@@ -1,0 +1,2644 @@
+{
+      "*": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food",
+                              "Education",
+                              "Loan",
+                              "Savings & Insurance",
+                              "Travel & Tour",
+                              "Special Occasion",
+                              "Others",
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Graduation Day",
+                              "Household",
+                              "Gift (Friends & Family)",
+                              "College Fee",
+                              "Principle Payment",
+                              "Life Style",
+                              "Sport & Fitness",
+                              "Hotel Food",
+                              "Diwali",
+                              "Insurance",
+                              "Expense for Relatives",
+                              "Expense for Cow",
+                              "Interest Payment",
+                              "Expense for Friends",
+                              "Tour",
+                              "Movie",
+                              "Groceries",
+                              "Services",
+                              "Expense for Father",
+                              "Travel Expense",
+                              "Expense for Brother",
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock",
+                              "Health Insurance",
+                              "Naresh Clinic",
+                              "Shuttle Equipments",
+                              "Index Fund",
+                              "Graduation Day",
+                              "Gas",
+                              "Term Insurance",
+                              "Dress & Shoes",
+                              "SBI Policy",
+                              "Internet",
+                              "Kolandha Loan",
+                              "College Fee",
+                              "New Product",
+                              "Brother Other Expenses",
+                              "Hotel Food",
+                              "Educational Loan",
+                              "Ooty Tour",
+                              "Cow",
+                              "Diwali",
+                              "Petrol",
+                              "Dr Natrajan Electricity & Mobile",
+                              "Yercaurd Trip",
+                              "Father Other Expenses",
+                              "Shuttle",
+                              "Dr Natrajan Loan",
+                              "Repair Old",
+                              "Mutual Fund",
+                              "Haircut",
+                              "Yerikari Lady Loan",
+                              "Udhaykumar Bank Loan",
+                              "Magalir Suyaudhavi Kollu",
+                              "Movie",
+                              "Katpadi Trip",
+                              "Gold",
+                              "Relative",
+                              "Groceries",
+                              "Electricity",
+                              "Friend",
+                              "Bajaj Finance"
+                        ]
+                  },
+                  "Educational Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Educational Loan"
+                        ]
+                  },
+                  "Bajaj Finance": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Bajaj Finance"
+                        ]
+                  },
+                  "Magalir Suyaudhavi Kollu": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Magalir Suyaudhavi Kollu"
+                        ]
+                  },
+                  "New Product": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "New Product"
+                        ]
+                  },
+                  "Udhaykumar Bank Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Udhaykumar Bank Loan"
+                        ]
+                  },
+                  "Health Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance",
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Health Insurance"
+                        ]
+                  },
+                  "SBI Policy": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "SBI Policy"
+                        ]
+                  },
+                  "Diwali": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Diwali"
+                        ],
+                        "L3": [
+                              "Diwali"
+                        ]
+                  },
+                  "College Fee": {
+                        "L1": [
+                              "Education"
+                        ],
+                        "L2": [
+                              "College Fee"
+                        ],
+                        "L3": [
+                              "College Fee"
+                        ]
+                  },
+                  "Katpadi Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Katpadi Trip"
+                        ]
+                  },
+                  "Yercaurd Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Yercaurd Trip"
+                        ]
+                  },
+                  "Ooty Tour": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Tour"
+                        ],
+                        "L3": [
+                              "Ooty Tour"
+                        ]
+                  },
+                  "Haircut": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Haircut"
+                        ]
+                  },
+                  "Dress & Shoes": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Dress & Shoes"
+                        ]
+                  },
+                  "Repair Old": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "Repair Old"
+                        ]
+                  },
+                  "Father Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Father"
+                        ],
+                        "L3": [
+                              "Father Other Expenses"
+                        ]
+                  },
+                  "Brother Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Brother"
+                        ],
+                        "L3": [
+                              "Brother Other Expenses"
+                        ]
+                  },
+                  "Kolandha Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Kolandha Loan"
+                        ]
+                  },
+                  "Term Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Term Insurance"
+                        ]
+                  },
+                  "Friend": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Gift (Friends & Family)"
+                        ],
+                        "L3": [
+                              "Friend"
+                        ]
+                  },
+                  "Graduation Day": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Graduation Day"
+                        ],
+                        "L3": [
+                              "Graduation Day"
+                        ]
+                  },
+                  "Gas": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Gas"
+                        ]
+                  },
+                  "Electricity": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Electricity"
+                        ]
+                  },
+                  "Movie": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Movie"
+                        ],
+                        "L3": [
+                              "Movie"
+                        ]
+                  },
+                  "Petrol": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Petrol"
+                        ]
+                  },
+                  "Shuttle": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle"
+                        ]
+                  },
+                  "Cow": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Cow"
+                        ],
+                        "L3": [
+                              "Cow"
+                        ]
+                  },
+                  "Yerikari Lady Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Yerikari Lady Loan"
+                        ]
+                  },
+                  "Hotel Food": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Hotel Food"
+                        ],
+                        "L3": [
+                              "Hotel Food"
+                        ]
+                  },
+                  "Relative": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Relatives"
+                        ],
+                        "L3": [
+                              "Relative"
+                        ]
+                  },
+                  "Mutual Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Mutual Fund"
+                        ]
+                  },
+                  "Stock": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock"
+                        ]
+                  },
+                  "Index Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Index Fund"
+                        ]
+                  },
+                  "Gold": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Gold"
+                        ]
+                  },
+                  "Dr Natrajan Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Loan"
+                        ]
+                  },
+                  "Dr Natrajan Electricity & Mobile": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Interest Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Electricity & Mobile"
+                        ]
+                  },
+                  "Naresh Clinic": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Friends"
+                        ],
+                        "L3": [
+                              "Naresh Clinic"
+                        ]
+                  },
+                  "Internet": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Internet"
+                        ]
+                  },
+                  "Groceries": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Groceries"
+                        ],
+                        "L3": [
+                              "Groceries"
+                        ]
+                  },
+                  "Shuttle Equipments": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle Equipments"
+                        ]
+                  }
+            },
+            "Principle Payment": {
+                  "Educational Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Educational Loan"
+                        ]
+                  },
+                  "Bajaj Finance": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Bajaj Finance"
+                        ]
+                  },
+                  "Magalir Suyaudhavi Kollu": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Magalir Suyaudhavi Kollu"
+                        ]
+                  },
+                  "Udhaykumar Bank Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Udhaykumar Bank Loan"
+                        ]
+                  },
+                  "Kolandha Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Kolandha Loan"
+                        ]
+                  },
+                  "Yerikari Lady Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Yerikari Lady Loan"
+                        ]
+                  },
+                  "Dr Natrajan Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Loan"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Kolandha Loan",
+                              "Udhaykumar Bank Loan",
+                              "Yerikari Lady Loan",
+                              "Magalir Suyaudhavi Kollu",
+                              "Dr Natrajan Loan",
+                              "Educational Loan",
+                              "Bajaj Finance"
+                        ]
+                  }
+            },
+            "Household": {
+                  "New Product": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "New Product"
+                        ]
+                  },
+                  "Repair Old": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "Repair Old"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "New Product",
+                              "Repair Old"
+                        ]
+                  }
+            },
+            "Insurance": {
+                  "Health Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Health Insurance"
+                        ]
+                  },
+                  "Term Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Term Insurance"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Health Insurance",
+                              "Term Insurance"
+                        ]
+                  }
+            },
+            "Savings": {
+                  "SBI Policy": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "SBI Policy"
+                        ]
+                  },
+                  "Health Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Health Insurance"
+                        ]
+                  },
+                  "Mutual Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Mutual Fund"
+                        ]
+                  },
+                  "Stock": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock"
+                        ]
+                  },
+                  "Index Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Index Fund"
+                        ]
+                  },
+                  "Gold": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Gold"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock",
+                              "Health Insurance",
+                              "Gold",
+                              "Index Fund",
+                              "Mutual Fund",
+                              "SBI Policy"
+                        ]
+                  }
+            },
+            "Diwali": {
+                  "Diwali": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Diwali"
+                        ],
+                        "L3": [
+                              "Diwali"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Diwali"
+                        ],
+                        "L3": [
+                              "Diwali"
+                        ]
+                  }
+            },
+            "College Fee": {
+                  "College Fee": {
+                        "L1": [
+                              "Education"
+                        ],
+                        "L2": [
+                              "College Fee"
+                        ],
+                        "L3": [
+                              "College Fee"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Education"
+                        ],
+                        "L2": [
+                              "College Fee"
+                        ],
+                        "L3": [
+                              "College Fee"
+                        ]
+                  }
+            },
+            "Travel Expense": {
+                  "Katpadi Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Katpadi Trip"
+                        ]
+                  },
+                  "Yercaurd Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Yercaurd Trip"
+                        ]
+                  },
+                  "Petrol": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Petrol"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Yercaurd Trip",
+                              "Petrol",
+                              "Katpadi Trip"
+                        ]
+                  }
+            },
+            "Tour": {
+                  "Ooty Tour": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Tour"
+                        ],
+                        "L3": [
+                              "Ooty Tour"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Tour"
+                        ],
+                        "L3": [
+                              "Ooty Tour"
+                        ]
+                  }
+            },
+            "Life Style": {
+                  "Haircut": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Haircut"
+                        ]
+                  },
+                  "Dress & Shoes": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Dress & Shoes"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Dress & Shoes",
+                              "Haircut"
+                        ]
+                  }
+            },
+            "Expense for Father": {
+                  "Father Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Father"
+                        ],
+                        "L3": [
+                              "Father Other Expenses"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Father"
+                        ],
+                        "L3": [
+                              "Father Other Expenses"
+                        ]
+                  }
+            },
+            "Expense for Brother": {
+                  "Brother Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Brother"
+                        ],
+                        "L3": [
+                              "Brother Other Expenses"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Brother"
+                        ],
+                        "L3": [
+                              "Brother Other Expenses"
+                        ]
+                  }
+            },
+            "Gift (Friends & Family)": {
+                  "Friend": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Gift (Friends & Family)"
+                        ],
+                        "L3": [
+                              "Friend"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Gift (Friends & Family)"
+                        ],
+                        "L3": [
+                              "Friend"
+                        ]
+                  }
+            },
+            "Graduation Day": {
+                  "Graduation Day": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Graduation Day"
+                        ],
+                        "L3": [
+                              "Graduation Day"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Graduation Day"
+                        ],
+                        "L3": [
+                              "Graduation Day"
+                        ]
+                  }
+            },
+            "Services": {
+                  "Gas": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Gas"
+                        ]
+                  },
+                  "Electricity": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Electricity"
+                        ]
+                  },
+                  "Internet": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Internet"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Gas",
+                              "Electricity",
+                              "Internet"
+                        ]
+                  }
+            },
+            "Movie": {
+                  "Movie": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Movie"
+                        ],
+                        "L3": [
+                              "Movie"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Movie"
+                        ],
+                        "L3": [
+                              "Movie"
+                        ]
+                  }
+            },
+            "Sport & Fitness": {
+                  "Shuttle": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle"
+                        ]
+                  },
+                  "Shuttle Equipments": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle Equipments"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle",
+                              "Shuttle Equipments"
+                        ]
+                  }
+            },
+            "Expense for Cow": {
+                  "Cow": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Cow"
+                        ],
+                        "L3": [
+                              "Cow"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Cow"
+                        ],
+                        "L3": [
+                              "Cow"
+                        ]
+                  }
+            },
+            "Hotel Food": {
+                  "Hotel Food": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Hotel Food"
+                        ],
+                        "L3": [
+                              "Hotel Food"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Hotel Food"
+                        ],
+                        "L3": [
+                              "Hotel Food"
+                        ]
+                  }
+            },
+            "Expense for Relatives": {
+                  "Relative": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Relatives"
+                        ],
+                        "L3": [
+                              "Relative"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Relatives"
+                        ],
+                        "L3": [
+                              "Relative"
+                        ]
+                  }
+            },
+            "Interest Payment": {
+                  "Dr Natrajan Electricity & Mobile": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Interest Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Electricity & Mobile"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Interest Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Electricity & Mobile"
+                        ]
+                  }
+            },
+            "Expense for Friends": {
+                  "Naresh Clinic": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Friends"
+                        ],
+                        "L3": [
+                              "Naresh Clinic"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Friends"
+                        ],
+                        "L3": [
+                              "Naresh Clinic"
+                        ]
+                  }
+            },
+            "Groceries": {
+                  "Groceries": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Groceries"
+                        ],
+                        "L3": [
+                              "Groceries"
+                        ]
+                  },
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Groceries"
+                        ],
+                        "L3": [
+                              "Groceries"
+                        ]
+                  }
+            }
+      },
+      "Loan": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Interest Payment",
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Kolandha Loan",
+                              "Udhaykumar Bank Loan",
+                              "Yerikari Lady Loan",
+                              "Magalir Suyaudhavi Kollu",
+                              "Dr Natrajan Electricity & Mobile",
+                              "Dr Natrajan Loan",
+                              "Educational Loan",
+                              "Bajaj Finance"
+                        ]
+                  },
+                  "Educational Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Educational Loan"
+                        ]
+                  },
+                  "Bajaj Finance": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Bajaj Finance"
+                        ]
+                  },
+                  "Magalir Suyaudhavi Kollu": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Magalir Suyaudhavi Kollu"
+                        ]
+                  },
+                  "Udhaykumar Bank Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Udhaykumar Bank Loan"
+                        ]
+                  },
+                  "Kolandha Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Kolandha Loan"
+                        ]
+                  },
+                  "Yerikari Lady Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Yerikari Lady Loan"
+                        ]
+                  },
+                  "Dr Natrajan Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Loan"
+                        ]
+                  },
+                  "Dr Natrajan Electricity & Mobile": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Interest Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Electricity & Mobile"
+                        ]
+                  }
+            },
+            "Principle Payment": {
+                  "*": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Kolandha Loan",
+                              "Udhaykumar Bank Loan",
+                              "Yerikari Lady Loan",
+                              "Magalir Suyaudhavi Kollu",
+                              "Dr Natrajan Loan",
+                              "Educational Loan",
+                              "Bajaj Finance"
+                        ]
+                  },
+                  "Educational Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Educational Loan"
+                        ]
+                  },
+                  "Bajaj Finance": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Bajaj Finance"
+                        ]
+                  },
+                  "Magalir Suyaudhavi Kollu": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Magalir Suyaudhavi Kollu"
+                        ]
+                  },
+                  "Udhaykumar Bank Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Udhaykumar Bank Loan"
+                        ]
+                  },
+                  "Kolandha Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Kolandha Loan"
+                        ]
+                  },
+                  "Yerikari Lady Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Yerikari Lady Loan"
+                        ]
+                  },
+                  "Dr Natrajan Loan": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Principle Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Loan"
+                        ]
+                  }
+            },
+            "Interest Payment": {
+                  "*": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Interest Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Electricity & Mobile"
+                        ]
+                  },
+                  "Dr Natrajan Electricity & Mobile": {
+                        "L1": [
+                              "Loan"
+                        ],
+                        "L2": [
+                              "Interest Payment"
+                        ],
+                        "L3": [
+                              "Dr Natrajan Electricity & Mobile"
+                        ]
+                  }
+            }
+      },
+      "Living Essentials": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services",
+                              "Household",
+                              "Life Style",
+                              "Groceries"
+                        ],
+                        "L3": [
+                              "Groceries",
+                              "New Product",
+                              "Electricity",
+                              "Internet",
+                              "Gas",
+                              "Repair Old",
+                              "Dress & Shoes",
+                              "Haircut"
+                        ]
+                  },
+                  "New Product": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "New Product"
+                        ]
+                  },
+                  "Haircut": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Haircut"
+                        ]
+                  },
+                  "Dress & Shoes": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Dress & Shoes"
+                        ]
+                  },
+                  "Repair Old": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "Repair Old"
+                        ]
+                  },
+                  "Gas": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Gas"
+                        ]
+                  },
+                  "Electricity": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Electricity"
+                        ]
+                  },
+                  "Internet": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Internet"
+                        ]
+                  },
+                  "Groceries": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Groceries"
+                        ],
+                        "L3": [
+                              "Groceries"
+                        ]
+                  }
+            },
+            "Household": {
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "New Product",
+                              "Repair Old"
+                        ]
+                  },
+                  "New Product": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "New Product"
+                        ]
+                  },
+                  "Repair Old": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Household"
+                        ],
+                        "L3": [
+                              "Repair Old"
+                        ]
+                  }
+            },
+            "Life Style": {
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Dress & Shoes",
+                              "Haircut"
+                        ]
+                  },
+                  "Haircut": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Haircut"
+                        ]
+                  },
+                  "Dress & Shoes": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Life Style"
+                        ],
+                        "L3": [
+                              "Dress & Shoes"
+                        ]
+                  }
+            },
+            "Services": {
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Gas",
+                              "Electricity",
+                              "Internet"
+                        ]
+                  },
+                  "Gas": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Gas"
+                        ]
+                  },
+                  "Electricity": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Electricity"
+                        ]
+                  },
+                  "Internet": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Services"
+                        ],
+                        "L3": [
+                              "Internet"
+                        ]
+                  }
+            },
+            "Groceries": {
+                  "*": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Groceries"
+                        ],
+                        "L3": [
+                              "Groceries"
+                        ]
+                  },
+                  "Groceries": {
+                        "L1": [
+                              "Living Essentials"
+                        ],
+                        "L2": [
+                              "Groceries"
+                        ],
+                        "L3": [
+                              "Groceries"
+                        ]
+                  }
+            }
+      },
+      "Savings & Insurance": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance",
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock",
+                              "Health Insurance",
+                              "Gold",
+                              "Index Fund",
+                              "Term Insurance",
+                              "Mutual Fund",
+                              "SBI Policy"
+                        ]
+                  },
+                  "Health Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance",
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Health Insurance"
+                        ]
+                  },
+                  "SBI Policy": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "SBI Policy"
+                        ]
+                  },
+                  "Term Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Term Insurance"
+                        ]
+                  },
+                  "Mutual Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Mutual Fund"
+                        ]
+                  },
+                  "Stock": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock"
+                        ]
+                  },
+                  "Index Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Index Fund"
+                        ]
+                  },
+                  "Gold": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Gold"
+                        ]
+                  }
+            },
+            "Insurance": {
+                  "*": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Health Insurance",
+                              "Term Insurance"
+                        ]
+                  },
+                  "Health Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Health Insurance"
+                        ]
+                  },
+                  "Term Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Insurance"
+                        ],
+                        "L3": [
+                              "Term Insurance"
+                        ]
+                  }
+            },
+            "Savings": {
+                  "*": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock",
+                              "Health Insurance",
+                              "Gold",
+                              "Index Fund",
+                              "Mutual Fund",
+                              "SBI Policy"
+                        ]
+                  },
+                  "SBI Policy": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "SBI Policy"
+                        ]
+                  },
+                  "Health Insurance": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Health Insurance"
+                        ]
+                  },
+                  "Mutual Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Mutual Fund"
+                        ]
+                  },
+                  "Stock": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Stock"
+                        ]
+                  },
+                  "Index Fund": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Index Fund"
+                        ]
+                  },
+                  "Gold": {
+                        "L1": [
+                              "Savings & Insurance"
+                        ],
+                        "L2": [
+                              "Savings"
+                        ],
+                        "L3": [
+                              "Gold"
+                        ]
+                  }
+            }
+      },
+      "Special Occasion": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Diwali",
+                              "Graduation Day"
+                        ],
+                        "L3": [
+                              "Diwali",
+                              "Graduation Day"
+                        ]
+                  },
+                  "Diwali": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Diwali"
+                        ],
+                        "L3": [
+                              "Diwali"
+                        ]
+                  },
+                  "Graduation Day": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Graduation Day"
+                        ],
+                        "L3": [
+                              "Graduation Day"
+                        ]
+                  }
+            },
+            "Diwali": {
+                  "*": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Diwali"
+                        ],
+                        "L3": [
+                              "Diwali"
+                        ]
+                  },
+                  "Diwali": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Diwali"
+                        ],
+                        "L3": [
+                              "Diwali"
+                        ]
+                  }
+            },
+            "Graduation Day": {
+                  "*": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Graduation Day"
+                        ],
+                        "L3": [
+                              "Graduation Day"
+                        ]
+                  },
+                  "Graduation Day": {
+                        "L1": [
+                              "Special Occasion"
+                        ],
+                        "L2": [
+                              "Graduation Day"
+                        ],
+                        "L3": [
+                              "Graduation Day"
+                        ]
+                  }
+            }
+      },
+      "Education": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Education"
+                        ],
+                        "L2": [
+                              "College Fee"
+                        ],
+                        "L3": [
+                              "College Fee"
+                        ]
+                  },
+                  "College Fee": {
+                        "L1": [
+                              "Education"
+                        ],
+                        "L2": [
+                              "College Fee"
+                        ],
+                        "L3": [
+                              "College Fee"
+                        ]
+                  }
+            },
+            "College Fee": {
+                  "*": {
+                        "L1": [
+                              "Education"
+                        ],
+                        "L2": [
+                              "College Fee"
+                        ],
+                        "L3": [
+                              "College Fee"
+                        ]
+                  },
+                  "College Fee": {
+                        "L1": [
+                              "Education"
+                        ],
+                        "L2": [
+                              "College Fee"
+                        ],
+                        "L3": [
+                              "College Fee"
+                        ]
+                  }
+            }
+      },
+      "Travel & Tour": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Tour",
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Yercaurd Trip",
+                              "Petrol",
+                              "Ooty Tour",
+                              "Katpadi Trip"
+                        ]
+                  },
+                  "Katpadi Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Katpadi Trip"
+                        ]
+                  },
+                  "Yercaurd Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Yercaurd Trip"
+                        ]
+                  },
+                  "Ooty Tour": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Tour"
+                        ],
+                        "L3": [
+                              "Ooty Tour"
+                        ]
+                  },
+                  "Petrol": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Petrol"
+                        ]
+                  }
+            },
+            "Travel Expense": {
+                  "*": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Yercaurd Trip",
+                              "Petrol",
+                              "Katpadi Trip"
+                        ]
+                  },
+                  "Katpadi Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Katpadi Trip"
+                        ]
+                  },
+                  "Yercaurd Trip": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Yercaurd Trip"
+                        ]
+                  },
+                  "Petrol": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Travel Expense"
+                        ],
+                        "L3": [
+                              "Petrol"
+                        ]
+                  }
+            },
+            "Tour": {
+                  "*": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Tour"
+                        ],
+                        "L3": [
+                              "Ooty Tour"
+                        ]
+                  },
+                  "Ooty Tour": {
+                        "L1": [
+                              "Travel & Tour"
+                        ],
+                        "L2": [
+                              "Tour"
+                        ],
+                        "L3": [
+                              "Ooty Tour"
+                        ]
+                  }
+            }
+      },
+      "Others": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Cow",
+                              "Expense for Father",
+                              "Expense for Brother",
+                              "Expense for Friends",
+                              "Expense for Relatives",
+                              "Gift (Friends & Family)"
+                        ],
+                        "L3": [
+                              "Naresh Clinic",
+                              "Relative",
+                              "Brother Other Expenses",
+                              "Father Other Expenses",
+                              "Friend",
+                              "Cow"
+                        ]
+                  },
+                  "Father Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Father"
+                        ],
+                        "L3": [
+                              "Father Other Expenses"
+                        ]
+                  },
+                  "Brother Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Brother"
+                        ],
+                        "L3": [
+                              "Brother Other Expenses"
+                        ]
+                  },
+                  "Friend": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Gift (Friends & Family)"
+                        ],
+                        "L3": [
+                              "Friend"
+                        ]
+                  },
+                  "Cow": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Cow"
+                        ],
+                        "L3": [
+                              "Cow"
+                        ]
+                  },
+                  "Relative": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Relatives"
+                        ],
+                        "L3": [
+                              "Relative"
+                        ]
+                  },
+                  "Naresh Clinic": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Friends"
+                        ],
+                        "L3": [
+                              "Naresh Clinic"
+                        ]
+                  }
+            },
+            "Expense for Father": {
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Father"
+                        ],
+                        "L3": [
+                              "Father Other Expenses"
+                        ]
+                  },
+                  "Father Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Father"
+                        ],
+                        "L3": [
+                              "Father Other Expenses"
+                        ]
+                  }
+            },
+            "Expense for Brother": {
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Brother"
+                        ],
+                        "L3": [
+                              "Brother Other Expenses"
+                        ]
+                  },
+                  "Brother Other Expenses": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Brother"
+                        ],
+                        "L3": [
+                              "Brother Other Expenses"
+                        ]
+                  }
+            },
+            "Gift (Friends & Family)": {
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Gift (Friends & Family)"
+                        ],
+                        "L3": [
+                              "Friend"
+                        ]
+                  },
+                  "Friend": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Gift (Friends & Family)"
+                        ],
+                        "L3": [
+                              "Friend"
+                        ]
+                  }
+            },
+            "Expense for Cow": {
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Cow"
+                        ],
+                        "L3": [
+                              "Cow"
+                        ]
+                  },
+                  "Cow": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Cow"
+                        ],
+                        "L3": [
+                              "Cow"
+                        ]
+                  }
+            },
+            "Expense for Relatives": {
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Relatives"
+                        ],
+                        "L3": [
+                              "Relative"
+                        ]
+                  },
+                  "Relative": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Relatives"
+                        ],
+                        "L3": [
+                              "Relative"
+                        ]
+                  }
+            },
+            "Expense for Friends": {
+                  "*": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Friends"
+                        ],
+                        "L3": [
+                              "Naresh Clinic"
+                        ]
+                  },
+                  "Naresh Clinic": {
+                        "L1": [
+                              "Others"
+                        ],
+                        "L2": [
+                              "Expense for Friends"
+                        ],
+                        "L3": [
+                              "Naresh Clinic"
+                        ]
+                  }
+            }
+      },
+      "Entertainment & Food": {
+            "*": {
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Hotel Food",
+                              "Sport & Fitness",
+                              "Movie"
+                        ],
+                        "L3": [
+                              "Shuttle",
+                              "Hotel Food",
+                              "Shuttle Equipments",
+                              "Movie"
+                        ]
+                  },
+                  "Movie": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Movie"
+                        ],
+                        "L3": [
+                              "Movie"
+                        ]
+                  },
+                  "Shuttle": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle"
+                        ]
+                  },
+                  "Hotel Food": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Hotel Food"
+                        ],
+                        "L3": [
+                              "Hotel Food"
+                        ]
+                  },
+                  "Shuttle Equipments": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle Equipments"
+                        ]
+                  }
+            },
+            "Movie": {
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Movie"
+                        ],
+                        "L3": [
+                              "Movie"
+                        ]
+                  },
+                  "Movie": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Movie"
+                        ],
+                        "L3": [
+                              "Movie"
+                        ]
+                  }
+            },
+            "Sport & Fitness": {
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle",
+                              "Shuttle Equipments"
+                        ]
+                  },
+                  "Shuttle": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle"
+                        ]
+                  },
+                  "Shuttle Equipments": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Sport & Fitness"
+                        ],
+                        "L3": [
+                              "Shuttle Equipments"
+                        ]
+                  }
+            },
+            "Hotel Food": {
+                  "*": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Hotel Food"
+                        ],
+                        "L3": [
+                              "Hotel Food"
+                        ]
+                  },
+                  "Hotel Food": {
+                        "L1": [
+                              "Entertainment & Food"
+                        ],
+                        "L2": [
+                              "Hotel Food"
+                        ],
+                        "L3": [
+                              "Hotel Food"
+                        ]
+                  }
+            }
+      }
+}

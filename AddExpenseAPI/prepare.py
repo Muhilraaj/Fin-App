@@ -8,6 +8,7 @@ Created on Sun Jan  1 12:22:42 2023
 import pandas as pd
 import json
 from azure.cosmos import CosmosClient, PartitionKey
+import hashlib
 
 endpoint='https://myfin-db.documents.azure.com:443/'
 key='UCrkusJL9E4oI2KUgsFd4vyZLDb2xHtYgxojCBmK3Uz8YiWklE8vWXSIRDAUVDNANb1JSsaTItKmACDbI1s9yg=='
@@ -17,6 +18,11 @@ database=client.get_database_client('DIM')
 container=database.get_container_client('Label')
 df=pd.read_excel('M:\My Project\MyFinApp\Budget.xlsx',sheet_name='Expenses')
 
+def customHash(data):
+    data=str(data)
+    hash_obj = hashlib.sha256()
+    hash_obj.update(data.encode())
+    return hash_obj.hexdigest()
 
 def DeleteAllUsers():
     # Delete all documents in the container
@@ -65,13 +71,13 @@ def InsertCosmos(data):
 
 def PrepareLabel():
     Labels=df.loc[:,['L1','L2','L3']].applymap(lambda x:x.strip() if isinstance(x,str) else x).drop_duplicates().dropna()
-    Labels['id']=Labels.apply(lambda x:str(hash(x['L1']+x['L2']+x['L3'])),axis=1)  
+    Labels['id']=Labels.apply(lambda x:str(customHash(x['L1']+x['L2']+x['L3'])),axis=1)  
     Labels.apply(InsertCosmos,axis=1)
     
 def PrepareUser():
     global container
     User=df.applymap(lambda x:x.strip() if isinstance(x,str) else x).drop_duplicates().dropna()
-    User['id']=User.apply(lambda x:str(hash(x['On-Behalf'])),axis=1)
+    User['id']=User.apply(lambda x:str(customHash(x['On-Behalf'])),axis=1)
     container=database.get_container_client('On-Behalf')
     User.apply(InsertCosmos,axis=1)
     
@@ -79,13 +85,13 @@ def PrepareUser():
 def PrepareExpense():
     global container,database
     expense=df.rename(columns={'Expense':'Expense_Note','22-Aug':'15/08/2022','22-Sep':'15/09/2022','Oct-22':'15/10/2022','Nov-22':'15/11/2022','Dec-22':'15/12/2022','Jan-23':'15/01/2023','23-Feb':'15/02/2023'})
-    expense['Label_key']=expense.apply(lambda x:str(hash(x['L1']+x['L2']+x['L3'])),axis=1) 
-    expense['User_key']= expense.apply(lambda x:str(hash(x['On-Behalf'])),axis=1)
+    expense['Label_key']=expense.apply(lambda x:str(customHash(x['L1']+x['L2']+x['L3'])),axis=1) 
+    expense['User_key']= expense.apply(lambda x:str(customHash(x['On-Behalf'])),axis=1)
     expense=expense.drop(['L1','L2','L3','On-Behalf','Name'],axis=1)
-    expense=expense.melt(id_vars=['Expense_Note','Label_key','User_key'],var_name='Timestamp',value_name='Amount').dropna()
-    expense=expense.loc[(expense['Amount']!=0) & (expense['Expense_Note']!='Total')]
+    expense=expense.melt(id_vars=['Expense_Note','Label_key','User_key'],var_name='Timestamp',value_name='Expense').dropna()
+    expense=expense.loc[(expense['Expense']!=0) & (expense['Expense_Note']!='Total')]
     expense['Timestamp']=pd.to_datetime(expense['Timestamp'],format='%d/%m/%Y').dt.strftime('%Y-%m-%d %H:%M:%S')
-    expense['id']=expense.apply(lambda x:str(hash(str(x['Timestamp'])+x['Label_key']+x['User_key'])),axis=1)
+    expense['id']=expense.apply(lambda x:str(customHash(str(x['Timestamp'])+x['Label_key']+x['User_key'])),axis=1)
     database=client.get_database_client('Fact')
     container=database.get_container_client('Expense')
     expense.apply(InsertCosmos,axis=1)

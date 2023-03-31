@@ -28,9 +28,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import React from 'react';
 import FormHelperText from '@mui/material/FormHelperText';
-import Container from '@mui/material/Container';
-import axios from 'axios';
-import jsonpAdapter from 'axios-jsonp';
+import FormData from './FormData'
+import { flexbox } from '@mui/system';
 
 
 let [data,setLabels]=['','']
@@ -101,20 +100,20 @@ class Labels {
 function DropDown(props) {
   //console.log(data[0])
   return (
-    <FormControl sx={{ minWidth: 250 }}  error={props.error}>
+    <FormControl sx={{ width: "100%", maxWidth: 550 }}  error={props.error}>
       <InputLabel id="demo-simple-select-label">{props.label}</InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
         value={props.value}
         label={props.label}
-        onChange={(e) => { props.d_handler(e) }}
+        onChange={(e) => { props.handler(e) }}
       >
         <MenuItem value="*">
           <em>Select Label</em>
         </MenuItem>
         {
-          props.d_state.map(
+          props.options.map(
             (d) => { return <MenuItem value={d}>{d}</MenuItem> }
           )
         }
@@ -126,7 +125,7 @@ function DropDown(props) {
 
 function DateTime(props) {
   return (
-    <FormControl sx={{ minWidth: 200 }}>
+    <FormControl sx={{ width: "100%",minWidth: 240 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}
       >
         <DemoContainer
@@ -154,19 +153,22 @@ function DateTime(props) {
 
 function App() {
 
-  const [state1, handler1] = useState([]);
-  const [state2, handler2] = useState([]);
-  const [state3, handler3] = useState([]);
-  let setState1;
-  let setState2;
-  let setState3;
-  [Labels.L1, setState1] = useState('*');
-  [Labels.L2, setState2] = useState('*');
-  [Labels.L3, setState3] = useState('*');
+  const [L1Options, setL1Options] = useState([]);
+  const [L2Options, setL2Options] = useState([]);
+  const [L3Options, setL3Options] = useState([]);
+  let setL1Value;
+  let setL2Value;
+  let setL3Value;
+  [Labels.L1, setL1Value] = useState('*');
+  [Labels.L2, setL2Value] = useState('*');
+  [Labels.L3, setL3Value] = useState('*');
+  const [ObValue, setObValue] = useState('*');
+  const [ObOptions, setObOptions] = useState([]);
   const [priceError, setPriceError] = useState(false);
   const [L1Error, setL1Error] = useState(false);
   const [L2Error, setL2Error] = useState(false);
   const [L3Error, setL3Error] = useState(false);
+  const [ObError, setObError] = useState(false);
   const [behalfError, setbehalfError] = useState(false);
   const [datetimeError, setdatetimeError] = useState(null);
   const [datetimestateError, setdatetimestateError] = useState(false);
@@ -181,43 +183,57 @@ function App() {
     }
   }, [datetimeError]);
 
-
-  const refreshState = () => {
-    handler1(() => { return Labels.getL1() });
-    handler2(() => { return Labels.getL2() });
-    handler3(() => { return Labels.getL3() });
-  }
-
   [data,setLabels]=useState();
   useEffect(() => {
     (async () => {
       try{
-        let response = await axios.get(
-        'https://myfinapi18.azurewebsites.net/api/labels?code=daSl1rP1F0w--C3A0DQXoltQrv8942H_aXTomPfyYZq3AzFu0xUD0A==',{ params: { answer: 42 } });
-         response=JSON.parse(response.data);
+         const response = await FormData.Label();
          setLabels(response);
-         handler1(response['*']['*']['*']['L1'])
-         handler2(response['*']['*']['*']['L3'])
-         handler3(response['*']['*']['*']['L3'])
+         setL1Options(response['*']['*']['*']['L1'])
+         setL2Options(response['*']['*']['*']['L3'])
+         setL3Options(response['*']['*']['*']['L3'])
     } catch (error) {
       console.error(error);
     }
     })();
   }, []);
+  
+  useEffect(() => {
+    (async () => {
+      try{
+        const response = await FormData.OnBehalf();
+        setObOptions(response);
+    } catch (error) {
+      console.error(error);
+    }
+    })();
+  }, []);
+
+  const refreshState = () => {
+    setL1Options(() => { return Labels.getL1() });
+    setL2Options(() => { return Labels.getL2() });
+    setL3Options(() => { return Labels.getL3() });
+  }
+
   const L1_Handler = (e) => {
-    setState1(e.target.value);
+    setL1Value(e.target.value);
     refreshState();
     DropDown_ErrorHandler(e.target.value,setL1Error);
   }
   const L2_Handler = (e) => {
-    setState2(e.target.value);
+    setL2Value(e.target.value);
     refreshState();
     DropDown_ErrorHandler(e.target.value,setL2Error);
   }
   const L3_Handler = (e) => {
-    setState3(e.target.value);
+    setL3Value(e.target.value);
     refreshState();
     DropDown_ErrorHandler(e.target.value,setL3Error);
+  }
+  
+  const OnBehalf_Handler = (e) => {
+    setObValue(e.target.value);
+    DropDown_ErrorHandler(e.target.value,setObError);
   }
 
   const Price_Handler = (e)=>{
@@ -271,6 +287,7 @@ function App() {
     const l1s=DropDown_ErrorHandler(event.target[2].value,setL1Error);
     const l2s=DropDown_ErrorHandler(event.target[4].value,setL2Error);
     const l3s=DropDown_ErrorHandler(event.target[6].value,setL3Error);
+    const obs=DropDown_ErrorHandler(event.target[8].value,setObError);
     if(event.target[12].value==='')
     {
       setdatetimestateError(true);
@@ -279,16 +296,23 @@ function App() {
     {
       setdatetimestateError(false);
     }
-    if(!(ps|l1s|l2s|l3s|behalfError)&&datetimeError===null&&event.target[12].value!=='')
+    if(!(ps|l1s|l2s|l3s|behalfError|obs)&&datetimeError===null&&event.target[12].value!=='')
     {
-      console.log([event.target.amount.value,event.target[2].value,event.target[4].value,event.target[6].value,event.target[8].value,event.target.Comments.value,event.target[12].value])
+      const data={"Expense":event.target.amount.value,
+                  "L1":event.target[2].value,
+                  "L2":event.target[4].value,
+                  "L3":event.target[6].value,
+                  "Onbehalf":event.target[8].value,
+                  "Expense_Note":event.target.Comments.value,
+                  "Timestamp":event.target[12].value}
+      console.log(data);
     }
   };
 
   return (
     <ThemeProvider theme={theme} >
       <Stack spacing={5} direction="column">
-        <AppBar position="static">
+        <AppBar position="static" width="100%">
           <Toolbar variant="dense">
             <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
               <MenuIcon />
@@ -298,43 +322,40 @@ function App() {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Box sx={{ padding: '50px' }}
-          width='700px'
-          height='600px'
-          alignContent="center"
+        <Box sx={{ display: 'flex' }} p={4}
+          justifyContent="center"
+          alignItems="center"
           display="flex"
-          
         >
-          <Box sx={{ flexGrow: 1, padding: '50px' }}
+          <Box sx={{ display: 'flex' }} p={4}
             display="flex"
             border='solid'
           >
             <Form onSubmit={handleSubmit}>
               <Stack direction="column" spacing={2}>
                 <FormControl error={priceError}>
-                  <InputLabel htmlFor="amount">Amount</InputLabel>
+                  <InputLabel htmlFor="amount">Expense</InputLabel>
                   <OutlinedInput
                     id="amount"
                     onChange={(e) => {Price_Handler(e)}}
                     startAdornment={<InputAdornment position="start">₹ </InputAdornment>}
-                    label="Amount"
+                    label="Expense"
                   />
                   <FormHelperText>{priceError?'Enter a valid price(Eg: 10, 20.5)':''}</FormHelperText>
                 </FormControl>
                 <Stack spacing={2} direction="row">
-                  <DropDown id='L1' d_state={state1} value={Labels.L1} d_handler={L1_Handler} error={L1Error} label={"L1"} />
-                  <DropDown id='L2' d_state={state2} value={Labels.L2} d_handler={L2_Handler} error={L2Error} label={"L2"} />
+                  <DropDown id='L1' options={L1Options} value={Labels.L1} handler={L1_Handler} error={L1Error} label={"L1"} />
+                  <DropDown id='L2' options={L2Options} value={Labels.L2} handler={L2_Handler} error={L2Error} label={"L2"} />
                 </Stack>
                 <Stack spacing={2} direction="row">
-                  <DropDown id='L3' d_state={state3} value={Labels.L3} d_handler={L3_Handler} error={L3Error} label={"L3"} />
-                  <DropDown id='Onbehalf' d_state={state2} value={Labels.L2} d_handler={L2_Handler} label={"Onbehalf"} />
+                  <DropDown id='L3' options={L3Options} value={Labels.L3} handler={L3_Handler} error={L3Error} label={"L3"} />
+                  <DropDown id='Onbehalf' options={ObOptions} value={ObValue} handler={OnBehalf_Handler} error={ObError} label={"Onbehalf"} />
                 </Stack>
                 <TextField id="Comments" label="Comments" variant="outlined" />
                 <Stack spacing={2} direction="row">
-                  <DateTime id='Datetime' label={"Date Time"} d_handler={Datetime_Handler} e_message={errorDateMessage}></DateTime>
+                  <DateTime id='Datetime' label={"Date Time"} handler={Datetime_Handler} e_message={errorDateMessage}></DateTime>
                   <Button type="submit" variant="contained" color="success" sx={{
-                    width: 220,
-                    height: 60
+                   width: "100%"
                   }}>
                     Submit
                   </Button>

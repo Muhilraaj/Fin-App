@@ -6,13 +6,19 @@ import azure.functions as func
 from azure.storage.blob import BlobServiceClient, BlobClient
 from azure.cosmos import CosmosClient
 
+headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+    }
+
 def handle_labels():
     blob_service_client = BlobServiceClient.from_connection_string(os.environ['Storage_Account_String'])
     container_name = os.environ["Storage_Account_Container_Name"]
     blob_name = os.environ["Storage_Account_Blob_Name"]
     blob_client = blob_service_client.get_blob_client(container_name, blob_name)
     json_data = json.loads(blob_client.download_blob().readall())
-    return func.HttpResponse(body=str(json_data), mimetype="application/json")
+    return func.HttpResponse(body=str(json_data),headers=headers, mimetype="application/json")
 
 def handle_user():
     client = CosmosClient(url=os.environ["Cosmos_DB_Endpoint"], credential=os.environ["Cosmos_DB_Key"])
@@ -23,12 +29,17 @@ def handle_user():
     documents = []
     for item in user_list:
         documents.append(item)
-    return func.HttpResponse(str(documents))
+    return func.HttpResponse(str(documents),headers=headers,mimetype="application/json")
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     method = req.method.lower()
     path = req.route_params.get('path', 'user').lower()
-    if method == 'get' and path == 'user':
+    if req.method == "OPTIONS":
+        return func.HttpResponse(
+            headers=headers,
+            status_code=204
+        )
+    elif method == 'get' and path == 'user':
         return handle_user()
     elif method == 'get' and path == 'labels':
         return handle_labels()

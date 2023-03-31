@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -29,8 +29,11 @@ import Button from '@mui/material/Button';
 import React from 'react';
 import FormHelperText from '@mui/material/FormHelperText';
 import Container from '@mui/material/Container';
-const { data } = require('./data.js');
+import axios from 'axios';
+import jsonpAdapter from 'axios-jsonp';
 
+
+let [data,setLabels]=['','']
 
 const theme = createTheme({
   backgroundColor: '#bdbdbd',
@@ -150,9 +153,19 @@ function DateTime(props) {
 }
 
 function App() {
-  const [state1, handler1] = useState(Labels.getL1());
-  const [state2, handler2] = useState(Labels.getL2());
-  const [state3, handler3] = useState(Labels.getL3());
+
+  [data,setLabels]=useState();
+  useEffect(() => {
+    (async () => {
+      try{
+      const response = await axios.get(
+        'https://myfinapi18.azurewebsites.net/api/labels?code=daSl1rP1F0w--C3A0DQXoltQrv8942H_aXTomPfyYZq3AzFu0xUD0A==');
+         setLabels(response);
+    } catch (error) {
+      console.error(error);
+    }
+    })();
+  }, []);
   let setState1;
   let setState2;
   let setState3;
@@ -177,6 +190,9 @@ function App() {
     }
   }, [datetimeError]);
 
+  const [state1, handler1] = useState([]);
+  const [state2, handler2] = useState([]);
+  const [state3, handler3] = useState([]);
 
   const refreshState = () => {
     handler1(() => { return Labels.getL1() });

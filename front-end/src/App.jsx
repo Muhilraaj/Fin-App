@@ -154,18 +154,9 @@ function DateTime(props) {
 
 function App() {
 
-  [data,setLabels]=useState();
-  useEffect(() => {
-    (async () => {
-      try{
-      const response = await axios.get(
-        'https://myfinapi18.azurewebsites.net/api/labels?code=daSl1rP1F0w--C3A0DQXoltQrv8942H_aXTomPfyYZq3AzFu0xUD0A==');
-         setLabels(response);
-    } catch (error) {
-      console.error(error);
-    }
-    })();
-  }, []);
+  const [state1, handler1] = useState([]);
+  const [state2, handler2] = useState([]);
+  const [state3, handler3] = useState([]);
   let setState1;
   let setState2;
   let setState3;
@@ -190,15 +181,29 @@ function App() {
     }
   }, [datetimeError]);
 
-  const [state1, handler1] = useState([]);
-  const [state2, handler2] = useState([]);
-  const [state3, handler3] = useState([]);
 
   const refreshState = () => {
     handler1(() => { return Labels.getL1() });
     handler2(() => { return Labels.getL2() });
     handler3(() => { return Labels.getL3() });
   }
+
+  [data,setLabels]=useState();
+  useEffect(() => {
+    (async () => {
+      try{
+        let response = await axios.get(
+        'https://myfinapi18.azurewebsites.net/api/labels?code=daSl1rP1F0w--C3A0DQXoltQrv8942H_aXTomPfyYZq3AzFu0xUD0A==',{ params: { answer: 42 } });
+         response=JSON.parse(response.data);
+         setLabels(response);
+         handler1(response['*']['*']['*']['L1'])
+         handler2(response['*']['*']['*']['L3'])
+         handler3(response['*']['*']['*']['L3'])
+    } catch (error) {
+      console.error(error);
+    }
+    })();
+  }, []);
   const L1_Handler = (e) => {
     setState1(e.target.value);
     refreshState();

@@ -18,6 +18,7 @@ def handle_labels():
     blob_name = os.environ["Storage_Account_Blob_Name"]
     blob_client = blob_service_client.get_blob_client(container_name, blob_name)
     json_data = json.loads(blob_client.download_blob().readall())
+    json_data = json.dumps(json_data)
     return func.HttpResponse(body=str(json_data),headers=headers, mimetype="application/json")
 
 def handle_user():
@@ -26,10 +27,11 @@ def handle_user():
     container=database.get_container_client('On-Behalf')
     query = '''SELECT c["On-Behalf"] FROM c'''
     user_list = container.query_items(query=query, enable_cross_partition_query=True)
-    documents = []
+    users = []
     for item in user_list:
-        documents.append(item)
-    return func.HttpResponse(str(documents),headers=headers,mimetype="application/json")
+        users.append(item)
+    users = json.dumps(users)
+    return func.HttpResponse(str(users),headers=headers,mimetype="application/json")
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     method = req.method.lower()

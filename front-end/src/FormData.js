@@ -16,6 +16,10 @@ class FormData
             return list;
         }).catch((err)=>{throw err});
     }
+    static SubmitExpense(Expense)
+    {
+        return axios.post(process.env.REACT_APP_API_Expense_URL,Expense);
+    }
 }
 
 export default FormData;

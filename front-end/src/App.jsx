@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -32,7 +32,7 @@ import FormData from './FormData'
 import { flexbox } from '@mui/system';
 
 
-let [data,setLabels]=['','']
+let [data, setLabels] = ['', '']
 
 const theme = createTheme({
   backgroundColor: '#bdbdbd',
@@ -100,7 +100,7 @@ class Labels {
 function DropDown(props) {
   //console.log(data[0])
   return (
-    <FormControl sx={{ width: "100%", maxWidth: 550 }}  error={props.error}>
+    <FormControl sx={{ width: "100%", maxWidth: 550 }} error={props.error}>
       <InputLabel id="demo-simple-select-label">{props.label}</InputLabel>
       <Select
         labelId="demo-simple-select-label"
@@ -118,14 +118,14 @@ function DropDown(props) {
           )
         }
       </Select>
-      <FormHelperText>{props.error?'Select Something':''}</FormHelperText>
+      <FormHelperText>{props.error ? 'Select Something' : ''}</FormHelperText>
     </FormControl>
   );
 }
 
 function DateTime(props) {
   return (
-    <FormControl sx={{ width: "100%",minWidth: 240 }}>
+    <FormControl sx={{ width: "100%", minWidth: 240 }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}
       >
         <DemoContainer
@@ -134,16 +134,16 @@ function DateTime(props) {
           ]}
         >
           <DemoItem>
-            <DateTimePicker label={props.label} 
-            defaultValue={dayjs()}
-            onError = {(e)=>{props.e_handler(e)}}
-            slotProps={{
-              textField: {
-                helperText:props.e_message
-              }
-            }}
-            required
-            disableFuture/>
+            <DateTimePicker label={props.label}
+              value={props.value}
+              onChange={(e) => { props.handler(e) }}
+              onError={(e) => props.e_handler(e)}
+              slotProps={{
+                textField: {
+                  helperText: props.e_message
+                }
+              }}
+              disableFuture />
           </DemoItem>
         </DemoContainer>
       </LocalizationProvider>
@@ -163,6 +163,7 @@ function App() {
   [Labels.L2, setL2Value] = useState('*');
   [Labels.L3, setL3Value] = useState('*');
   const [ObValue, setObValue] = useState('*');
+  const [DatetimeValue, setDatetimeValue] = useState(dayjs());
   const [ObOptions, setObOptions] = useState([]);
   const [priceError, setPriceError] = useState(false);
   const [L1Error, setL1Error] = useState(false);
@@ -183,29 +184,29 @@ function App() {
     }
   }, [datetimeError]);
 
-  [data,setLabels]=useState();
+  [data, setLabels] = useState();
   useEffect(() => {
     (async () => {
-      try{
-         const response = await FormData.Label();
-         setLabels(response);
-         setL1Options(response['*']['*']['*']['L1'])
-         setL2Options(response['*']['*']['*']['L3'])
-         setL3Options(response['*']['*']['*']['L3'])
-    } catch (error) {
-      console.error(error);
-    }
+      try {
+        const response = await FormData.Label();
+        setLabels(response);
+        setL1Options(response['*']['*']['*']['L1'])
+        setL2Options(response['*']['*']['*']['L3'])
+        setL3Options(response['*']['*']['*']['L3'])
+      } catch (error) {
+        console.error(error);
+      }
     })();
   }, []);
-  
+
   useEffect(() => {
     (async () => {
-      try{
+      try {
         const response = await FormData.OnBehalf();
         setObOptions(response);
-    } catch (error) {
-      console.error(error);
-    }
+      } catch (error) {
+        console.error(error);
+      }
     })();
   }, []);
 
@@ -218,94 +219,100 @@ function App() {
   const L1_Handler = (e) => {
     setL1Value(e.target.value);
     refreshState();
-    DropDown_ErrorHandler(e.target.value,setL1Error);
+    DropDown_ErrorHandler(e.target.value, setL1Error);
   }
   const L2_Handler = (e) => {
     setL2Value(e.target.value);
     refreshState();
-    DropDown_ErrorHandler(e.target.value,setL2Error);
+    DropDown_ErrorHandler(e.target.value, setL2Error);
   }
   const L3_Handler = (e) => {
     setL3Value(e.target.value);
     refreshState();
-    DropDown_ErrorHandler(e.target.value,setL3Error);
+    DropDown_ErrorHandler(e.target.value, setL3Error);
   }
-  
+
   const OnBehalf_Handler = (e) => {
     setObValue(e.target.value);
-    DropDown_ErrorHandler(e.target.value,setObError);
+    DropDown_ErrorHandler(e.target.value, setObError);
   }
 
-  const Price_Handler = (e)=>{
-    Price_ErrorHandler(e.target.value,setPriceError);
+  const Price_Handler = (e) => {
+    Price_ErrorHandler(e.target.value, setPriceError);
   }
 
-  const Datetime_Handler = (e)=>{
-    if(e!==''&&datetimeError!=='disableFuture')
-    {
-      setdatetimestateError(false);
-    }
-    else
-    {
-      setdatetimestateError(true);
-    }
-  }
-
-  const Datetime_ErrorHandler = (e)=>{
+  const Datetime_ErrorHandler = (e) => {
     setdatetimeError(e);
   }
-  
-  const Price_ErrorHandler = (value,setter) => {
-    if(isNaN(value)||value.length===0)
-    {
+
+  const Datetime_Handler = (e) => {
+    setDatetimeValue(e);
+  }
+
+  const Price_ErrorHandler = (value, setter) => {
+    if (isNaN(value) || value.length === 0) {
       setter(true);
       return true;
     }
-    else
-    {
+    else {
       setter(false);
       return false;
     }
   }
 
-  const DropDown_ErrorHandler = (value,setter)=>{
-    if(value==='*')
-    {
+  const DropDown_ErrorHandler = (value, setter) => {
+    if (value === '*') {
       setter(true);
       return true;
     }
-    else
-    {
+    else {
       setter(false);
       return false;
     }
   }
-
-  const handleSubmit = (event) => {
+  const formatDatetime = (dt) => {
+    dt = new Date(dt);
+    const options = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23'
+    };
+    return dt.toLocaleString('en-US', options).replace(/,/g, '');
+  }
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const ps=Price_ErrorHandler(event.target.amount.value,setPriceError);
-    const l1s=DropDown_ErrorHandler(event.target[2].value,setL1Error);
-    const l2s=DropDown_ErrorHandler(event.target[4].value,setL2Error);
-    const l3s=DropDown_ErrorHandler(event.target[6].value,setL3Error);
-    const obs=DropDown_ErrorHandler(event.target[8].value,setObError);
-    if(event.target[12].value==='')
-    {
+    const ps = Price_ErrorHandler(event.target.amount.value, setPriceError);
+    const l1s = DropDown_ErrorHandler(event.target[2].value, setL1Error);
+    const l2s = DropDown_ErrorHandler(event.target[4].value, setL2Error);
+    const l3s = DropDown_ErrorHandler(event.target[6].value, setL3Error);
+    const obs = DropDown_ErrorHandler(event.target[8].value, setObError);
+    if (event.target[12].value === '') {
       setdatetimestateError(true);
     }
-    else
-    {
+    else {
       setdatetimestateError(false);
     }
-    if(!(ps|l1s|l2s|l3s|behalfError|obs)&&datetimeError===null&&event.target[12].value!=='')
-    {
-      const data={"Expense":event.target.amount.value,
-                  "L1":event.target[2].value,
-                  "L2":event.target[4].value,
-                  "L3":event.target[6].value,
-                  "Onbehalf":event.target[8].value,
-                  "Expense_Note":event.target.Comments.value,
-                  "Timestamp":event.target[12].value}
-      console.log(data);
+    if (!(ps | l1s | l2s | l3s | behalfError | obs) && datetimeError === null && event.target[12].value !== '') {
+      let e = {
+        "Expense": event.target.amount.value,
+        "L1": event.target[2].value,
+        "L2": event.target[4].value,
+        "L3": event.target[6].value,
+        "Onbehalf": event.target[8].value,
+        "Expense_Note": event.target.Comments.value,
+        "Timestamp": formatDatetime(DatetimeValue)
+      }
+      e = JSON.stringify(e);
+      try {
+        const response = await FormData.SubmitExpense(e);
+      } catch (error) {
+        console.error(error);
+      }
+
     }
   };
 
@@ -337,11 +344,11 @@ function App() {
                   <InputLabel htmlFor="amount">Expense</InputLabel>
                   <OutlinedInput
                     id="amount"
-                    onChange={(e) => {Price_Handler(e)}}
+                    onChange={(e) => { Price_Handler(e) }}
                     startAdornment={<InputAdornment position="start">₹ </InputAdornment>}
                     label="Expense"
                   />
-                  <FormHelperText>{priceError?'Enter a valid price(Eg: 10, 20.5)':''}</FormHelperText>
+                  <FormHelperText>{priceError ? 'Enter a valid price(Eg: 10, 20.5)' : ''}</FormHelperText>
                 </FormControl>
                 <Stack spacing={2} direction="row">
                   <DropDown id='L1' options={L1Options} value={Labels.L1} handler={L1_Handler} error={L1Error} label={"L1"} />
@@ -353,15 +360,15 @@ function App() {
                 </Stack>
                 <TextField id="Comments" label="Comments" variant="outlined" />
                 <Stack spacing={2} direction="row">
-                  <DateTime id='Datetime' label={"Date Time"} handler={Datetime_Handler} e_message={errorDateMessage}></DateTime>
+                  <DateTime id='Datetime' label={"Date Time"} value={DatetimeValue} handler={Datetime_Handler} e_handler={Datetime_ErrorHandler} e_message={errorDateMessage}></DateTime>
                   <Button type="submit" variant="contained" color="success" sx={{
-                   width: "100%"
+                    width: "100%"
                   }}>
                     Submit
                   </Button>
                 </Stack>
               </Stack>
-              <FormHelperText error={datetimestateError}>{datetimestateError?'Datetime cannot be empty':''}</FormHelperText>
+              <FormHelperText error={datetimestateError}>{datetimestateError ? 'Datetime cannot be empty' : ''}</FormHelperText>
             </Form>
           </Box>
         </Box>

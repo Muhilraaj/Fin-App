@@ -18,7 +18,8 @@ class FormData
     }
     static SubmitExpense(Expense)
     {
-        return axios.post(process.env.REACT_APP_API_Expense_URL,Expense);
+        const ins=axios.create();
+        return ins.post(process.env.REACT_APP_API_Expense_URL,Expense);
     }
 }
 

@@ -45,7 +45,7 @@ def postExpense(data):
     d={}
     d['Expense']=data['Expense']
     d['Expense_Note']=data['Expense_Note']
-    format = '%m / %d / %Y %I:%M %p'
+    format = '%m/%d/%Y %H:%M:%S'
     d['Timestamp']=str(datetime.datetime.strptime(data['Timestamp'], format))
     d['Label_key']=str(customHash(data['L1']+data['L2']+data['L3']))
     d['User_key']=str(customHash(data['Onbehalf']))
@@ -61,21 +61,26 @@ def postExpense(data):
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    method = req.method.lower()
-    path = req.route_params.get('path', 'user').lower()
-    if method == "OPTIONS":
-        return func.HttpResponse(headers=headers,status_code=204)
-    elif method == 'get' and path == 'user':
-        return getUser()
-    elif method == 'get' and path == 'labels':
-        return getLabels()
-    elif method == 'post' and path == 'expense':
         try:
-            body=req.get_json()
-            return postExpense(body)
+            method = req.method.lower()
+            path = req.route_params.get('path', 'user').lower()
+            if method == "options":
+                return func.HttpResponse(headers=headers,status_code=204)
+            elif method == 'get' and path == 'user':
+                return getUser()
+            elif method == 'get' and path == 'labels':
+                return getLabels()
+            elif method == 'post' and path == 'expense':
+                try:
+                    body=req.get_json()
+                    return postExpense(body)
+                except Exception as e:
+                    print(e)
+                    return func.HttpResponse(headers=headers,status_code=400)
+
+            else:
+                return func.HttpResponse("Not Found",headers=headers,status_code=404)
         except Exception as e:
             print(e)
-            return func.HttpResponse(headers=headers,status_code=400)
+            return func.HttpResponse(headers=headers,status_code=500)
 
-    else:
-        return func.HttpResponse("Not Found", status_code=404)

@@ -170,7 +170,6 @@ function App() {
   const [L3Error, setL3Error] = useState(false);
   const [ObError, setObError] = useState(false);
   const [behalfError, setbehalfError] = useState(false);
-  setbehalfError(false);
   const [datetimeError, setdatetimeError] = useState(null);
   const [datetimestateError, setdatetimestateError] = useState(false);
   const [isFormSuccess, setIsFormSuccess] = useState(false);
@@ -184,6 +183,8 @@ function App() {
     setL2Error(false);
     setL1Error(false);
     setPriceError(false);
+    setbehalfError(false);
+    setObError(false);
     setDatetimeValue(dayjs());
     refreshState();
   }

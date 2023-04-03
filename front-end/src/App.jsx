@@ -324,8 +324,7 @@ function App() {
       }
       e = JSON.stringify(e);
       try {
-        const response = await FormData.SubmitExpense(e);
-        console.log(response);
+        await FormData.SubmitExpense(e);
         setIsFormSuccess(true);
         event.target.amount.value = '';
         event.target.Comments.value = '';

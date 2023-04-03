@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -63,7 +63,7 @@ const theme = createTheme({
   },
 });
 
-class Labels {
+/*class Labels {
   static L1 = '*';
   static L2 = '*';
   static L3 = '*';
@@ -81,7 +81,7 @@ class Labels {
     return data[this.L1][this.L2][this.L3]['L3'];
   }
 
-  /*static getL1()
+  static getL1()
   {
     return Array.from(new Set(this.d.filter((x)=>{return this.check(x)}).map((x)=>{return x['L1']})));
   }
@@ -93,8 +93,8 @@ class Labels {
   {
     return Array.from(new Set(this.d.filter((x)=>{return this.check(x)}).map((x)=>{return x['L3']})));
   }
-  */
-}
+  
+}*/
 
 function DropDown(props) {
   //console.log(data[0])
@@ -152,15 +152,15 @@ function DateTime(props) {
 
 function App() {
 
+  [data, setLabels] = useState({'*':{'*':{'*':{'L1':[],'L2':[],'L3':[]}}}});
+  
+
   const [L1Options, setL1Options] = useState([]);
   const [L2Options, setL2Options] = useState([]);
   const [L3Options, setL3Options] = useState([]);
-  let setL1Value;
-  let setL2Value;
-  let setL3Value;
-  [Labels.L1, setL1Value] = useState('*');
-  [Labels.L2, setL2Value] = useState('*');
-  [Labels.L3, setL3Value] = useState('*');
+  const [L1Value, setL1Value] = useState('*');
+  const [L2Value, setL2Value] = useState('*');
+  const [L3Value, setL3Value] = useState('*');
   const [ObValue, setObValue] = useState('*');
   const [DatetimeValue, setDatetimeValue] = useState(dayjs());
   const [ObOptions, setObOptions] = useState([]);
@@ -174,6 +174,21 @@ function App() {
   const [datetimestateError, setdatetimestateError] = useState(false);
   const [isFormSuccess, setIsFormSuccess] = useState(false);
   const [isFormError, setIsFormError] = useState(false);
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await FormData.Label();
+        setLabels(response);
+        setL1Options(response['*']['*']['*']['L1'])
+        setL2Options(response['*']['*']['*']['L3'])
+        setL3Options(response['*']['*']['*']['L3'])
+        const response2 = await FormData.OnBehalf();
+        setObOptions(response2);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, []);
   const resetForm = () => {
     setL3Value('*');
     setL2Value('*');
@@ -186,7 +201,6 @@ function App() {
     setbehalfError(false);
     setObError(false);
     setDatetimeValue(dayjs());
-    refreshState();
   }
   const errorDateMessage = React.useMemo(() => {
     switch (datetimeError) {
@@ -199,51 +213,23 @@ function App() {
     }
   }, [datetimeError]);
 
-  [data, setLabels] = useState();
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await FormData.Label();
-        setLabels(response);
-        setL1Options(response['*']['*']['*']['L1'])
-        setL2Options(response['*']['*']['*']['L3'])
-        setL3Options(response['*']['*']['*']['L3'])
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await FormData.OnBehalf();
-        setObOptions(response);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, []);
-
-  const refreshState = () => {
-    setL1Options(() => { return Labels.getL1() });
-    setL2Options(() => { return Labels.getL2() });
-    setL3Options(() => { return Labels.getL3() });
-  }
+  useMemo(() => {
+    console.log([L1Value,L2Value,L3Value]);
+    setL1Options(data[L1Value][L2Value][L3Value]['L1']);
+    setL2Options(data[L1Value][L2Value][L3Value]['L2']);
+    setL3Options(data[L1Value][L2Value][L3Value]['L3']);
+  },[L1Value,L2Value,L3Value]);
 
   const L1_Handler = (e) => {
     setL1Value(e.target.value);
-    refreshState();
     DropDown_ErrorHandler(e.target.value, setL1Error);
   }
   const L2_Handler = (e) => {
     setL2Value(e.target.value);
-    refreshState();
     DropDown_ErrorHandler(e.target.value, setL2Error);
   }
   const L3_Handler = (e) => {
     setL3Value(e.target.value);
-    refreshState();
     DropDown_ErrorHandler(e.target.value, setL3Error);
   }
 
@@ -388,11 +374,11 @@ function App() {
                   <FormHelperText>{priceError ? 'Enter a valid price(Eg: 10, 20.5)' : ''}</FormHelperText>
                 </FormControl>
                 <Stack spacing={2} direction="row">
-                  <DropDown id='L1' options={L1Options} value={Labels.L1} handler={L1_Handler} error={L1Error} label={"L1"} />
-                  <DropDown id='L2' options={L2Options} value={Labels.L2} handler={L2_Handler} error={L2Error} label={"L2"} />
+                  <DropDown id='L1' options={L1Options} value={L1Value} handler={L1_Handler} error={L1Error} label={"L1"} />
+                  <DropDown id='L2' options={L2Options} value={L2Value} handler={L2_Handler} error={L2Error} label={"L2"} />
                 </Stack>
                 <Stack spacing={2} direction="row">
-                  <DropDown id='L3' options={L3Options} value={Labels.L3} handler={L3_Handler} error={L3Error} label={"L3"} />
+                  <DropDown id='L3' options={L3Options} value={L3Value} handler={L3_Handler} error={L3Error} label={"L3"} />
                   <DropDown id='Onbehalf' options={ObOptions} value={ObValue} handler={OnBehalf_Handler} error={ObError} label={"Onbehalf"} />
                 </Stack>
                 <TextField id="Comments" label="Comments" variant="outlined" />

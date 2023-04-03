@@ -2,7 +2,6 @@
 import './App.css';
 import Form from 'react-bootstrap/Form';
 import dayjs from 'dayjs';
-import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -17,7 +16,6 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -29,7 +27,8 @@ import Button from '@mui/material/Button';
 import React from 'react';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormData from './FormData'
-import { flexbox } from '@mui/system';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 
 let [data, setLabels] = ['', '']
@@ -173,6 +172,20 @@ function App() {
   const [behalfError, setbehalfError] = useState(false);
   const [datetimeError, setdatetimeError] = useState(null);
   const [datetimestateError, setdatetimestateError] = useState(false);
+  const [isFormSuccess, setIsFormSuccess] = useState(false);
+  const [isFormError, setIsFormError] = useState(false);
+  const resetForm = () => {
+    setL3Value('*');
+    setL2Value('*');
+    setL1Value('*');
+    setObValue('*');
+    setL3Error(false);
+    setL2Error(false);
+    setL1Error(false);
+    setPriceError(false);
+    setDatetimeValue(dayjs());
+    refreshState();
+  }
   const errorDateMessage = React.useMemo(() => {
     switch (datetimeError) {
       case 'disableFuture': {
@@ -283,6 +296,22 @@ function App() {
     };
     return dt.toLocaleString('en-US', options).replace(/,/g, '');
   }
+  const handleCloseSuccess = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setIsFormSuccess(false);
+  };
+
+  const handleCloseError = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setIsFormError(false);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const ps = Price_ErrorHandler(event.target.amount.value, setPriceError);
@@ -309,8 +338,14 @@ function App() {
       e = JSON.stringify(e);
       try {
         const response = await FormData.SubmitExpense(e);
+        console.log(response);
+        setIsFormSuccess(true);
+        event.target.amount.value = '';
+        event.target.Comments.value = '';
+        resetForm();
       } catch (error) {
-        console.error(error);
+        console.log(error);
+        setIsFormError(true);
       }
 
     }
@@ -369,6 +404,16 @@ function App() {
                 </Stack>
               </Stack>
               <FormHelperText error={datetimestateError}>{datetimestateError ? 'Datetime cannot be empty' : ''}</FormHelperText>
+              <Snackbar open={isFormSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
+                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                  Form Submitted Successfully
+                </Alert>
+              </Snackbar>
+              <Snackbar open={isFormError} autoHideDuration={6000} onClose={handleCloseError}>
+                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+                  Error in Form Submission
+                </Alert>
+              </Snackbar>
             </Form>
           </Box>
         </Box>

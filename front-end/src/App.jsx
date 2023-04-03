@@ -214,7 +214,6 @@ function App() {
   }, [datetimeError]);
 
   useMemo(() => {
-    console.log([L1Value,L2Value,L3Value]);
     setL1Options(data[L1Value][L2Value][L3Value]['L1']);
     setL2Options(data[L1Value][L2Value][L3Value]['L2']);
     setL3Options(data[L1Value][L2Value][L3Value]['L3']);

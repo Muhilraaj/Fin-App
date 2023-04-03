@@ -12,7 +12,8 @@ class FormData
         return axios.get(process.env.REACT_APP_API_OnBehalf_URL).then((r)=>{
             r=r.data
             const list=[];
-            r.map((e)=>{list.push(e['On-Behalf'])});
+            r.map((e)=>{list.push(e['On-Behalf']);
+        return '';});
             return list;
         }).catch((err)=>{throw err});
     }

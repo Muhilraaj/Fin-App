@@ -34,6 +34,11 @@ jobs:
           api_location: "" # Api source code path - optional
           output_location: "build" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+      - task: AzureStaticWebApp@0
+        env:
+          REACT_APP_API_Label_URL: ${{secrets.REACT_APP_API_LABEL_URL}}
+          REACT_APP_API_OnBehalf_URL: ${{secrets.REACT_APP_API_ONBEHALF_URL}}
+          REACT_APP_API_Expense_URL: ${{secrets.REACT_APP_API_EXPENSE_URL}}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

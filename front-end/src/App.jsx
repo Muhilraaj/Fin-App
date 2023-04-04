@@ -152,8 +152,8 @@ function DateTime(props) {
 
 function App() {
 
-  [data, setLabels] = useState({'*':{'*':{'*':{'L1':[],'L2':[],'L3':[]}}}});
-  
+  [data, setLabels] = useState({ '*': { '*': { '*': { 'L1': [], 'L2': [], 'L3': [] } } } });
+
 
   const [L1Options, setL1Options] = useState([]);
   const [L2Options, setL2Options] = useState([]);
@@ -217,7 +217,7 @@ function App() {
     setL1Options(data[L1Value][L2Value][L3Value]['L1']);
     setL2Options(data[L1Value][L2Value][L3Value]['L2']);
     setL3Options(data[L1Value][L2Value][L3Value]['L3']);
-  },[L1Value,L2Value,L3Value]);
+  }, [L1Value, L2Value, L3Value]);
 
   const L1_Handler = (e) => {
     setL1Value(e.target.value);
@@ -337,6 +337,7 @@ function App() {
     }
   };
 
+  const { vertical, horizontal} = {vertical:'bottom',horizontal:'right'};
   return (
     <ThemeProvider theme={theme} >
       <Stack spacing={5} direction="column">
@@ -346,7 +347,7 @@ function App() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" component="div">
-              Price Label
+              Expenditure
             </Typography>
           </Toolbar>
         </AppBar>
@@ -390,12 +391,12 @@ function App() {
                 </Stack>
               </Stack>
               <FormHelperText error={datetimestateError}>{datetimestateError ? 'Datetime cannot be empty' : ''}</FormHelperText>
-              <Snackbar open={isFormSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
+              <Snackbar open={isFormSuccess} anchorOrigin={{vertical,horizontal}} autoHideDuration={6000} onClose={handleCloseSuccess}>
                 <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
                   Form Submitted Successfully
                 </Alert>
               </Snackbar>
-              <Snackbar open={isFormError} autoHideDuration={6000} onClose={handleCloseError}>
+              <Snackbar open={isFormError} anchorOrigin={{vertical,horizontal}} autoHideDuration={6000} onClose={handleCloseError}>
                 <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
                   Error in Form Submission
                 </Alert>

@@ -18,6 +18,7 @@ database=client.get_database_client('DIM')
 container=database.get_container_client('Label')
 #df=pd.read_excel('M:\My Project\MyFinApp\Budget.xlsx',sheet_name='Expenses')
 #df=df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+df=[]
 
 def customHash(data):
     data=str(data)

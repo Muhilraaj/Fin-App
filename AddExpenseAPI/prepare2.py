@@ -16,7 +16,7 @@ key='UCrkusJL9E4oI2KUgsFd4vyZLDb2xHtYgxojCBmK3Uz8YiWklE8vWXSIRDAUVDNANb1JSsaTItK
 client = CosmosClient(url=endpoint, credential=key)
 database=client.get_database_client('DIM')
 container=database.get_container_client('Label')
-df=pd.read_excel('M:\My Project\MyFinApp\Budget.xlsx',sheet_name='Expenses')
+#df=pd.read_excel('M:\My Project\MyFinApp\Budget.xlsx',sheet_name='Expenses')
 
 def GetAllLabels():
     # Delete all documents in the container
@@ -94,9 +94,12 @@ for f in ans:
                     dd[k1][k2]={}
                     dd[k1][k2][k3]={}
                     dd[k1][k2][k3][k]=list(set(df_fltr[k]))
+
+with open("myfile.json", "w") as outfile:
+    json.dump(dd, outfile)
             
 connection_string="DefaultEndpointsProtocol=https;AccountName=myfinstorage;AccountKey=838yEISoKmlGLiOVeu7Ha/eMsin4VbkvdlmMXJf917B6WTadIRJ14PIZ5RHCDDVAbqH/XZnoB+aj+AStb+wksA==;EndpointSuffix=core.windows.net"
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 blob_client = blob_service_client.get_blob_client(container='json-files', blob="myfile.json")
 with open("myfile.json", "rb") as jsonFile:
-    blob_client.upload_blob(jsonFile)
+    blob_client.upload_blob(jsonFile,overwrite=True)

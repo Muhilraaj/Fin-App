@@ -7,7 +7,7 @@ name: Build and deploy Python project to Azure Function App - myfinapi18
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - backend-api/**
       - .github/workflows/backend.yml

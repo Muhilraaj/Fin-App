@@ -53,7 +53,7 @@ jobs:
         uses: Azure/functions-action@v1
         id: deploy-to-function
         with:
-          app-name: 'myfinapi18-dev'
+          app-name: 'myfinapp18-dev'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREFUNCTION_PUBLISH_PROFILE_DEV }}

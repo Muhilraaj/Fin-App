@@ -33,6 +33,8 @@ jobs:
       - name: Build
         run: |
           cd backend-api
+          export GOOS="linux"
+          export GOARCH="amd64"
           go build handler.go
           cd ~
 

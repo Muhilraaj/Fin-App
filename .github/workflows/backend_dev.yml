@@ -36,7 +36,7 @@ jobs:
       - name: Build
         run: |
           cd backend-api
-          GOOS=linux GOARCH=amd64 go build handler.go
+          touch abc.txt
           cd ~
 
       - name: List all after run and before upload

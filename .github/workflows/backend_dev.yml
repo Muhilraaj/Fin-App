@@ -28,20 +28,13 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.GO_VERSION }}
-      
-      - name: List all before run
-        run: |
-         ls -R backend-api
+  
 
       - name: Build
         run: |
           cd backend-api
-          touch abc.txt
+          go build handler.go
           cd ~
-
-      - name: List all after run and before upload
-        run: |
-         ls -R backend-api
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -62,10 +55,6 @@ jobs:
         with:
           name: go-app
           path: backend-api
-
-      - name: List all after download
-        run: |
-         ls -R backend-api
 
       - name: "Login"
         uses: azure/login@v1

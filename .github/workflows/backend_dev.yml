@@ -31,7 +31,9 @@ jobs:
   
 
       - name: Build
-        run: go build -o backend-api backend-api/handler.go
+        run: |
+          cd backend-api
+          go build handler.go
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3

@@ -35,7 +35,7 @@ jobs:
           cd backend-api
           export GOOS="linux"
           export GOARCH="amd64"
-          go build handler.go
+          go build -o handler handler.go
           cd ~
 
       - name: Upload artifact for deployment job

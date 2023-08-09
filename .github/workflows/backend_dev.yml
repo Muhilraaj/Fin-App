@@ -31,12 +31,7 @@ jobs:
   
 
       - name: Build
-        run: |
-          cd backend-api
-          export GOOS="linux"
-          export GOARCH="amd64"
-          go build -o handler handler.go
-          cd ~
+        run: go build -o backend-api backend-api/handler.go
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3

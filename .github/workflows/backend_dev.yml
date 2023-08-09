@@ -31,7 +31,7 @@ jobs:
       
       - name: List all before run
         run: |
-          ls -R
+         ls -R backend-api
 
       - name: Build
         run: |
@@ -41,7 +41,7 @@ jobs:
 
       - name: List all after run and before upload
         run: |
-         ls -R
+         ls -R backend-api
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -65,7 +65,7 @@ jobs:
 
       - name: List all after download
         run: |
-          ls -R
+         ls -R backend-api
 
       - name: "Login"
         uses: azure/login@v1

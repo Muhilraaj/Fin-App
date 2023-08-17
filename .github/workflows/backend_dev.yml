@@ -38,7 +38,7 @@ jobs:
       - name: Build
         run: |
           cd backend-api
-          go build -o backend-api/handler handler.go
+          go build -o handler handler.go
           ls -R
           
 

@@ -39,6 +39,7 @@ jobs:
         run: |
           cd backend-api
           go build -o backend-api/handler handler.go
+          ls -R
           
 
       - name: Upload artifact for deployment job

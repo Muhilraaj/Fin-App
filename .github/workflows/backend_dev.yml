@@ -16,6 +16,12 @@ on:
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api # set this to the path to your web app project, defaults to the repository root
   GO_VERSION: '1.20.4' 
+  Storage_Account_Name: 'myfinstorage'
+  Storage_Account_Key: '838yEISoKmlGLiOVeu7Ha/eMsin4VbkvdlmMXJf917B6WTadIRJ14PIZ5RHCDDVAbqH/XZnoB+aj+AStb+wksA=='
+  BLOB_URL: 'https://myfinstorage.blob.core.windows.net/json-files/myfile.json'
+  Cosmos_DB_Endpoint: 'https://myfin-db-dev.documents.azure.com:443/'
+  Cosmos_DB_Key: 'UoYB3uop5CG4gZSzdIbsfvWtxwf8gguwLVlyOo1Dgnqr0WMJvPOpSIvY1O9gzLWBVEtR56DvdzdIACDbdFOiEQ=='
+  Port: '8080'
 
 jobs:
   build:

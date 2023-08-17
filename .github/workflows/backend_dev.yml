@@ -33,7 +33,7 @@ jobs:
       - name: Build
         run: |
           cd backend-api
-          go run handler.go
+          
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3

@@ -30,19 +30,15 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: backend-api/go.sum
 
-      
-      - name: Install Dependencies
-        run: |
-          cd backend-api
-          go mod init handler
-          go mod tidy
-          
       - name: Build
         run: |
           cd backend-api
+          export CGO_ENABLED=0
           go build -o handler handler.go
           ls -R
+          go env
           
 
       - name: Upload artifact for deployment job

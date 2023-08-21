@@ -6,11 +6,11 @@ on:
       - main
     paths:
       - front-end/**
-      - .github/workflows/frontend.yml
+      - .github/workflows/frontend_prod.yml
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - master
+      - main
 
 jobs:
   build_and_deploy_job:

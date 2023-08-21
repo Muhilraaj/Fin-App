@@ -11,7 +11,11 @@ on:
     paths:
       - backend-api/**
       - .github/workflows/backend_dev.yml
-  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - dev
+  
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api 

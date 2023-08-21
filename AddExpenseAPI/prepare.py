@@ -149,12 +149,12 @@ def UpdateExpense(id,key,value):
 
 '''
 DeleteLabel('f104234857a090b751e27d25c1b6402719c201fadfeac82df6f2c2ff9b032b79')
-
-data={"L1": "Entertainment & Fun",
-        "L2": "Mall/Exhibition/Park",
-        "L3": "Entry Fee"}
-AddLabel(data)
 '''
+data={"L1": "Travel & Tour",
+        "L2": "Tour",
+        "L3": "Wonderla Tour-Banglore"}
+AddLabel(data)
+
 
 #UpdateExpense('3e744263e33fd7cae6d8b8e8ff42afa39bd26805844057ef5f6f90a40b7501ea','Label_key','8bbf6d0c37082f998b816b860c3f559c7e67d542f0b370f82125362808ed6694')
 #DeleteLabel('8b7272278a5676b33596cfe1b1f13de1c4145589ddce1ac642346022c425da4e')

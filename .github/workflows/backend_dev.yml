@@ -1,0 +1,78 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+# More info on Python, GitHub Actions, and Azure Functions: https://aka.ms/python-webapps-actions
+
+name: Build and deploy Go project to Azure Function App - myfinapp18-dev
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - backend-api/**
+      - .github/workflows/backend_dev.yml
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - dev
+  
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api 
+  GO_VERSION: '1.20.4' 
+  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Go version
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: backend-api/go.sum
+
+      - name: Build
+        run: |
+          cd backend-api
+          export CGO_ENABLED=0
+          go build -o handler handler.go
+          
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+            name: go-app
+            path: backend-api
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-function.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: go-app
+          path: backend-api
+
+      - name: "Login"
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_FUNCTION_RBAC_CREDENTIALS_FINAPP_DEV }}
+
+      - name: 'Deploy to Azure Functions'
+        uses: Azure/functions-action@v1
+        id: deploy-to-function
+        with:
+          app-name: 'myfinapp18-dev'
+          slot-name: 'Production'
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        

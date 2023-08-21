@@ -37,8 +37,6 @@ jobs:
           cd backend-api
           export CGO_ENABLED=0
           go build -o handler handler.go
-          ls -R
-          go env
           
 
       - name: Upload artifact for deployment job
@@ -64,7 +62,7 @@ jobs:
       - name: "Login"
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_FUNCTION_RBAC_CREDENTIALS_DEV }}
+          creds: ${{ secrets.AZURE_FUNCTION_RBAC_CREDENTIALS_FINAPP_DEV }}
 
       - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1

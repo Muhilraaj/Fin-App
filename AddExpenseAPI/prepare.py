@@ -81,6 +81,7 @@ def AddLabel(data):
     database=client.get_database_client('DIM')
     container=database.get_container_client('Label')
     data["id"]=customHash(data['L1']+data['L2']+data['L3'])
+    data["pk"]=1
     InsertCosmos(data)
 
 def AddUser(data):
@@ -88,6 +89,7 @@ def AddUser(data):
     database=client.get_database_client('DIM')
     container=database.get_container_client('On-Behalf')
     data["id"]=customHash(data['On-Behalf'])
+    data["pk"]=1
     InsertCosmos(data)
     
 def PrepareUser():
@@ -112,6 +114,14 @@ def DeleteLabel(id):
     query = "SELECT * FROM c WHERE c.id = '%s'"%id
     result = list(container.query_items(query, enable_cross_partition_query=True))
     container.delete_item(item=result[0], partition_key=result[0]['id'])
+
+def DeleteUser(id):
+    global container,database
+    database=client.get_database_client('DIM')
+    container=database.get_container_client('On-Behalf')
+    query = "SELECT * FROM c WHERE c.id = '%s'"%id
+    result = list(container.query_items(query, enable_cross_partition_query=True))
+    container.delete_item(item=result[0],partition_key=1)
     
 def InsertExpense():
     global container,database
@@ -150,10 +160,16 @@ def UpdateExpense(id,key,value):
 '''
 DeleteLabel('f104234857a090b751e27d25c1b6402719c201fadfeac82df6f2c2ff9b032b79')
 '''
+'''
 data={"L1": "Travel & Tour",
         "L2": "Tour",
         "L3": "Wonderla Tour-Banglore"}
 AddLabel(data)
+'''
+
+#DeleteUser("2a1d184d51ba87bb6ebb5c292a4bb163b3665ef2db9f2ab76de2ee4000a56174")
+data={"Name":"Praveen Kumar M","On-Behalf":"Friend - Praveen Kumar","Relationship":"College Friend - SCT"}
+AddUser(data)
 
 
 #UpdateExpense('3e744263e33fd7cae6d8b8e8ff42afa39bd26805844057ef5f6f90a40b7501ea','Label_key','8bbf6d0c37082f998b816b860c3f559c7e67d542f0b370f82125362808ed6694')

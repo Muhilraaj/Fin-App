@@ -1,5 +1,4 @@
 //import logo from './logo.svg';
-import './App.css';
 import Form from 'react-bootstrap/Form';
 import dayjs from 'dayjs';
 import AppBar from '@mui/material/AppBar';
@@ -7,16 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Stack from '@mui/material/Stack';
-import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -25,43 +15,20 @@ import MenuIcon from '@mui/icons-material/Menu';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import React from 'react';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormData from './FormData'
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import DropDown from '../../components/DropDown/DropDown';
+import DateTime from '../../components/DateTime/DateTime';
+import FormData from '../../services/FormData'
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import theme from '../../assets/theme';
 
 
 let [data, setLabels] = ['', '']
 
-const theme = createTheme({
-  backgroundColor: '#bdbdbd',
-  palette: {
-    primary: {
-      // light: will be calculated from palette.primary.main,
-      main: '#000',
-      // dark: will be calculated from palette.primary.main,
-      // contrastText: will be calculated to contrast with palette.primary.main
-    },
-    secondary: {
-      light: '#0066ff',
-      main: '#0044ff',
-      // dark: will be calculated from palette.secondary.main,
-      contrastText: '#ffcc00',
-    },
-    // Provide every color token (light, main, dark, and contrastText) when using
-    // custom colors for props in Material UI's components.
-    // Then you will be able to use it like this: `<Button color="custom">`
-    // (For TypeScript, you need to add module augmentation for the `custom` value)
-    custom: {
-      light: '#ffa726',
-      main: '#f57c00',
-      dark: '#ef6c00',
-      contrastText: 'rgba(0, 0, 0, 0.87)',
-    },
-    // Used by `getContrastText()` to maximize the contrast between
-    // the background and the text.
-  },
-});
+
 
 /*class Labels {
   static L1 = '*';
@@ -96,61 +63,8 @@ const theme = createTheme({
   
 }*/
 
-function DropDown(props) {
-  //console.log(data[0])
-  return (
-    <FormControl sx={{ width: "100%", maxWidth: 550 }} error={props.error}>
-      <InputLabel id="demo-simple-select-label">{props.label}</InputLabel>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={props.value}
-        label={props.label}
-        onChange={(e) => { props.handler(e) }}
-      >
-        <MenuItem value="*">
-          <em>Select Label</em>
-        </MenuItem>
-        {
-          props.options.map(
-            (d) => { return <MenuItem value={d}>{d}</MenuItem> }
-          )
-        }
-      </Select>
-      <FormHelperText>{props.error ? 'Select Something' : ''}</FormHelperText>
-    </FormControl>
-  );
-}
 
-function DateTime(props) {
-  return (
-    <FormControl sx={{ width: "100%", minWidth: 240 }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}
-      >
-        <DemoContainer
-          components={[
-            'DateTimePicker',
-          ]}
-        >
-          <DemoItem>
-            <DateTimePicker label={props.label}
-              value={props.value}
-              onChange={(e) => { props.handler(e) }}
-              onError={(e) => props.e_handler(e)}
-              slotProps={{
-                textField: {
-                  helperText: props.e_message
-                }
-              }}
-              disableFuture />
-          </DemoItem>
-        </DemoContainer>
-      </LocalizationProvider>
-    </FormControl>
-  )
-}
-
-function App() {
+function ExpenseForm() {
 
   [data, setLabels] = useState({ '*': { '*': { '*': { 'L1': [], 'L2': [], 'L3': [] } } } });
 
@@ -409,4 +323,4 @@ function App() {
   );
 }
 
-export default App;
+export default ExpenseForm;

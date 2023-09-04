@@ -1,6 +1,7 @@
 package main
 
 import (
+	azcosmosapi "api/azcosmos-api"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -148,12 +149,74 @@ func postExpense(c *gin.Context) {
 	}
 }
 
+func postJWT() {
+	var login = make(map[string]interface{})
+	/*if err := c.ShouldBindJSON(&login); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "send proper expense data"})
+		return
+	}
+	*/
+	login["user-id"] = "muhil18"
+	login["password"] = "Lihum@18"
+	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
+	fmt.Println(query)
+	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
+	fmt.Println(data)
+
+}
+
+func GetUser() {
+	endpoint := os.Getenv("Cosmos_DB_Endpoint")
+	key := os.Getenv("Cosmos_DB_Key")
+
+	cred, err := azcosmos.NewKeyCredential(key)
+	if err != nil {
+		log.Fatal("Failed to create a credential: ", err)
+	}
+
+	// Create a CosmosDB client
+	client, err := azcosmos.NewClientWithKey(endpoint, cred, nil)
+	if err != nil {
+		log.Fatal("Failed to create Azure Cosmos DB client: ", err)
+	}
+
+	container, _ := client.NewContainer("DIM", "On-Behalf")
+	pk := azcosmos.NewPartitionKeyNumber(1)
+
+	queryPager := container.NewQueryItemsPager("SELECT c['On-Behalf'] FROM c", pk, nil)
+	var result []map[string]interface{}
+
+	fmt.Printf("queryPager: %v\n", queryPager)
+
+	for queryPager.More() {
+		queryResponse, err := queryPager.NextPage(context.Background())
+		if err != nil {
+			var responseErr *azcore.ResponseError
+			errors.As(err, &responseErr)
+			log.Fatal(err)
+		}
+
+		for _, item := range queryResponse.Items {
+			var itemResponseBody map[string]interface{}
+			err = json.Unmarshal(item, &itemResponseBody)
+			result = append(result, itemResponseBody)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+	fmt.Print(result)
+}
+
 func main() {
-	route := gin.Default()
-	route.GET("api/user", getUser)
-	route.GET("api/labels", getLabel)
-	route.POST("api/expense", postExpense)
-	port_info := APIPort()
-	route.Run(port_info)
-	log.Println("API is up & running - ")
+	/*
+		route := gin.Default()
+		route.GET("api/user", getUser)
+		route.GET("api/labels", getLabel)
+		route.POST("api/expense", postExpense)
+		port_info := APIPort()
+		route.Run(port_info)
+		log.Println("API is up & running - ")
+	*/
+	GetUser()
 }

@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import theme from '../../assets/theme';
+import API from '../../services/API'
 
 function Copyright(props) {
   return (
@@ -31,13 +32,14 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const token = API.SubmitLogin({
+      'user-id': data.get('user-id'),
+      'password': data.get('password'),
+    })
+    console.log(token);
   };
 
   return (
@@ -63,10 +65,10 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="user-id"
+              label="User Id"
+              name="user-id"
+              autoComplete="user-id"
               autoFocus
             />
             <TextField

@@ -158,6 +158,9 @@ func postJWT(c *gin.Context) {
 	}
 	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
 	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	if len(data) == 1 {
 		data[0]["datetime"] = time.Now().Add(10 * time.Minute)
 		token := auth.GenerateToken(data[0])

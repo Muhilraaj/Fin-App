@@ -19,7 +19,7 @@ import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import DropDown from '../../components/DropDown/DropDown';
 import DateTime from '../../components/DateTime/DateTime';
-import FormData from '../../services/FormData'
+import API from '../../services/API'
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -91,12 +91,12 @@ function ExpenseForm() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await FormData.Label();
+        const response = await API.Label();
         setLabels(response);
         setL1Options(response['*']['*']['*']['L1'])
         setL2Options(response['*']['*']['*']['L3'])
         setL3Options(response['*']['*']['*']['L3'])
-        const response2 = await FormData.OnBehalf();
+        const response2 = await API.OnBehalf();
         setObOptions(response2);
       } catch (error) {
         console.error(error);
@@ -238,7 +238,7 @@ function ExpenseForm() {
       }
       e = JSON.stringify(e);
       try {
-        await FormData.SubmitExpense(e);
+        await API.SubmitExpense(e);
         setIsFormSuccess(true);
         event.target.amount.value = '';
         event.target.Comments.value = '';

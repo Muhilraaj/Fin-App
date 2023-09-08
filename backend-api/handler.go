@@ -69,7 +69,7 @@ func getUser(c *gin.Context) {
 		}
 	}
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET")
+	c.Header("Access-Control-Allow-Methods", "GET,OPTIONS")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &result)
 }
@@ -85,7 +85,7 @@ func getLabel(c *gin.Context) {
 	var label = make(map[string]interface{})
 	_ = json.NewDecoder(b.Body(azblob.RetryReaderOptions{})).Decode(&label)
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET")
+	c.Header("Access-Control-Allow-Methods", "GET,OPTIONS")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &label)
 }
@@ -141,7 +141,7 @@ func postExpense(c *gin.Context) {
 	ctx := context.Background()
 	_, err = container.CreateItem(ctx, pk, marshalled, nil)
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "POST")
+	c.Header("Access-Control-Allow-Methods", "POST,OPTIONS")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	if err != nil {
 		fmt.Print(err)
@@ -159,7 +159,7 @@ func postJWT(c *gin.Context) {
 	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
 	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "POST")
+	c.Header("Access-Control-Allow-Methods", "POST,OPTIONS")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	if len(data) == 1 {
 		data[0]["datetime"] = time.Now().Add(10 * time.Minute)

@@ -2,10 +2,17 @@
 import './App.css';
 import ExpenseForm from '../InputForm/ExpenseForm';
 import SignIn from '../SignIn/SignIn';
+import { Routes, Route } from 'react-router-dom';
 
 function App()
 {
-   return <SignIn></SignIn>
+   return (
+   <>
+       <Routes>
+          <Route path="/" element={<SignIn/>} />
+          <Route path="/expense" element={<ExpenseForm/>} />
+       </Routes>
+   </>)
 }
 
 export default App;

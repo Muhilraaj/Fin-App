@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import theme from '../../assets/theme';
 import API from '../../services/API';
+import Form from 'react-bootstrap/Form';
 
 function Copyright(props) {
   return (
@@ -60,7 +61,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Form onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -105,7 +106,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
             </Grid>
-          </Box>
+          </Form>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>

@@ -160,7 +160,7 @@ func postJWT(c *gin.Context) {
 	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	c.Header("Access-Control-Allow-Headers", "*")
 	if len(data) == 1 {
 		data[0]["datetime"] = time.Now().Add(10 * time.Minute)
 		token := auth.GenerateToken(data[0])

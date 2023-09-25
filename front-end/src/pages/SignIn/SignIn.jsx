@@ -16,6 +16,7 @@ import theme from '../../assets/theme';
 import API from '../../services/API';
 import Form from 'react-bootstrap/Form';
 
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -40,7 +41,9 @@ export default function SignIn() {
       "user-id": data.get('user-id'),
       "password": data.get('password'),
     });
+    await API.Label()
     console.log(token)
+    //Cookies.set('token',token['data']['token'],{ expires: expirationTime })
   };
 
   return (

@@ -75,6 +75,11 @@ func getUser(c *gin.Context) {
 }
 
 func getLabel(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(cookie)
 	cred, _ := azblob.NewSharedKeyCredential(os.Getenv("Storage_Account_Name"), os.Getenv("Storage_Account_Key"))
 	options := azblob.PipelineOptions{}
 	u, _ := url.Parse(os.Getenv("BLOB_URL"))
@@ -160,13 +165,24 @@ func postJWT(c *gin.Context) {
 	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
-	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	c.Header("Access-Control-Expose-Headers", "*, Authorization")
 	if len(data) == 1 {
 		data[0]["datetime"] = time.Now().Add(10 * time.Minute)
 		token := auth.GenerateToken(data[0])
-		result := make(map[string]interface{})
-		result["token"] = token
-		c.JSON(http.StatusAccepted, &result)
+		cookie := http.Cookie{
+			Name:     "token",
+			Value:    token,
+			HttpOnly: true,
+			Secure:   true,
+			Path:     "/",
+			SameSite: http.SameSiteNoneMode,
+			MaxAge:   600,
+		}
+		//c.SetCookie("token", token, 600, "/", "localhost", false, true)
+		http.SetCookie(c.Writer, &cookie)
+		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 		return
 	}
 	c.JSON(http.StatusForbidden, gin.H{"error": "incorrect login credentials"})
@@ -180,7 +196,9 @@ func main() {
 			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
 			c.Header("Access-Control-Allow-Origin", "*")
 			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type")
+			c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
+			c.Header("Access-Control-Allow-Credentials", "true")
+			c.Header("Access-Control-Expose-Headers", "*, Authorization")
 			c.AbortWithStatus(http.StatusOK)
 		} else {
 			// Continue processing other requests

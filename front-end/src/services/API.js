@@ -5,11 +5,11 @@ class API
 {
     static Label() 
     {
-        return axios.get(process.env.REACT_APP_API_URL+'/api/labels').then((r)=>r.data).catch((err)=>{throw err});
+        return axios.get(process.env.REACT_APP_API_URL+'/api/labels',{ withCredentials: true }).then((r)=>r.data).catch((err)=>{throw err});
     }
     static OnBehalf()
     {
-        return axios.get(process.env.REACT_APP_API_URL+'/api/user').then((r)=>{
+        return axios.get(process.env.REACT_APP_API_URL+'/api/user',{ withCredentials: true }).then((r)=>{
             r=r.data
             const list=[];
             r.map((e)=>{list.push(e['On-Behalf']);
@@ -20,7 +20,7 @@ class API
     static SubmitExpense(Expense)
     {
         const ins=axios.create();
-        return ins.post(process.env.REACT_APP_API_URL+'/api/expense',Expense);
+        return ins.post(process.env.REACT_APP_API_URL+'/api/expense',Expense,{ withCredentials: true });
     }
     static SubmitLogin(Login)
     {

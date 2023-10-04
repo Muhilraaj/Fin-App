@@ -77,6 +77,7 @@ func getUser(c *gin.Context) {
 func getLabel(c *gin.Context) {
 	cookie, err := c.Cookie("token")
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 	fmt.Println(cookie)

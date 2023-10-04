@@ -194,7 +194,7 @@ func main() {
 		// Check if the request method is OPTIONS
 		if c.Request.Method == http.MethodOptions {
 			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
-			c.Header("Access-Control-Allow-Origin", "*")
+			c.Header("Access-Control-Allow-Origin", "http://localhost")
 			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
 			c.Header("Access-Control-Allow-Credentials", "true")

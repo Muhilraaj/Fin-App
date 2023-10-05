@@ -180,7 +180,7 @@ func postJWT(c *gin.Context) {
 			Path:     "/",
 			SameSite: http.SameSiteNoneMode,
 		}
-		cookie.Expires = time.Now().Add(time.Minute * 10)
+		cookie.Expires = time.Now().AddDate(0, 0, 1)
 		//c.SetCookie("token", token, 600, "/", "localhost", false, true)
 		http.SetCookie(c.Writer, &cookie)
 		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})

@@ -178,7 +178,7 @@ func postJWT(c *gin.Context) {
 			HttpOnly: true,
 			Secure:   true,
 			Path:     "/",
-			SameSite: http.SameSiteNoneMode,
+			SameSite: http.SameSiteLaxMode,
 		}
 		cookie.Expires = time.Now().AddDate(0, 0, 1)
 		//c.SetCookie("token", token, 600, "/", "localhost", false, true)

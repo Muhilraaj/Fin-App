@@ -176,7 +176,7 @@ func postJWT(c *gin.Context) {
 			Name:     "token",
 			Value:    token,
 			HttpOnly: false,
-			Secure:   false,
+			Secure:   true,
 			Path:     "/",
 			SameSite: http.SameSiteLaxMode,
 		}

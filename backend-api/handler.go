@@ -175,8 +175,8 @@ func postJWT(c *gin.Context) {
 		cookie := http.Cookie{
 			Name:     "token",
 			Value:    token,
-			HttpOnly: true,
-			Secure:   true,
+			HttpOnly: false,
+			Secure:   false,
 			Path:     "/",
 			SameSite: http.SameSiteLaxMode,
 		}

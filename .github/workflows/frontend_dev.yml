@@ -3,10 +3,10 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - main
+      - dev
     paths:
       - front-end/**
-      - .github/workflows/frontend_prod.yml
+      - .github/workflows/frontend_dev.yml
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:

@@ -157,6 +157,7 @@ func postExpense(c *gin.Context) {
 }
 
 func postJWT(c *gin.Context) {
+	//fmt.Println(c.Request.Header.Get("Origin"))
 	var login = make(map[string]interface{})
 	if err := c.ShouldBindJSON(&login); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "send login credentials"})
@@ -175,7 +176,7 @@ func postJWT(c *gin.Context) {
 		cookie := http.Cookie{
 			Name:     "token",
 			Value:    token,
-			Domain:   c.Request.Header.Get("Origin"),
+			Domain:   ".localhost",
 			HttpOnly: false,
 			Secure:   true,
 			Path:     "/",

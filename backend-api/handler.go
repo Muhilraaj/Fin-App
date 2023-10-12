@@ -68,7 +68,7 @@ func getUser(c *gin.Context) {
 			}
 		}
 	}
-	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
 	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &result)
@@ -90,7 +90,7 @@ func getLabel(c *gin.Context) {
 	b, _ := url.Download(ctx, 0, azblob.CountToEnd, azblob.BlobAccessConditions{}, false, azblob.ClientProvidedKeyOptions{})
 	var label = make(map[string]interface{})
 	_ = json.NewDecoder(b.Body(azblob.RetryReaderOptions{})).Decode(&label)
-	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
 	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &label)
@@ -146,7 +146,7 @@ func postExpense(c *gin.Context) {
 	pk := azcosmos.NewPartitionKeyNumber(1)
 	ctx := context.Background()
 	_, err = container.CreateItem(ctx, pk, marshalled, nil)
-	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	if err != nil {
@@ -166,7 +166,7 @@ func postJWT(c *gin.Context) {
 	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
 	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
 	//origin := c.Request.Header.Get("Origin")
-	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net/")
+	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
 	c.Header("Access-Control-Allow-Credentials", "true")
@@ -203,7 +203,7 @@ func main() {
 		if c.Request.Method == http.MethodOptions {
 			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
 			//origin := c.Request.Header.Get("Origin")
-			c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net/")
+			c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
 			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
 			c.Header("Access-Control-Allow-Credentials", "true")

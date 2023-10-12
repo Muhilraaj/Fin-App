@@ -170,13 +170,14 @@ func postJWT(c *gin.Context) {
 	c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
 	c.Header("Access-Control-Allow-Credentials", "true")
 	c.Header("Access-Control-Expose-Headers", "*, Authorization")
+	origin, _ := url.Parse(c.Request.Header.Get("Origin"))
 	if len(data) == 1 {
 		data[0]["datetime"] = time.Now().Add(10 * time.Minute)
 		token := auth.GenerateToken(data[0])
 		cookie := http.Cookie{
 			Name:     "token",
 			Value:    token,
-			Domain:   c.Request.Header.Get("Origin"),
+			Domain:   origin.Hostname(),
 			HttpOnly: false,
 			Secure:   true,
 			Path:     "/",

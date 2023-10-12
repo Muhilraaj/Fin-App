@@ -165,7 +165,8 @@ func postJWT(c *gin.Context) {
 	}
 	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
 	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
-	c.Header("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
+	origin := c.Request.Header.Get("Origin")
+	c.Header("Access-Control-Allow-Origin", origin)
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
 	c.Header("Access-Control-Allow-Credentials", "true")
@@ -201,7 +202,8 @@ func main() {
 		// Check if the request method is OPTIONS
 		if c.Request.Method == http.MethodOptions {
 			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
-			c.Header("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
+			origin := c.Request.Header.Get("Origin")
+			c.Header("Access-Control-Allow-Origin", origin)
 			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
 			c.Header("Access-Control-Allow-Credentials", "true")

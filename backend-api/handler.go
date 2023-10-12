@@ -170,7 +170,7 @@ func postJWT(c *gin.Context) {
 	c.Header("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type, X-Requested-With, X-HTTP-Method-Override, Accept")
 	c.Header("Access-Control-Allow-Credentials", "true")
 	c.Header("Access-Control-Expose-Headers", "*, Authorization")
-	origin, _ := url.Parse(c.Request.Header.Get("Origin"))
+	//origin, _ := url.Parse(c.Request.Header.Get("Origin"))
 	istLocation, _ := time.LoadLocation("Asia/Kolkata")
 	currentTime := time.Now().In(istLocation)
 
@@ -178,13 +178,13 @@ func postJWT(c *gin.Context) {
 		data[0]["datetime"] = currentTime.Add(10 * time.Minute)
 		token := auth.GenerateToken(data[0])
 		cookie := http.Cookie{
-			Name:     "token",
-			Value:    token,
-			Domain:   origin.Hostname(),
+			Name:  "token",
+			Value: token,
+			//Domain:   origin.Hostname(),
 			HttpOnly: false,
 			Secure:   true,
 			Path:     "/",
-			SameSite: http.SameSiteNoneMode,
+			SameSite: http.SameSiteLaxMode,
 		}
 		cookie.Expires = currentTime.Add(10 * time.Minute)
 		//c.SetCookie("token", token, 600, "/", "localhost", false, true)

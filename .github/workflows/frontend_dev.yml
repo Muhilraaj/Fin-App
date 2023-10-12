@@ -8,7 +8,7 @@ on:
       - front-end/**
       - .github/workflows/frontend_prod.yml
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, reopened, closed]
     branches:
       - dev
 

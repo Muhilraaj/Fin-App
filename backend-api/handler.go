@@ -176,7 +176,7 @@ func postJWT(c *gin.Context) {
 		cookie := http.Cookie{
 			Name:     "token",
 			Value:    token,
-			Domain:   c.Request.Host,
+			Domain:   c.Request.Header.Get("Origin"),
 			HttpOnly: false,
 			Secure:   true,
 			Path:     "/",

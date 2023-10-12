@@ -35,7 +35,7 @@ jobs:
           output_location: "build" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
         env:
-          REACT_APP_API_URL_DEV: ${{secrets.REACT_APP_API_URL_DEV}}
+          REACT_APP_API_URL: ${{secrets.REACT_APP_API_URL_DEV}}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

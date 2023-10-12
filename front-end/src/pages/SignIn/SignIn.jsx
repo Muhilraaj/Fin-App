@@ -37,12 +37,10 @@ export default function SignIn() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const token= await API.SubmitLogin({
+    await API.SubmitLogin({
       "user-id": data.get('user-id'),
       "password": data.get('password'),
     });
-    await API.Label()
-    console.log(token)
     //Cookies.set('token',token['data']['token'],{ expires: expirationTime })
   };
 

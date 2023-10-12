@@ -41,7 +41,6 @@ export default function SignIn() {
       "user-id": data.get('user-id'),
       "password": data.get('password'),
     });
-    //Cookies.set('token',token['data']['token'],{ expires: expirationTime })
   };
 
   return (

@@ -171,8 +171,11 @@ func postJWT(c *gin.Context) {
 	c.Header("Access-Control-Allow-Credentials", "true")
 	c.Header("Access-Control-Expose-Headers", "*, Authorization")
 	origin, _ := url.Parse(c.Request.Header.Get("Origin"))
+	istLocation, _ := time.LoadLocation("Asia/Kolkata")
+	currentTime := time.Now().In(istLocation)
+
 	if len(data) == 1 {
-		data[0]["datetime"] = time.Now().Add(10 * time.Minute)
+		data[0]["datetime"] = currentTime.Add(10 * time.Minute)
 		token := auth.GenerateToken(data[0])
 		cookie := http.Cookie{
 			Name:     "token",
@@ -183,7 +186,7 @@ func postJWT(c *gin.Context) {
 			Path:     "/",
 			SameSite: http.SameSiteNoneMode,
 		}
-		cookie.Expires = time.Now().AddDate(0, 0, 1)
+		cookie.Expires = currentTime.Add(10 * time.Minute)
 		//c.SetCookie("token", token, 600, "/", "localhost", false, true)
 		http.SetCookie(c.Writer, &cookie)
 		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})

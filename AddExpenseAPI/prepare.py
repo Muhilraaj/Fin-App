@@ -161,9 +161,9 @@ def UpdateExpense(id,key,value):
 DeleteLabel('f104234857a090b751e27d25c1b6402719c201fadfeac82df6f2c2ff9b032b79')
 '''
 
-data={"L1": "Travel & Tour",
-        "L2": "Tour",
-        "L3": "Kolli Hills"}
+data={"L1": "Education",
+        "L2": "Cloud",
+        "L3": "Microsoft Azure Subscription"}
 AddLabel(data)
 '''
 

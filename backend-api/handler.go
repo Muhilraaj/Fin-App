@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"time"
@@ -68,7 +69,7 @@ func getUser(c *gin.Context) {
 			}
 		}
 	}
-	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &result)
@@ -90,7 +91,7 @@ func getLabel(c *gin.Context) {
 	b, _ := url.Download(ctx, 0, azblob.CountToEnd, azblob.BlobAccessConditions{}, false, azblob.ClientProvidedKeyOptions{})
 	var label = make(map[string]interface{})
 	_ = json.NewDecoder(b.Body(azblob.RetryReaderOptions{})).Decode(&label)
-	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &label)
@@ -146,7 +147,7 @@ func postExpense(c *gin.Context) {
 	pk := azcosmos.NewPartitionKeyNumber(1)
 	ctx := context.Background()
 	_, err = container.CreateItem(ctx, pk, marshalled, nil)
-	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	if err != nil {
@@ -166,7 +167,7 @@ func postJWT(c *gin.Context) {
 	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
 	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
 	//origin := c.Request.Header.Get("Origin")
-	c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type,*")
 	c.Header("Access-Control-Allow-Credentials", "true")
@@ -196,6 +197,26 @@ func postJWT(c *gin.Context) {
 	c.JSON(http.StatusForbidden, gin.H{"error": "incorrect login credentials"})
 }
 
+func reverseProxy(c *gin.Context) {
+	remote, err := url.Parse(os.Getenv("FRONT_END_URL"))
+	if err != nil {
+		panic(err)
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(remote)
+	proxy.Director = func(req *http.Request) {
+		req.Header = c.Request.Header
+		req.Host = remote.Host
+		req.URL.Scheme = remote.Scheme
+		req.URL.Host = remote.Host
+		req.URL.Path = c.Param("path")
+	}
+
+	fmt.Println(c.Param("path"))
+
+	proxy.ServeHTTP(c.Writer, c.Request)
+}
+
 func main() {
 	route := gin.Default()
 	route.Use(func(c *gin.Context) {
@@ -203,7 +224,7 @@ func main() {
 		if c.Request.Method == http.MethodOptions {
 			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
 			//origin := c.Request.Header.Get("Origin")
-			c.Header("Access-Control-Allow-Origin", "https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
+			c.Header("Access-Control-Allow-Origin", "*")
 			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			c.Header("Access-Control-Allow-Headers", "Content-Type,*")
 			c.Header("Access-Control-Allow-Credentials", "true")
@@ -215,6 +236,11 @@ func main() {
 		}
 	})
 	route.GET("api/user", getUser)
+	route.GET("/login", reverseProxy)
+	route.GET("/expense", reverseProxy)
+	route.GET("/static/*path", reverseProxy)
+	route.GET("/manifest.json", reverseProxy)
+	route.GET("/logo192.png", reverseProxy)
 	route.GET("api/labels", getLabel)
 	route.POST("api/expense", postExpense)
 	route.POST("api/login", postJWT)

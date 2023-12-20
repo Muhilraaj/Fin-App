@@ -9,8 +9,8 @@ function App()
    return (
    <>
        <Routes>
-          <Route path="/login" element={<SignIn/>} />
-          <Route path="/expense" element={<ExpenseForm/>} />
+          <Route path="/page//login" element={<SignIn/>} />
+          <Route path="/page/expense" element={<ExpenseForm/>} />
        </Routes>
    </>)
 }

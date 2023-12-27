@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,10 +12,13 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../../assets/theme';
 import API from '../../services/API';
 import Form from 'react-bootstrap/Form';
+import { useNavigate } from 'react-router-dom';
 
 
 function Copyright(props) {
@@ -33,16 +37,34 @@ function Copyright(props) {
 // TODO remove, this demo shouldn't need to reset the theme.
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    await API.SubmitLogin({
-      "user-id": data.get('user-id'),
-      "password": data.get('password'),
-    });
-    await API.Label();
+    try{
+      await API.SubmitLogin({
+        "user-id": data.get('user-id'),
+        "password": data.get('password'),
+      });
+      navigate('/page/expense');
+    } catch (error)
+    {
+      setFormError(`${error.response.status} ${error.response.statusText} error`);
+      setIsFormError(true); 
+    }
   };
 
+  const [isFormError, setIsFormError] = useState(false);
+  const [formError,setFormError] = useState('');
+  const handleCloseError = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setIsFormError(false);
+    setFormError('');
+  };
+  
+  const { vertical, horizontal} = {vertical:'bottom',horizontal:'right'};
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -106,6 +128,11 @@ export default function SignIn() {
                 </Link>
               </Grid>
             </Grid>
+            <Snackbar open={isFormError} anchorOrigin={{vertical,horizontal}} autoHideDuration={6000} onClose={handleCloseError}>
+                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+                  {formError}
+                </Alert>
+            </Snackbar>
           </Form>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />

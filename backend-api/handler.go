@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
 	"time"
@@ -183,7 +182,7 @@ func postJWT(c *gin.Context) {
 			Name:  "token",
 			Value: token,
 			//Domain:   origin.Hostname(),
-			HttpOnly: false,
+			HttpOnly: true,
 			Secure:   true,
 			Path:     "/",
 			SameSite: http.SameSiteNoneMode,
@@ -195,26 +194,6 @@ func postJWT(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusForbidden, gin.H{"error": "incorrect login credentials"})
-}
-
-func reverseProxy(c *gin.Context) {
-	remote, err := url.Parse(os.Getenv("FRONT_END_URL"))
-	if err != nil {
-		panic(err)
-	}
-
-	proxy := httputil.NewSingleHostReverseProxy(remote)
-	proxy.Director = func(req *http.Request) {
-		req.Header = c.Request.Header
-		req.Host = remote.Host
-		req.URL.Scheme = remote.Scheme
-		req.URL.Host = remote.Host
-		req.URL.Path = c.Param("path")
-	}
-
-	fmt.Println(c.Param("path"))
-
-	proxy.ServeHTTP(c.Writer, c.Request)
 }
 
 func main() {
@@ -236,11 +215,6 @@ func main() {
 		}
 	})
 	route.GET("api/user", getUser)
-	route.GET("/login", reverseProxy)
-	route.GET("/expense", reverseProxy)
-	route.GET("/static/*path", reverseProxy)
-	route.GET("/manifest.json", reverseProxy)
-	route.GET("/logo192.png", reverseProxy)
 	route.GET("api/labels", getLabel)
 	route.POST("api/expense", postExpense)
 	route.POST("api/login", postJWT)

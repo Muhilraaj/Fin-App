@@ -24,15 +24,15 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.MYFINAPPDEV_AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
 
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }} 
           registryUrl: docker.io
-          registryUsername: ${{ secrets.MYFINAPPDEV_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.MYFINAPPDEV_REGISTRY_PASSWORD }}
+          registryUsername: ${{ secrets.DOCKER_USERNAME }}
+          registryPassword: ${{ secrets.DOCKER_PASSWORD }}
           containerAppName: myfin-app-dev
           resourceGroup: MyFin-App-Dev
           imageToBuild: muhil18/myfin-app-dev:${{ github.sha }}

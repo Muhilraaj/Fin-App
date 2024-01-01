@@ -42,7 +42,7 @@ jobs:
           registryPassword: ${{ secrets.DOCKER_PASSWORD }}
           containerAppName: myfin-app-dev
           resourceGroup: MyFin-App-Dev
-          imageToBuild: muhil18/myfin-app-dev:${{ github.sha }}
+          imageToBuild: muhil18/myfin-app-dev:latest}
           
 
      

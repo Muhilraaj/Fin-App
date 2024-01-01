@@ -34,6 +34,9 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }} 
+          environmentVariables: | 
+            FRONTEND_URL='https://happy-glacier-0b5d60d10.3.azurestaticapps.net'
+            BACKEND_URL='https://myfinapp18-dev.azurewebsites.net'
           registryUrl: docker.io
           registryUsername: ${{ secrets.DOCKER_USERNAME }}
           registryPassword: ${{ secrets.DOCKER_PASSWORD }}

@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
 func backendProxy(c *gin.Context) {
-	remote, err := url.Parse(os.Getenv("BACKEND_URL"))
+	remote, err := url.Parse("https://myfinapp18-dev.azurewebsites.net")
 	if err != nil {
 		panic(err)
 	}
@@ -31,7 +30,7 @@ func backendProxy(c *gin.Context) {
 }
 
 func frontendProxy(c *gin.Context) {
-	remote, err := url.Parse(os.Getenv("FRONTEND_URL"))
+	remote, err := url.Parse("https://happy-glacier-0b5d60d10.3.azurestaticapps.net")
 	if err != nil {
 		panic(err)
 	}

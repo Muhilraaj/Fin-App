@@ -69,25 +69,25 @@ func GenerateToken(claims map[string]interface{}) string {
 	return tokenString
 }
 
-func ValidateToken(tokenString string) map[string]interface{} {
+func ValidateToken(tokenString string) (map[string]interface{}, error) {
 	publicKey := fmt.Sprintf("-----BEGIN PUBLIC KEY-----\n%s\n-----END PUBLIC KEY-----", os.Getenv("RSA_Public_Secret_Key"))
 
 	var finalClaims = make(map[string]interface{})
 	rsaPublicSecret, err := ParsePublicKeyFromString(publicKey)
 	if err != nil {
 		fmt.Println(err)
-		return finalClaims
+		return finalClaims, err
 	}
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return rsaPublicSecret, nil
 	})
 
 	if err != nil {
-		return finalClaims
+		return finalClaims, err
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return finalClaims
+		return finalClaims, errors.New("invalid token")
 	}
-	return claims
+	return claims, nil
 }

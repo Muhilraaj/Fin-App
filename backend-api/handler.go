@@ -31,6 +31,18 @@ func customHash(data interface{}) string {
 }
 
 func getUser(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	_, err = auth.ValidateToken(cookie)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
 	endpoint := os.Getenv("Cosmos_DB_Endpoint")
 	key := os.Getenv("Cosmos_DB_Key")
 
@@ -78,9 +90,15 @@ func getLabel(c *gin.Context) {
 	cookie, err := c.Cookie("token")
 	if err != nil {
 		fmt.Println(err)
-		panic(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
 	}
-	fmt.Println(cookie)
+	_, err = auth.ValidateToken(cookie)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
 	cred, _ := azblob.NewSharedKeyCredential(os.Getenv("Storage_Account_Name"), os.Getenv("Storage_Account_Key"))
 	options := azblob.PipelineOptions{}
 	u, _ := url.Parse(os.Getenv("BLOB_URL"))
@@ -105,6 +123,18 @@ func APIPort() string {
 }
 
 func postExpense(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	_, err = auth.ValidateToken(cookie)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
 	var expense = make(map[string]interface{})
 	if err := c.ShouldBindJSON(&expense); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "send proper expense data"})
@@ -196,6 +226,25 @@ func postJWT(c *gin.Context) {
 	c.JSON(http.StatusForbidden, gin.H{"error": "incorrect login credentials"})
 }
 
+func checkToken(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	_, err = auth.ValidateToken(cookie)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Cookie Present"})
+}
+
 func main() {
 	route := gin.Default()
 	route.Use(func(c *gin.Context) {
@@ -215,6 +264,7 @@ func main() {
 		}
 	})
 	route.GET("api/user", getUser)
+	route.GET("api/checkCookie", checkToken)
 	route.GET("api/labels", getLabel)
 	route.POST("api/expense", postExpense)
 	route.POST("api/login", postJWT)

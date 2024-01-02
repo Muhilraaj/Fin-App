@@ -1,6 +1,8 @@
 package main
 
 import (
+	"api/auth"
+	azcosmosapi "api/azcosmos-api"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -67,12 +69,18 @@ func getUser(c *gin.Context) {
 		}
 	}
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &result)
 }
 
 func getLabel(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+	fmt.Println(cookie)
 	cred, _ := azblob.NewSharedKeyCredential(os.Getenv("Storage_Account_Name"), os.Getenv("Storage_Account_Key"))
 	options := azblob.PipelineOptions{}
 	u, _ := url.Parse(os.Getenv("BLOB_URL"))
@@ -83,7 +91,7 @@ func getLabel(c *gin.Context) {
 	var label = make(map[string]interface{})
 	_ = json.NewDecoder(b.Body(azblob.RetryReaderOptions{})).Decode(&label)
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.JSON(http.StatusAccepted, &label)
 }
@@ -139,7 +147,7 @@ func postExpense(c *gin.Context) {
 	ctx := context.Background()
 	_, err = container.CreateItem(ctx, pk, marshalled, nil)
 	c.Header("Access-Control-Allow-Origin", "*")
-	c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	if err != nil {
 		fmt.Print(err)
@@ -148,11 +156,68 @@ func postExpense(c *gin.Context) {
 	}
 }
 
+func postJWT(c *gin.Context) {
+	//fmt.Println(c.Request.Header.Get("Origin"))
+	var login = make(map[string]interface{})
+	if err := c.ShouldBindJSON(&login); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "send login credentials"})
+		return
+	}
+	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
+	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
+	//origin := c.Request.Header.Get("Origin")
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "POST")
+	c.Header("Access-Control-Allow-Headers", "Content-Type,*")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	c.Header("Access-Control-Expose-Headers", "*, Authorization")
+	//origin, _ := url.Parse(c.Request.Header.Get("Origin"))
+	istLocation, _ := time.LoadLocation("Asia/Kolkata")
+	currentTime := time.Now().In(istLocation)
+
+	if len(data) == 1 {
+		data[0]["datetime"] = currentTime.Add(10 * time.Minute)
+		token := auth.GenerateToken(data[0])
+		cookie := http.Cookie{
+			Name:  "token",
+			Value: token,
+			//Domain:   origin.Hostname(),
+			HttpOnly: true,
+			Secure:   true,
+			Path:     "/",
+			SameSite: http.SameSiteNoneMode,
+		}
+		cookie.Expires = currentTime.Add(10 * time.Minute)
+		//c.SetCookie("token", token, 600, "/", "localhost", false, true)
+		http.SetCookie(c.Writer, &cookie)
+		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+		return
+	}
+	c.JSON(http.StatusForbidden, gin.H{"error": "incorrect login credentials"})
+}
+
 func main() {
 	route := gin.Default()
+	route.Use(func(c *gin.Context) {
+		// Check if the request method is OPTIONS
+		if c.Request.Method == http.MethodOptions {
+			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
+			//origin := c.Request.Header.Get("Origin")
+			c.Header("Access-Control-Allow-Origin", "*")
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Header("Access-Control-Allow-Headers", "Content-Type,*")
+			c.Header("Access-Control-Allow-Credentials", "true")
+			c.Header("Access-Control-Expose-Headers", "*, Authorization")
+			c.AbortWithStatus(http.StatusOK)
+		} else {
+			// Continue processing other requests
+			c.Next()
+		}
+	})
 	route.GET("api/user", getUser)
 	route.GET("api/labels", getLabel)
 	route.POST("api/expense", postExpense)
+	route.POST("api/login", postJWT)
 	port_info := APIPort()
 	route.Run(port_info)
 	log.Println("API is up & running - ")

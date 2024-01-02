@@ -1,0 +1,44 @@
+name: Trigger auto deployment for myfin-app-dev
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ dev ]
+    paths:
+    - 'reverseProxy/**'
+    - '.github/workflows/reverse_proxy_dev.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - dev
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}/reverseProxy
+          environmentVariables: FRONTEND_URL=https://happy-glacier-0b5d60d10.3.azurestaticapps.net BACKEND_URL=https://myfinapp18-dev.azurewebsites.net
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.DOCKER_USERNAME }}
+          registryPassword: ${{ secrets.DOCKER_PASSWORD }}
+          containerAppName: my-fin-app-dev
+          resourceGroup: MyFin-App-Dev
+          imageToBuild: muhil18/myfin-app-dev:latest
+          
+
+     
+

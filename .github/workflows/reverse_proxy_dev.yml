@@ -40,7 +40,7 @@ jobs:
           registryUrl: docker.io
           registryUsername: ${{ secrets.DOCKER_USERNAME }}
           registryPassword: ${{ secrets.DOCKER_PASSWORD }}
-          containerAppName: myfin-app-dev
+          containerAppName: my-fin-app-dev
           resourceGroup: MyFin-App-Dev
           imageToBuild: muhil18/myfin-app-dev:latest
           

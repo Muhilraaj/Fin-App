@@ -31,7 +31,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}/reverseProxy
-          environmentVariables: FRONTEND_URL=https://red-coast-08236e510.2.azurestaticapps.net/ BACKEND_URL=https://myfinapi18.azurewebsites.net
+          environmentVariables: FRONTEND_URL=https://red-coast-08236e510.2.azurestaticapps.net BACKEND_URL=https://myfinapi18.azurewebsites.net
           registryUrl: docker.io
           registryUsername: ${{ secrets.DOCKER_USERNAME }}
           registryPassword: ${{ secrets.DOCKER_PASSWORD }}

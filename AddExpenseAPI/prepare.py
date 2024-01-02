@@ -9,9 +9,13 @@ import pandas as pd
 import json
 from azure.cosmos import CosmosClient, PartitionKey
 import hashlib
+import os
+from dotenv import load_dotenv
 
-endpoint='https://myfin-db.documents.azure.com:443/'
-key='UCrkusJL9E4oI2KUgsFd4vyZLDb2xHtYgxojCBmK3Uz8YiWklE8vWXSIRDAUVDNANb1JSsaTItKmACDbI1s9yg=='
+load_dotenv()
+
+endpoint=os.getenv('azcosmos_endpoint')
+key=os.getenv('azcosmos_key')
 
 client = CosmosClient(url=endpoint, credential=key)
 database=client.get_database_client('DIM')
@@ -157,20 +161,11 @@ def UpdateExpense(id,key,value):
     
 
 
-'''
-DeleteLabel('f104234857a090b751e27d25c1b6402719c201fadfeac82df6f2c2ff9b032b79')
-'''
-
 data={"L1": "Education",
         "L2": "Cloud",
         "L3": "Microsoft Azure Subscription"}
 AddLabel(data)
-'''
 
-#DeleteUser("2a1d184d51ba87bb6ebb5c292a4bb163b3665ef2db9f2ab76de2ee4000a56174")
-data={"Name":"Praveen Kumar M","On-Behalf":"Friend - Praveen Kumar","Relationship":"College Friend - SCT"}
-AddUser(data)
-'''
 
 #UpdateExpense('3e744263e33fd7cae6d8b8e8ff42afa39bd26805844057ef5f6f90a40b7501ea','Label_key','8bbf6d0c37082f998b816b860c3f559c7e67d542f0b370f82125362808ed6694')
 #DeleteLabel('8b7272278a5676b33596cfe1b1f13de1c4145589ddce1ac642346022c425da4e')

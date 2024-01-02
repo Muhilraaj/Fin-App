@@ -9,9 +9,13 @@ import copy
 import json
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.storage.blob import BlobServiceClient
+import os
+from dotenv import load_dotenv
 
-endpoint='https://myfin-db.documents.azure.com:443/'
-key='UCrkusJL9E4oI2KUgsFd4vyZLDb2xHtYgxojCBmK3Uz8YiWklE8vWXSIRDAUVDNANb1JSsaTItKmACDbI1s9yg=='
+load_dotenv()
+
+endpoint=os.getenv('azcosmos_endpoint')
+key=os.getenv('azcosmos_key')
 
 client = CosmosClient(url=endpoint, credential=key)
 database=client.get_database_client('DIM')
@@ -42,9 +46,9 @@ def rec(i,n,l):
 df=pd.DataFrame(data)
 
 dd={}
-dd['*']={};
-dd['*']['*']={};
-dd['*']['*']['*']={'L1':['*'],'L2':['*'],'L3':['*']};
+dd['*']={}
+dd['*']['*']={}
+dd['*']['*']['*']={'L1':['*'],'L2':['*'],'L3':['*']}
 for e in data:
     try:
         dd[e['L1']][e['L2']][e['L3']]={'L1':['*'],'L2':['*'],'L3':['*']}
@@ -98,7 +102,7 @@ for f in ans:
 with open("myfile.json", "w") as outfile:
     json.dump(dd, outfile)
             
-connection_string="DefaultEndpointsProtocol=https;AccountName=myfinstorage;AccountKey=838yEISoKmlGLiOVeu7Ha/eMsin4VbkvdlmMXJf917B6WTadIRJ14PIZ5RHCDDVAbqH/XZnoB+aj+AStb+wksA==;EndpointSuffix=core.windows.net"
+connection_string=os.getenv('storage_account_connection_string')
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 blob_client = blob_service_client.get_blob_client(container='json-files', blob="myfile.json")
 with open("myfile.json", "rb") as jsonFile:

@@ -2,7 +2,7 @@
 import './App.css';
 import ExpenseForm from '../InputForm/ExpenseForm';
 import SignIn from '../SignIn/SignIn';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route,Navigate } from 'react-router-dom';
 
 function App()
 {
@@ -10,6 +10,7 @@ function App()
    <>
        <Routes>
           <Route path="/page/login" element={<SignIn/>} />
+          <Route path="/" element={ <Navigate to="/page/login" /> } />
           <Route path="/page/expense" element={<ExpenseForm/>} />
        </Routes>
    </>)

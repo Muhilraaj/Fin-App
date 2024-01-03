@@ -10,7 +10,7 @@ on:
     - 'reverseProxy/**'
     - '.github/workflows/reverse_proxy_dev.yml'
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
     branches:
       - dev
       

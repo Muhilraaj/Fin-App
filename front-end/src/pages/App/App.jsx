@@ -10,7 +10,7 @@ function App()
    <>
        <Routes>
           <Route path="/page/login" element={<SignIn/>} />
-          <Route path="/" element={ <Navigate to="/page/login" /> } />
+          <Route path="/" element={ <Navigate to="/page/login" replace={true} />  } />
           <Route path="/page/expense" element={<ExpenseForm/>} />
        </Routes>
    </>)

@@ -12,7 +12,7 @@ on:
       - backend-api/**
       - .github/workflows/backend_dev.yml
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
     branches:
       - dev
   

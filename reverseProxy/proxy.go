@@ -54,6 +54,7 @@ func main() {
 	route := gin.Default()
 	route.Any("/api/*path", backendProxy)
 	route.Any("/page/*path", frontendProxy)
+	route.Any("/", frontendProxy)
 	route.GET("/static/*path", frontendProxy)
 	route.GET("/manifest.json", frontendProxy)
 	route.GET("/logo192.png", frontendProxy)

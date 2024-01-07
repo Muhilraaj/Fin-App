@@ -101,7 +101,8 @@ func getLabel(c *gin.Context) {
 	}
 	cred, _ := azblob.NewSharedKeyCredential(os.Getenv("Storage_Account_Name"), os.Getenv("Storage_Account_Key"))
 	options := azblob.PipelineOptions{}
-	u, _ := url.Parse(os.Getenv("BLOB_URL"))
+	var blob_url = map[string]string{"/expense": os.Getenv("EXPENSE_BLOB_URL"), "/income": os.Getenv("INCOME_BLOB_URL")}
+	u, _ := url.Parse(blob_url[c.Param("path")])
 	pipeline := azblob.NewPipeline(cred, options)
 	url := azblob.NewBlobURL(*u, pipeline)
 	ctx := context.Background()
@@ -186,6 +187,69 @@ func postExpense(c *gin.Context) {
 	}
 }
 
+func postIncome(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	_, err = auth.ValidateToken(cookie)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	var income = make(map[string]interface{})
+	if err := c.ShouldBindJSON(&income); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "send proper income data"})
+		return
+	}
+	var result = make(map[string]interface{})
+	result["Income"] = income["Income"]
+	result["Income_Note"] = income["Income_Note"]
+	input_format := "01/02/2006 15:04:05"
+	output_format := "2006-01-02 15:04:05"
+	parsedTime, err := time.Parse(input_format, fmt.Sprint(income["Timestamp"]))
+	if err != nil {
+		fmt.Print(err)
+		panic(err)
+	}
+	result["Timestamp"] = parsedTime.Format(output_format)
+	result["Label_key"] = customHash(fmt.Sprintf("%v%v", income["L1"], income["L2"]))
+	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], income["Label_key"]))
+	result["pk"] = 1
+	endpoint := os.Getenv("Cosmos_DB_Endpoint")
+	key := os.Getenv("Cosmos_DB_Key")
+
+	cred, err := azcosmos.NewKeyCredential(key)
+	if err != nil {
+		log.Fatal("Failed to create a credential: ", err)
+	}
+
+	// Create a CosmosDB client
+	client, err := azcosmos.NewClientWithKey(endpoint, cred, nil)
+	if err != nil {
+		log.Fatal("Failed to create Azure Cosmos DB client: ", err)
+	}
+
+	container, _ := client.NewContainer("Fact", "Income")
+
+	marshalled, _ := json.Marshal(result)
+
+	pk := azcosmos.NewPartitionKeyNumber(1)
+	ctx := context.Background()
+	_, err = container.CreateItem(ctx, pk, marshalled, nil)
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "POST")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	if err != nil {
+		fmt.Print(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "send proper income data"})
+		return
+	}
+}
+
 func postJWT(c *gin.Context) {
 	//fmt.Println(c.Request.Header.Get("Origin"))
 	var login = make(map[string]interface{})
@@ -265,8 +329,9 @@ func main() {
 	})
 	route.GET("api/user", getUser)
 	route.GET("api/checkCookie", checkToken)
-	route.GET("api/labels", getLabel)
+	route.GET("api/labels/*path", getLabel)
 	route.POST("api/expense", postExpense)
+	route.POST("api/income", postIncome)
 	route.POST("api/login", postJWT)
 	port_info := APIPort()
 	route.Run(port_info)

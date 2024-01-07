@@ -91,10 +91,10 @@ function ExpenseForm() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await API.Label();
+        const response = await API.ExpenseLabel();
         setLabels(response);
         setL1Options(response['*']['*']['*']['L1'])
-        setL2Options(response['*']['*']['*']['L3'])
+        setL2Options(response['*']['*']['*']['L2'])
         setL3Options(response['*']['*']['*']['L3'])
         const response2 = await API.OnBehalf();
         setObOptions(response2);
@@ -251,7 +251,7 @@ function ExpenseForm() {
     }
   };
 
-  const { vertical, horizontal} = {vertical:'bottom',horizontal:'right'};
+  const { vertical, horizontal } = { vertical: 'bottom', horizontal: 'right' };
   return (
     <ThemeProvider theme={theme} >
       <Stack spacing={5} direction="column">
@@ -305,12 +305,12 @@ function ExpenseForm() {
                 </Stack>
               </Stack>
               <FormHelperText error={datetimestateError}>{datetimestateError ? 'Datetime cannot be empty' : ''}</FormHelperText>
-              <Snackbar open={isFormSuccess} anchorOrigin={{vertical,horizontal}} autoHideDuration={6000} onClose={handleCloseSuccess}>
+              <Snackbar open={isFormSuccess} anchorOrigin={{ vertical, horizontal }} autoHideDuration={6000} onClose={handleCloseSuccess}>
                 <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
                   Form Submitted Successfully
                 </Alert>
               </Snackbar>
-              <Snackbar open={isFormError} anchorOrigin={{vertical,horizontal}} autoHideDuration={6000} onClose={handleCloseError}>
+              <Snackbar open={isFormError} anchorOrigin={{ vertical, horizontal }} autoHideDuration={6000} onClose={handleCloseError}>
                 <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
                   Error in Form Submission
                 </Alert>

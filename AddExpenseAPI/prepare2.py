@@ -99,7 +99,7 @@ for f in ans:
                     dd[k1][k2][k3]={}
                     dd[k1][k2][k3][k]=list(set(df_fltr[k]))
 
-with open("myfile.json", "w") as outfile:
+with open("expense-label.json", "w") as outfile:
     json.dump(dd, outfile)
             
 connection_string=os.getenv('storage_account_connection_string')

@@ -95,6 +95,14 @@ def AddUser(data):
     data["id"]=customHash(data['On-Behalf'])
     data["pk"]=1
     InsertCosmos(data)
+
+def AddIncomeLabel(data):
+    global container,database
+    database=client.get_database_client('DIM')
+    container=database.get_container_client('Income_Label')
+    data["id"]=customHash(data['L1']+data['L2'])
+    data["pk"]=1
+    InsertCosmos(data)
     
 def PrepareUser():
     global container
@@ -115,6 +123,14 @@ def DeleteLabel(id):
     global container,database
     database=client.get_database_client('DIM')
     container=database.get_container_client('Label')
+    query = "SELECT * FROM c WHERE c.id = '%s'"%id
+    result = list(container.query_items(query, enable_cross_partition_query=True))
+    container.delete_item(item=result[0], partition_key=1)
+
+def DeleteIncomeLabel(id):
+    global container,database
+    database=client.get_database_client('DIM')
+    container=database.get_container_client('Income_Label')
     query = "SELECT * FROM c WHERE c.id = '%s'"%id
     result = list(container.query_items(query, enable_cross_partition_query=True))
     container.delete_item(item=result[0], partition_key=1)
@@ -168,12 +184,14 @@ def UpdateExpense(id,key,value):
     container.replace_item(item=result[0],body=result[0])
     
 
-'''
-data={"L1": "Travel & Tour",
-        "L2": "Tour",
-        "L3": "Tour"}
-AddLabel(data)
-'''
+
+data={
+    "L1":"Bank",
+    "L2":"Cashback",
+    "Active": "Y"
+}
+AddIncomeLabel(data)
+
 
 
 

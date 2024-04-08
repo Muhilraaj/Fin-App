@@ -52,3 +52,38 @@ func ExecuteQuery(databaseid string, containerid string, queryString string, par
 
 	return result
 }
+
+func LeftJoin(firstData *[]map[string]interface{}, secondData *[]map[string]interface{}, key1 string, key2 string) *[]map[string]interface{} {
+	var finalResult = make([]map[string]interface{}, 0)
+	var mapSecond = make(map[string]*map[string]interface{})
+	for i := 0; i < len(*secondData); i++ {
+		mapSecond[(*secondData)[i][key2].(string)] = &(*secondData)[i]
+	}
+	for i := 0; i < len(*firstData); i++ {
+		for k, v := range *mapSecond[(*firstData)[i][key1].(string)] {
+			(*firstData)[i][k] = v
+		}
+		delete((*firstData)[i], key1)
+		delete((*firstData)[i], key2)
+		finalResult = append(finalResult, (*firstData)[i])
+	}
+	return &finalResult
+}
+func InnerJoin(firstData *[]map[string]interface{}, secondData *[]map[string]interface{}, key1 string, key2 string) *[]map[string]interface{} {
+	var finalResult = make([]map[string]interface{}, 0)
+	var mapSecond = make(map[string]*map[string]interface{})
+	for i := 0; i < len(*secondData); i++ {
+		mapSecond[(*secondData)[i][key2].(string)] = &(*secondData)[i]
+	}
+	for i := 0; i < len(*firstData); i++ {
+		if item := mapSecond[(*firstData)[i][key1].(string)]; item != nil {
+			for k, v := range *mapSecond[(*firstData)[i][key1].(string)] {
+				(*firstData)[i][k] = v
+			}
+			delete((*firstData)[i], key1)
+			delete((*firstData)[i], key2)
+			finalResult = append(finalResult, (*firstData)[i])
+		}
+	}
+	return &finalResult
+}

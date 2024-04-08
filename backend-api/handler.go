@@ -318,7 +318,6 @@ func getExpense(c *gin.Context) {
 	//calculate total income
 	var totalExpense = 0
 	for i := range *finalData {
-		fmt.Println((*finalData)[i]["Expense"])
 		if v, ok := ((*finalData)[i]["Expense"]).(int); ok {
 			totalExpense += v
 		} else if v, ok := ((*finalData)[i]["Expense"]).(string); ok {

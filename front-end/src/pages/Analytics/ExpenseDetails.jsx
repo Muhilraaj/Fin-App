@@ -115,7 +115,7 @@ export default function ExpenseDetails() {
       setL1Options(labels[L1Value][L2Value][L3Value]['L1']);
       setL2Options(labels[L1Value][L2Value][L3Value]['L2']);
       setL3Options(labels[L1Value][L2Value][L3Value]['L3']);
-    }, [L1Value, L2Value, L3Value]);
+    }, [L1Value, L2Value, L3Value,labels]);
   
     const L1_Handler = (e) => {
       setL1Value(e.target.value);

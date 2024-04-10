@@ -7,8 +7,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 function DropDown(props) {
     //console.log(data[0])
     return (
-      <FormControl sx={{ width: "100%", maxWidth: 550 }} error={props.error}>
-        <InputLabel id="demo-simple-select-label">{props.label}</InputLabel>
+      <FormControl sx={{ display:'flex',p:props.p,height:props.height,width:props.width,maxWidth:props.maxWidth,boxShadow:props.boxShadow }} error={props.error}>
+        <InputLabel id="demo-simple-select-label" sx={{display:'flex',p:props.p }}>{props.label}</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"

@@ -5,6 +5,9 @@ class API {
     static ExpenseLabel() {
         return axios.get(process.env.REACT_APP_API_URL + '/api/labels/expense', { withCredentials: true }).then((r) => r.data).catch((err) => { throw err });
     }
+    static GetExpense(params) {
+        return axios.get(process.env.REACT_APP_API_URL + '/api/expense', {withCredentials: true,params:params}).then((r) => r.data).catch((err) => { throw err });
+    }
     static IncomeLabel() {
         return axios.get(process.env.REACT_APP_API_URL + '/api/labels/income', { withCredentials: true }).then((r) => r.data).catch((err) => { throw err });
     }
@@ -12,11 +15,13 @@ class API {
         return axios.get(process.env.REACT_APP_API_URL + '/api/user', { withCredentials: true }).then((r) => {
             r = r.data
             const list = [];
+            const mUser={}
             r.map((e) => {
                 list.push(e['On-Behalf']);
+                mUser[e['On-Behalf']]=e['userKey'];
                 return '';
             });
-            return list;
+            return [list,mUser];
         }).catch((err) => { throw err });
     }
     static SubmitExpense(Expense) {

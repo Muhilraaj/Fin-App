@@ -8,6 +8,9 @@ class API {
     static GetExpense(params) {
         return axios.get(process.env.REACT_APP_API_URL + '/api/expense', {withCredentials: true,params:params}).then((r) => r.data).catch((err) => { throw err });
     }
+    static GetIncome(params) {
+        return axios.get(process.env.REACT_APP_API_URL + '/api/income', {withCredentials: true,params:params}).then((r) => r.data).catch((err) => { throw err });
+    }
     static IncomeLabel() {
         return axios.get(process.env.REACT_APP_API_URL + '/api/labels/income', { withCredentials: true }).then((r) => r.data).catch((err) => { throw err });
     }

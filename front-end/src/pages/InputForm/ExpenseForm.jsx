@@ -287,12 +287,12 @@ function ExpenseForm() {
                   <FormHelperText>{priceError ? 'Enter a valid price(Eg: 10, 20.5)' : ''}</FormHelperText>
                 </FormControl>
                 <Stack spacing={2} direction="row">
-                  <DropDown id='L1' options={L1Options} value={L1Value} handler={L1_Handler} error={L1Error} label={"L1"} />
-                  <DropDown id='L2' options={L2Options} value={L2Value} handler={L2_Handler} error={L2Error} label={"L2"} />
+                  <DropDown id='L1' options={L1Options} value={L1Value} handler={L1_Handler} error={L1Error} width='100%' maxWidth={550} label={"L1"} />
+                  <DropDown id='L2' options={L2Options} value={L2Value} handler={L2_Handler} error={L2Error} width='100%' maxWidth={550} label={"L2"} />
                 </Stack>
                 <Stack spacing={2} direction="row">
-                  <DropDown id='L3' options={L3Options} value={L3Value} handler={L3_Handler} error={L3Error} label={"L3"} />
-                  <DropDown id='Onbehalf' options={ObOptions} value={ObValue} handler={OnBehalf_Handler} error={ObError} label={"Onbehalf"} />
+                  <DropDown id='L3' options={L3Options} value={L3Value} handler={L3_Handler} error={L3Error} width='100%' maxWidth={550} label={"L3"} />
+                  <DropDown id='Onbehalf' options={ObOptions} value={ObValue} handler={OnBehalf_Handler} error={ObError} width='100%' maxWidth={550} label={"Onbehalf"} />
                 </Stack>
                 <TextField id="Comments" label="Comments" variant="outlined" />
                 <Stack spacing={2} direction="row">

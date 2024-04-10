@@ -334,6 +334,56 @@ func getExpense(c *gin.Context) {
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 }
 
+func getIncome(c *gin.Context) {
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	_, err = auth.ValidateToken(cookie)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
+		return
+	}
+	var filters = c.Request.URL.Query()
+	var incomeQuery = "SELECT c['Income'],c['Income_Note'],c['Label_key'],c['Timestamp'] FROM c "
+	var labelQuery = "SELECT c['id'],c['L1'],c['L2'],c['L3'] FROM c"
+	//add filter to the query
+	if v := filters["monthYear"]; v != nil {
+		year := v[0][0:4]
+		month := v[0][4:6]
+		incomeQuery = fmt.Sprintf("%s Where c.Timestamp >= '%s-%s-01' and c.Timestamp<='%s-%s-31'", incomeQuery, year, month, year, month)
+	}
+	if v := filters["L2"]; v != nil {
+		labelQuery = fmt.Sprintf("%s Where c.L2 = '%s'", labelQuery, v[0])
+	} else if v := filters["L1"]; v != nil {
+		labelQuery = fmt.Sprintf("%s Where c.L1 = '%s'", labelQuery, v[0])
+	}
+	incomeQuery = fmt.Sprintf("%s order by c.Timestamp", incomeQuery)
+	income := azcosmosapi.ExecuteQuery("Fact", "Income", incomeQuery, 1)
+	label := azcosmosapi.ExecuteQuery("DIM", "Income_Label", labelQuery, 1)
+	finalData := azcosmosapi.InnerJoin(&income, &label, "Label_key", "id")
+	//calculate total income
+	var totalIncome = 0
+	for i := range *finalData {
+		if v, ok := ((*finalData)[i]["Income"]).(int); ok {
+			totalIncome += v
+		} else if v, ok := ((*finalData)[i]["Income"]).(string); ok {
+			i, _ = strconv.Atoi(v)
+			totalIncome += i
+		} else if v, ok := ((*finalData)[i]["Income"]).(float64); ok {
+			totalIncome += int(v)
+		}
+	}
+	var result = map[string]interface{}{"data": finalData, "totalIncome": totalIncome}
+	c.JSON(http.StatusAccepted, &result)
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+}
+
 func main() {
 	route := gin.Default()
 	route.Use(func(c *gin.Context) {
@@ -357,6 +407,7 @@ func main() {
 	route.GET("api/labels/*path", getLabel)
 	route.POST("api/expense", postExpense)
 	route.GET("api/expense", getExpense)
+	route.GET("api/income", getIncome)
 	route.POST("api/income", postIncome)
 	route.POST("api/login", postJWT)
 	port_info := APIPort()

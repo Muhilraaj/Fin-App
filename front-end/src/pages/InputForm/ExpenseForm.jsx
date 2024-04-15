@@ -97,7 +97,7 @@ function ExpenseForm() {
         setL2Options(response['*']['*']['*']['L2'])
         setL3Options(response['*']['*']['*']['L3'])
         const response2 = await API.OnBehalf();
-        setObOptions(response2);
+        setObOptions(response2[0]);
       } catch (error) {
         console.error(error);
       }

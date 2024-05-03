@@ -186,8 +186,8 @@ def UpdateExpense(id,key,value):
 
 
 data={
-    "L1":"Bank",
-    "L2":"Cashback",
+    "L1":"Part Time Job",
+    "L2":"Lecture",
     "Active": "Y"
 }
 AddIncomeLabel(data)

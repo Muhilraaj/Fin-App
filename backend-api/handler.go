@@ -293,7 +293,7 @@ func getExpense(c *gin.Context) {
 	if v := filters["monthYear"]; v != nil {
 		year := v[0][0:4]
 		month := v[0][4:6]
-		expenseQuery = fmt.Sprintf("%s Where c.Timestamp >= '%s-%s-01' and c.Timestamp<='%s-%s-31'", expenseQuery, year, month, year, month)
+		expenseQuery = fmt.Sprintf("%s Where c.Timestamp >= '%s-%s-01' and c.Timestamp<='%s-%s-31 23:59:59'", expenseQuery, year, month, year, month)
 		flagExpenseQuery = true
 	}
 	if v := filters["L3"]; v != nil {

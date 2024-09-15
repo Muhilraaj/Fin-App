@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
+//import { DataGrid } from '@mui/x-data-grid';
 import React, { useEffect, useState,useMemo } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import Card from '@mui/material/Card';
@@ -11,6 +11,9 @@ import DropDown from '../../components/DropDown/DropDown';
 import Stack from '@mui/material/Stack';
 import Date from '../../components/Date/Date';
 import dayjs from 'dayjs';
+import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 const columns = [
   {
@@ -34,7 +37,7 @@ const columns = [
     renderHeader:(params)=>{
       return <p style={{ fontWeight: 'bold' }}>Income Note</p>
     },
-    width: 200,
+    width: 400,
     editable: true,
   },
   {
@@ -68,6 +71,7 @@ export default function IncomeDetails() {
     const [L2Value, setL2Value] = useState('*');
     const [DatetimeValue, setDatetimeValue] = useState(dayjs());
     const [params,setParams] = useState({'monthYear':dayjs().format("YYYYMM")});
+    const colDefs = useState(columns)[0];
 
     useEffect(()=>{
     (async ()=>{
@@ -154,13 +158,26 @@ export default function IncomeDetails() {
             
         </Stack>
         <Box sx={{ marginTop: 2,boxShadow:5,boxDecorationBreak:2 }}>
-          <DataGrid
-            getRowId={(row)=>row.Income_Note}
-            rows={incomeData}
+        <div
+            className="ag-theme-quartz" // applying the Data Grid theme
+            style={{ height: '100vh',width: '100%' }} // the Data Grid will fill the size of the parent container
+          >
+            {
+              /*
+              <DataGrid
+            getRowId={(row)=>row.Expense_Note}
+            rows={expenseData}
             columns={columns}
             disableColumnFilter
             pagination={false}
           />
+              */ 
+            }
+            <AgGridReact
+              rowData={incomeData}
+              columnDefs={colDefs}
+            />
+          </div>
         </Box>
       </Box>
     </ThemeProvider>

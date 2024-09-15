@@ -185,12 +185,12 @@ def UpdateExpense(id,key,value):
     
 
 
-data={
+'''data={
     "L1":"Others",
     "L2":"Tax",
     "L3":"Short Term Capital Gain Tax"
 }
-AddLabel(data)
+AddLabel(data)'''
 
 
 

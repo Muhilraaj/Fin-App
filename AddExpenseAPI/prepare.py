@@ -186,11 +186,11 @@ def UpdateExpense(id,key,value):
 
 
 data={
-    "L1":"Part Time Job",
-    "L2":"Lecture",
-    "Active": "Y"
+    "L1":"Others",
+    "L2":"Tax",
+    "L3":"Short Term Capital Gain Tax"
 }
-AddIncomeLabel(data)
+AddLabel(data)
 
 
 

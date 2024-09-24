@@ -178,22 +178,26 @@ def UpdateExpense(id,key,value):
     global container,database
     database=client.get_database_client('Fact')
     container=database.get_container_client('Expense')
-    query = "SELECT * FROM c WHERE c.id = '%s'"%id
-    result = list(container.query_items(query, enable_cross_partition_query=True))
-    result[0][key]=value
-    container.replace_item(item=result[0],body=result[0])
+    query = "SELECT * FROM c WHERE c.id = '%s' and c.pk=1"%id
+    items= list(container.read_all_items())
+    result=''
+    for i in items:
+        if i['id']==id:
+            result=i
+    result[key]=value
+    container.replace_item(item=result,body=result)
     
 
 
-data={
+'''data={
     "L1":"Others",
     "L2":"Tax",
     "L3":"Short Term Capital Gain Tax"
 }
-AddLabel(data)
+AddLabel(data)'''
 
 
 
 
-#UpdateExpense('3e744263e33fd7cae6d8b8e8ff42afa39bd26805844057ef5f6f90a40b7501ea','Label_key','8bbf6d0c37082f998b816b860c3f559c7e67d542f0b370f82125362808ed6694')
+UpdateExpense('6be57da0574a4d89b44ef166cf41ff4e0ad02c0aa270c1bfa490315c31ca51d6','User_key','86605cac7f0646867f62ff0f03ca6af9dc3ce860f772a8673cdb6cd34dffc3b1')
 #DeleteLabel('8b7272278a5676b33596cfe1b1f13de1c4145589ddce1ac642346022c425da4e')

@@ -178,10 +178,14 @@ def UpdateExpense(id,key,value):
     global container,database
     database=client.get_database_client('Fact')
     container=database.get_container_client('Expense')
-    query = "SELECT * FROM c WHERE c.id = '%s'"%id
-    result = list(container.query_items(query, enable_cross_partition_query=True))
-    result[0][key]=value
-    container.replace_item(item=result[0],body=result[0])
+    query = "SELECT * FROM c WHERE c.id = '%s' and c.pk=1"%id
+    items= list(container.read_all_items())
+    result=''
+    for i in items:
+        if i['id']==id:
+            result=i
+    result[key]=value
+    container.replace_item(item=result,body=result)
     
 
 

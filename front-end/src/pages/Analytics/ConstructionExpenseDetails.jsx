@@ -89,8 +89,7 @@ export default function ConstructionExpenseDetails() {
   const [L2Value, setL2Value] = useState('*');
   const [L3Value, setL3Value] = useState('*');
   const [ObValue, setObValue] = useState('*');
-  const [DatetimeValue, setDatetimeValue] = useState(dayjs());
-  const [params, setParams] = useState({ 'monthYear': dayjs().format("YYYYMM"), 'custom': 'Construction' });
+  const [params, setParams] = useState({ 'custom': 'Construction' });
   const colDefs = useState(columns)[0];
 
   useEffect(() => {
@@ -158,11 +157,6 @@ export default function ConstructionExpenseDetails() {
     setParams(tparams);
   }
 
-  const Datetime_Handler = (e) => {
-    setDatetimeValue(e);
-    const tparams = { 'monthYear': dayjs(e).format("YYYYMM"),'custom': 'Construction' }
-    setParams(tparams);
-  }
   return (
     <ThemeProvider theme={theme} >
       <Box sx={{ height: '100%', width: '100%', overflow: 'auto', padding: 2 }}>
@@ -176,7 +170,6 @@ export default function ConstructionExpenseDetails() {
                 </CardContent>
               </Card>
             </Box>
-            <Date label={'Month Year'} p={1} boxShadow={5} defaultValue={DatetimeValue} views={['month', 'year']} handler={Datetime_Handler} />
           </Stack>
           <Stack direction="row" sx={{ display: 'flex' }} spacing={2} >
             <DropDown id='L1' p={2.5} boxShadow={5} options={L1Options} value={L1Value} handler={L1_Handler} label={"L1"} />
@@ -197,7 +190,6 @@ export default function ConstructionExpenseDetails() {
             </Card>
           </Box>
           <Stack style={{ marginLeft: 'auto' }} direction="row" spacing={2}>
-            <Date label={'Month Year'} p={1} boxShadow={5} defaultValue={DatetimeValue} views={['month', 'year']} handler={Datetime_Handler} />
             <DropDown id='L1' p={1} boxShadow={5} options={L1Options} value={L1Value} handler={L1_Handler} label={"L1"} />
             <DropDown id='L2' p={1} boxShadow={5} options={L2Options} value={L2Value} handler={L2_Handler} label={"L2"} />
             <DropDown id='L3' p={1} boxShadow={5} options={L3Options} value={L3Value} handler={L3_Handler} label={"L3"} />

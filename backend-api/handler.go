@@ -64,7 +64,7 @@ func getLabel(c *gin.Context) {
 	}
 	cred, _ := azblob.NewSharedKeyCredential(os.Getenv("Storage_Account_Name"), os.Getenv("Storage_Account_Key"))
 	options := azblob.PipelineOptions{}
-	var blob_url = map[string]string{"/expense": os.Getenv("EXPENSE_BLOB_URL"), "/income": os.Getenv("INCOME_BLOB_URL")}
+	var blob_url = map[string]string{"/expense": os.Getenv("EXPENSE_BLOB_URL"), "/income": os.Getenv("INCOME_BLOB_URL"), "/construction": os.Getenv("CONSTRUCTION_BLOB_URL")}
 	u, _ := url.Parse(blob_url[c.Param("path")])
 	pipeline := azblob.NewPipeline(cred, options)
 	url := azblob.NewBlobURL(*u, pipeline)
@@ -286,7 +286,7 @@ func getExpense(c *gin.Context) {
 		return
 	}
 	var filters = c.Request.URL.Query()
-	var expenseQuery = "SELECT c['Expense'],c['Expense_Note'],c['Label_key'],c['User_key'],c['Timestamp'] FROM c "
+	var expenseQuery = "SELECT c['Expense'],c['Expense_Note'],c['Label_key'],c['User_key'],c['Timestamp'] FROM c WHERE NOT IS_DEFINED(c.Custom)"
 	var labelQuery = "SELECT c['id'],c['L1'],c['L2'],c['L3'] FROM c"
 	var flagExpenseQuery = false
 	//add filter to the query

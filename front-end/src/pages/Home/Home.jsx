@@ -19,6 +19,11 @@ function Home() {
         navigate('/page/expense');
     }
 
+    const handleConstruction = (event) => {
+        event.preventDefault();
+        navigate('/page/construction');
+    }
+
     const handleExpenseDetails = (event) => {
         event.preventDefault();
         navigate('/page/expenseDetails');
@@ -64,6 +69,22 @@ function Home() {
                             <CardContent>
                                 <Typography variant="h5" align="center">
                                     Expense
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                        <Card
+                            elevation={10}
+                            onClick={handleConstruction}
+                            sx={{
+                                minWidth: 345,
+                                backgroundColor: theme.palette.success.main,
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <CardContent>
+                                <Typography variant="h5" align="center">
+                                    Construction Expense
                                 </Typography>
                             </CardContent>
                         </Card>

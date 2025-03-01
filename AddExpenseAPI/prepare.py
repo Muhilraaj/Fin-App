@@ -186,14 +186,15 @@ def UpdateExpense(id,key,value):
 
 
 data={
-    "L1":"Others",
-    "L2":"Tax",
-    "L3":"Short Term Capital Gain Tax"
+    "L1":"Living Costs",
+    "L2":"Outside Food ",
+    "L3":"Snacks"
 }
+DeleteLabel('1ed9361a0a9cbba65cfa6d04a79a43b23df8e42f18a4fb0e37234921cda414b1')
 AddLabel(data)
 
 
 
 
 #UpdateExpense('3e744263e33fd7cae6d8b8e8ff42afa39bd26805844057ef5f6f90a40b7501ea','Label_key','8bbf6d0c37082f998b816b860c3f559c7e67d542f0b370f82125362808ed6694')
-#DeleteLabel('8b7272278a5676b33596cfe1b1f13de1c4145589ddce1ac642346022c425da4e')
+

@@ -24,7 +24,7 @@ container=database.get_container_client('Label')
 
 def GetAllLabels():
     # Delete all documents in the container
-    query = "SELECT c.L1,c.L2,c.L3 FROM c WHERE NOT IS_DEFINED(c.Custom)"
+    query = "SELECT c.L1,c.L2,c.L3 FROM c where c.Custom='Construction'"
     container=database.get_container_client('Label')
     #items = list(container.query_items(query=query, partition_key=None))
     item_list = list(container.query_items(query=query, enable_cross_partition_query=True))
@@ -99,11 +99,11 @@ for f in ans:
                     dd[k1][k2][k3]={}
                     dd[k1][k2][k3][k]=list(set(df_fltr[k]))
 
-with open("expense-label.json", "w") as outfile:
+with open("construction-label.json", "w") as outfile:
     json.dump(dd, outfile)
             
 connection_string=os.getenv('storage_account_connection_string')
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
-blob_client = blob_service_client.get_blob_client(container='json-files', blob="expense-label.json")
-with open("expense-label.json", "rb") as jsonFile:
+blob_client = blob_service_client.get_blob_client(container='json-files', blob="construction-label.json")
+with open("construction-label.json", "rb") as jsonFile:
     blob_client.upload_blob(jsonFile,overwrite=True)

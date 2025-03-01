@@ -14,6 +14,9 @@ class API {
     static IncomeLabel() {
         return axios.get(process.env.REACT_APP_API_URL + '/api/labels/income', { withCredentials: true }).then((r) => r.data).catch((err) => { throw err });
     }
+    static ConstructionLabel() {
+        return axios.get(process.env.REACT_APP_API_URL + '/api/labels/construction', { withCredentials: true }).then((r) => r.data).catch((err) => { throw err });
+    }
     static OnBehalf() {
         return axios.get(process.env.REACT_APP_API_URL + '/api/user', { withCredentials: true }).then((r) => {
             r = r.data

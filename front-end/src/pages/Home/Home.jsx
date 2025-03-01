@@ -19,6 +19,11 @@ function Home() {
         navigate('/page/expense');
     }
 
+    const handleConstruction = (event) => {
+        event.preventDefault();
+        navigate('/page/construction');
+    }
+
     const handleExpenseDetails = (event) => {
         event.preventDefault();
         navigate('/page/expenseDetails');
@@ -26,6 +31,10 @@ function Home() {
     const handleIncomeDetails = (event) => {
         event.preventDefault();
         navigate('/page/incomeDetails');
+    }
+    const handleConstructionExpenseDetails = (event) => {
+        event.preventDefault();
+        navigate('/page/expenseDetails/construction');
     }
 
     const handleIncome = (event) => {
@@ -69,6 +78,22 @@ function Home() {
                         </Card>
                         <Card
                             elevation={10}
+                            onClick={handleConstruction}
+                            sx={{
+                                minWidth: 345,
+                                backgroundColor: theme.palette.success.main,
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <CardContent>
+                                <Typography variant="h5" align="center">
+                                    Construction
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                        <Card
+                            elevation={10}
                             onClick={handleIncome}
                             sx={{
                                 minWidth: 345,
@@ -96,6 +121,22 @@ function Home() {
                             <CardContent>
                                 <Typography variant="h5" align="center">
                                     Expense Detail
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                        <Card
+                            elevation={10}
+                            onClick={handleConstructionExpenseDetails}
+                            sx={{
+                                minWidth: 345,
+                                backgroundColor: theme.palette.success.main,
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <CardContent>
+                                <Typography variant="h5" align="center">
+                                    Construction Detail
                                 </Typography>
                             </CardContent>
                         </Card>

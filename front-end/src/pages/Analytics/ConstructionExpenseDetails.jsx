@@ -92,7 +92,7 @@ export default function ConstructionExpenseDetails() {
 
   useEffect(() => {
     (async () => {
-      const response = await API.ExpenseLabel();
+      const response = await API.ConstructionLabel();
       setLabels(response);
       setL1Options(response['*']['*']['*']['L1'])
       setL2Options(response['*']['*']['*']['L2'])

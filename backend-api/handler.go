@@ -302,11 +302,11 @@ func getExpense(c *gin.Context) {
 		flagExpenseQuery = true
 	}
 	if v := filters["L3"]; v != nil {
-		labelQuery = fmt.Sprintf("%s and c.L3 = '%s'", labelQuery, v[0])
+		labelQuery = fmt.Sprintf("%s WHERE c.L3 = '%s'", labelQuery, v[0])
 	} else if v := filters["L2"]; v != nil {
-		labelQuery = fmt.Sprintf("%s and c.L2 = '%s'", labelQuery, v[0])
+		labelQuery = fmt.Sprintf("%s WHERE c.L2 = '%s'", labelQuery, v[0])
 	} else if v := filters["L1"]; v != nil {
-		labelQuery = fmt.Sprintf("%s and c.L1 = '%s'", labelQuery, v[0])
+		labelQuery = fmt.Sprintf("%s WHERE c.L1 = '%s'", labelQuery, v[0])
 	}
 	if v := filters["userKey"]; v != nil {
 		if !flagExpenseQuery {

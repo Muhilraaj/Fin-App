@@ -286,14 +286,19 @@ func getExpense(c *gin.Context) {
 		return
 	}
 	var filters = c.Request.URL.Query()
-	var expenseQuery = "SELECT c['Expense'],c['Expense_Note'],c['Label_key'],c['User_key'],c['Timestamp'] FROM c WHERE NOT IS_DEFINED(c.Custom)"
+	var expenseQuery = "SELECT c['Expense'],c['Expense_Note'],c['Label_key'],c['User_key'],c['Timestamp'] FROM c"
+	if v := filters["custom"]; v != nil {
+		expenseQuery = fmt.Sprintf("%s WHERE c.Custom = '%s'", expenseQuery, filters["custom"])
+	} else {
+		expenseQuery = fmt.Sprintf("%s WHERE NOT IS_DEFINED(c['Custom'])", expenseQuery)
+	}
 	var labelQuery = "SELECT c['id'],c['L1'],c['L2'],c['L3'] FROM c"
 	var flagExpenseQuery = false
 	//add filter to the query
 	if v := filters["monthYear"]; v != nil {
 		year := v[0][0:4]
 		month := v[0][4:6]
-		expenseQuery = fmt.Sprintf("%s Where c.Timestamp >= '%s-%s-01' and c.Timestamp<='%s-%s-31 23:59:59'", expenseQuery, year, month, year, month)
+		expenseQuery = fmt.Sprintf("%s and c.Timestamp >= '%s-%s-01' and c.Timestamp<='%s-%s-31 23:59:59'", expenseQuery, year, month, year, month)
 		flagExpenseQuery = true
 	}
 	if v := filters["L3"]; v != nil {
@@ -305,7 +310,7 @@ func getExpense(c *gin.Context) {
 	}
 	if v := filters["userKey"]; v != nil {
 		if !flagExpenseQuery {
-			expenseQuery = fmt.Sprintf("%s Where c.User_key = '%s'", expenseQuery, v[0])
+			expenseQuery = fmt.Sprintf("%s and c.User_key = '%s'", expenseQuery, v[0])
 		} else {
 			expenseQuery = fmt.Sprintf("%s and c.User_key = '%s'", expenseQuery, v[0])
 		}

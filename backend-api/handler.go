@@ -107,6 +107,9 @@ func postExpense(c *gin.Context) {
 	var result = make(map[string]interface{})
 	if ecust := expense["Custom"]; ecust != nil {
 		result["Custom"] = expense["Custom"]
+		result["Label_key"] = customHash(fmt.Sprintf("%v%v%v%v", expense["L1"], expense["L2"], expense["L3"], expense["Custom"]))
+	} else {
+		result["Label_key"] = customHash(fmt.Sprintf("%v%v%v", expense["L1"], expense["L2"], expense["L3"]))
 	}
 	result["Expense"] = expense["Expense"]
 	result["Expense_Note"] = expense["Expense_Note"]
@@ -118,7 +121,6 @@ func postExpense(c *gin.Context) {
 		panic(err)
 	}
 	result["Timestamp"] = parsedTime.Format(output_format)
-	result["Label_key"] = customHash(fmt.Sprintf("%v%v%v", expense["L1"], expense["L2"], expense["L3"]))
 	result["User_key"] = customHash(fmt.Sprint(expense["Onbehalf"]))
 	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], expense["Label_key"], expense["User_key"]))
 	result["pk"] = 1
@@ -291,7 +293,7 @@ func getExpense(c *gin.Context) {
 	var filters = c.Request.URL.Query()
 	var expenseQuery = "SELECT c['Expense'],c['Expense_Note'],c['Label_key'],c['User_key'],c['Timestamp'] FROM c"
 	if v := filters["custom"]; v != nil {
-		expenseQuery = fmt.Sprintf("%s WHERE c.Custom = '%s'", expenseQuery, filters["custom"])
+		expenseQuery = fmt.Sprintf("%s WHERE c.Custom = '%s'", expenseQuery, v[0])
 	} else {
 		expenseQuery = fmt.Sprintf("%s WHERE NOT IS_DEFINED(c['Custom'])", expenseQuery)
 	}

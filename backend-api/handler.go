@@ -105,6 +105,9 @@ func postExpense(c *gin.Context) {
 		return
 	}
 	var result = make(map[string]interface{})
+	if ecust := expense["Custom"]; ecust != nil {
+		result["Custom"] = expense["Custom"]
+	}
 	result["Expense"] = expense["Expense"]
 	result["Expense_Note"] = expense["Expense_Note"]
 	input_format := "01/02/2006 15:04:05"

@@ -35,6 +35,7 @@ def LoadCustomLabelCSV(filename):
     Labels=Labels.applymap(lambda x: x.strip() if isinstance(x, str) else x)
     Labels['id']=Labels.apply(lambda x:str(customHash(x['L1']+x['L2']+x['L3']+x['Custom'])),axis=1)  
     Labels['Active']='Y'
+    Labels['pk']=1
     print(Labels)
     Labels.apply(InsertCosmos,axis=1)
 

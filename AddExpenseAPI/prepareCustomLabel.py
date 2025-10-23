@@ -39,4 +39,29 @@ def LoadCustomLabelCSV(filename):
     print(Labels)
     Labels.apply(InsertCosmos,axis=1)
 
-LoadCustomLabelCSV('ConsLabel.csv')
+def DeleteLabel(id):
+    global container,database
+    database=client.get_database_client('DIM')
+    container=database.get_container_client('Label')
+    query = "SELECT * FROM c WHERE c.id = '%s'"%id
+    result = list(container.query_items(query, enable_cross_partition_query=True))
+    container.delete_item(item=result[0], partition_key=1)
+
+def AddCustomLabel(data):
+    global container,database
+    database=client.get_database_client('DIM')
+    container=database.get_container_client('Label')
+    data["id"]=customHash(data['L1']+data['L2']+data['L3']+data['Custom'])
+    data["pk"]=1
+    data['Active']='Y'
+    InsertCosmos(data)
+
+data={
+    "L1":"Other",
+    "L2":"Debth",
+    "L3":"Interest",
+    "Custom": "Construction"
+}
+
+AddCustomLabel(data)
+#DeleteLabel('689b2cc5f2b17ed01d279b724f9e8ff0a339c2f29929985cfec3d4c50eb0b678')

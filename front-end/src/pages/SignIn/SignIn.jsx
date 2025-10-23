@@ -42,11 +42,15 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     try{
-      await API.SubmitLogin({
+      const resp = await API.SubmitLogin({
         "user-id": data.get('user-id'),
         "password": data.get('password'),
       });
+      const { expiryMinutes } = resp.data;
       navigate('/page/home');
+      setInterval(() => {
+        navigate('/page/login');
+      }, expiryMinutes * 60 * 1000);
     } catch (error)
     {
       setFormError(`${error.response.status} ${error.response.statusText} error`);

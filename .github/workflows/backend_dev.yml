@@ -2,12 +2,12 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure Functions: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Go project to Azure Function App - myfinapp18-dev
+name: Deploy Function App - Backend API - My Fin App Dev
 
 on:
   push:
     branches:
-      - dev
+      [ dev ]
     paths:
       - backend-api/**
       - .github/workflows/backend_dev.yml

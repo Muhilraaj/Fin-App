@@ -1,5 +1,4 @@
-name: Trigger auto deployment for myfin-app-dev
-
+name: Deploy Container - Reverse Proxy - My Fin App Dev
 # When this action will be executed
 on:
   # Automatically trigger it when detected changes in repo

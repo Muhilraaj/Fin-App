@@ -66,7 +66,7 @@ jobs:
       - name: "Login"
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_FUNCTION_RBAC_CREDENTIALS_FINAPP_DEV }}
+          creds: ${{ secrets.AZURE_CREDENTIALS_DEV }}
 
       - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1

@@ -190,12 +190,14 @@ def UpdateExpense(id,key,value):
 
 
 data={
-    "L1":"Living Costs",
-    "L2":"Outside Food ",
-    "L3":"Snacks"
+    "L1":"Entertainment & Fun",
+    "L2":"DTH",
+    "L3":"Recharge",
+    "Active": "Y"
 }
-DeleteLabel('1ed9361a0a9cbba65cfa6d04a79a43b23df8e42f18a4fb0e37234921cda414b1')
+
 AddLabel(data)
+
 
 
 

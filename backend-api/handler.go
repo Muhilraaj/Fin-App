@@ -250,9 +250,8 @@ func postJWT(c *gin.Context) {
 			SameSite: http.SameSiteNoneMode,
 		}
 		cookie.Expires = currentTime.Add(30 * time.Minute)
-		//c.SetCookie("token", token, 600, "/", "localhost", false, true)
 		http.SetCookie(c.Writer, &cookie)
-		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+		c.JSON(http.StatusOK, gin.H{"message": "Login successful", "expiryMinutes": 30})
 		return
 	}
 	c.JSON(http.StatusForbidden, gin.H{"error": "incorrect login credentials"})

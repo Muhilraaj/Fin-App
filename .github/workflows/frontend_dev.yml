@@ -1,9 +1,9 @@
-name: Azure Static Web Apps CI/CD
+name: Deploy Static Web App - Frontend - My Fin App Dev
 
 on:
   push:
     branches:
-      - dev
+      [ dev ]
     paths:
       - front-end/**
       - .github/workflows/frontend_dev.yml

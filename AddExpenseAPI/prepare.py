@@ -190,9 +190,9 @@ def UpdateExpense(id,key,value):
 
 
 data={
-    "L1":"Entertainment & Fun",
-    "L2":"DTH",
-    "L3":"Recharge",
+    "L1":"Living Costs",
+    "L2":"Groceries",
+    "L3":"Dairy Products",
     "Active": "Y"
 }
 

@@ -58,6 +58,7 @@ func main() {
 	route.GET("/static/*path", frontendProxy)
 	route.GET("/manifest.json", frontendProxy)
 	route.GET("/logo.png", frontendProxy)
+	route.GET("/favicon.ico", frontendProxy)
 	route.NoRoute(frontendProxy)
 	route.Run(":443")
 }

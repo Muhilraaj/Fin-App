@@ -11,6 +11,7 @@ on:
     paths:
       - backend-api/**
       - .github/workflows/backend_dev.yml
+  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api 
@@ -36,7 +37,8 @@ jobs:
           cd backend-api
           export CGO_ENABLED=0
           go build -o handler .
-          
+          chmod +x handler
+          test -f handler
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4

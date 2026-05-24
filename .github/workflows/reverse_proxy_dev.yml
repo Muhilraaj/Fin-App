@@ -12,6 +12,7 @@ on:
     types: [closed]
     branches:
       - dev
+  workflow_dispatch:
       
 jobs:
   build-and-deploy:

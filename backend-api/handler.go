@@ -79,11 +79,11 @@ func getLabel(c *gin.Context) {
 }
 
 func APIPort() string {
-	port := ":8080"
+	port := "8080"
 	if val, ok := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT"); ok {
-		port = ":" + val
+		port = val
 	}
-	return port
+	return "0.0.0.0:" + port
 }
 
 func postExpense(c *gin.Context) {
@@ -382,6 +382,7 @@ func main() {
 	route.POST("api/income", postIncome)
 	route.POST("api/login", postJWT)
 	port_info := APIPort()
+	fmt.Println("Starting custom handler on", port_info)
 	route.Run(port_info)
 	log.Println("API is up & running - ")
 }

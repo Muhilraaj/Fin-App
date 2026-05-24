@@ -3,6 +3,7 @@ package main
 import (
 	"api/auth"
 	azcosmosapi "api/azcosmos-api"
+	"api/cosmosconfig"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -15,7 +16,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
 	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/gin-gonic/gin"
 )
@@ -42,7 +42,7 @@ func getUser(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
 		return
 	}
-	var result = azcosmosapi.ExecuteQuery("DIM", "On-Behalf", "SELECT c['On-Behalf'],c['id'] as userKey FROM c", 1)
+	var result = cosmosconfig.QueryOnBehalf("SELECT c['On-Behalf'],c['id'] as userKey FROM c")
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
@@ -124,27 +124,8 @@ func postExpense(c *gin.Context) {
 	result["User_key"] = customHash(fmt.Sprint(expense["Onbehalf"]))
 	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], expense["Label_key"], expense["User_key"]))
 	result["pk"] = 1
-	endpoint := os.Getenv("Cosmos_DB_Endpoint")
-	key := os.Getenv("Cosmos_DB_Key")
 
-	cred, err := azcosmos.NewKeyCredential(key)
-	if err != nil {
-		log.Fatal("Failed to create a credential: ", err)
-	}
-
-	// Create a CosmosDB client
-	client, err := azcosmos.NewClientWithKey(endpoint, cred, nil)
-	if err != nil {
-		log.Fatal("Failed to create Azure Cosmos DB client: ", err)
-	}
-
-	container, _ := client.NewContainer("Fact", "Expense")
-
-	marshalled, _ := json.Marshal(result)
-
-	pk := azcosmos.NewPartitionKeyNumber(1)
-	ctx := context.Background()
-	_, err = container.CreateItem(ctx, pk, marshalled, nil)
+	err = cosmosconfig.CreateExpense(result)
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
@@ -187,27 +168,8 @@ func postIncome(c *gin.Context) {
 	result["Label_key"] = customHash(fmt.Sprintf("%v%v", income["L1"], income["L2"]))
 	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], income["Label_key"]))
 	result["pk"] = 1
-	endpoint := os.Getenv("Cosmos_DB_Endpoint")
-	key := os.Getenv("Cosmos_DB_Key")
 
-	cred, err := azcosmos.NewKeyCredential(key)
-	if err != nil {
-		log.Fatal("Failed to create a credential: ", err)
-	}
-
-	// Create a CosmosDB client
-	client, err := azcosmos.NewClientWithKey(endpoint, cred, nil)
-	if err != nil {
-		log.Fatal("Failed to create Azure Cosmos DB client: ", err)
-	}
-
-	container, _ := client.NewContainer("Fact", "Income")
-
-	marshalled, _ := json.Marshal(result)
-
-	pk := azcosmos.NewPartitionKeyNumber(1)
-	ctx := context.Background()
-	_, err = container.CreateItem(ctx, pk, marshalled, nil)
+	err = cosmosconfig.CreateIncome(result)
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
@@ -226,7 +188,7 @@ func postJWT(c *gin.Context) {
 		return
 	}
 	query := fmt.Sprintf("select c['name'],c['user-id'],c['mail-id'] from c where c['user-id']='%s' and c['password']='%s'", login["user-id"], login["password"])
-	data := azcosmosapi.ExecuteQuery("DIM", "Login", query, 1)
+	data := cosmosconfig.QueryLogin(query)
 	//origin := c.Request.Header.Get("Origin")
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
@@ -320,9 +282,9 @@ func getExpense(c *gin.Context) {
 		}
 	}
 	expenseQuery = fmt.Sprintf("%s order by c.Timestamp", expenseQuery)
-	expense := azcosmosapi.ExecuteQuery("Fact", "Expense", expenseQuery, 1)
-	label := azcosmosapi.ExecuteQuery("DIM", "Label", labelQuery, 1)
-	on_behalf := azcosmosapi.ExecuteQuery("DIM", "On-Behalf", "SELECT c['id'],c['On-Behalf'] FROM c", 1)
+	expense := cosmosconfig.QueryExpense(expenseQuery)
+	label := cosmosconfig.QueryLabel(labelQuery)
+	on_behalf := cosmosconfig.QueryOnBehalf("SELECT c['id'],c['On-Behalf'] FROM c")
 	finalData := azcosmosapi.InnerJoin(azcosmosapi.InnerJoin(&expense, &label, "Label_key", "id"), &on_behalf, "User_key", "id")
 	//calculate total income
 	var totalExpense = 0
@@ -371,8 +333,8 @@ func getIncome(c *gin.Context) {
 		labelQuery = fmt.Sprintf("%s Where c.L1 = '%s'", labelQuery, v[0])
 	}
 	incomeQuery = fmt.Sprintf("%s order by c.Timestamp", incomeQuery)
-	income := azcosmosapi.ExecuteQuery("Fact", "Income", incomeQuery, 1)
-	label := azcosmosapi.ExecuteQuery("DIM", "Income_Label", labelQuery, 1)
+	income := cosmosconfig.QueryIncome(incomeQuery)
+	label := cosmosconfig.QueryIncomeLabel(labelQuery)
 	finalData := azcosmosapi.InnerJoin(&income, &label, "Label_key", "id")
 	//calculate total income
 	var totalIncome = 0

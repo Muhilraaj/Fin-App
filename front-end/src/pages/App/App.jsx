@@ -9,6 +9,7 @@ import Home from '../Home/Home';
 import IncomeDetails from '../Analytics/IncomeDetails';
 import ConstructionExpenseForm from '../InputForm/ConstructionExpenseForm';
 import ConstructionExpenseDetails from '../Analytics/ConstructionExpenseDetails';
+import SnackbarWrapper from '../../components/SnackbarWrapper';
 
 function App()
 {
@@ -25,6 +26,7 @@ function App()
           <Route path="/page/income" element={<IncomeForm/>} />
           <Route path="/page/home" element={<Home/>} />
        </Routes>
+       <SnackbarWrapper />
    </>)
 }
 

@@ -40,7 +40,7 @@ jobs:
         run: |
           cd backend-api
           export CGO_ENABLED=0
-          go build -o handler handler.go
+          go build -o handler .
           
 
       - name: Upload artifact for deployment job

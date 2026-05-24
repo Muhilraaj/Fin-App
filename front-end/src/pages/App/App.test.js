@@ -1,8 +1,13 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import snackbarReducer, { showSnackbar, hideSnackbar } from '../../stores/slices/snackbarSlice';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('snackbar slice shows and hides messages', () => {
+  let state = snackbarReducer(undefined, { type: '@@INIT' });
+  expect(state).toEqual({ open: false, message: '', type: 'success' });
+
+  state = snackbarReducer(state, showSnackbar({ message: 'Saved', type: 'success' }));
+  expect(state.open).toBe(true);
+  expect(state.message).toBe('Saved');
+
+  state = snackbarReducer(state, hideSnackbar());
+  expect(state.open).toBe(false);
 });

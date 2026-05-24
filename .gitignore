@@ -79,6 +79,9 @@ typings/
 # vuepress build output
 .vuepress/dist
 
+# create-react-app build output
+front-end/build/
+
 # Serverless directories
 .serverless/
 

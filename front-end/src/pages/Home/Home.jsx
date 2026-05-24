@@ -3,7 +3,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { ThemeProvider } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import React from 'react';
@@ -43,8 +42,7 @@ function Home() {
     }
 
     return (
-        <ThemeProvider theme={theme}>
-            <Box display="flex" flexDirection="column" minHeight="100vh">
+        <Box display="flex" flexDirection="column" minHeight="100vh">
                 <AppBar position="static">
                     <Toolbar variant="dense">
                         <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
@@ -159,7 +157,6 @@ function Home() {
                     </Stack>
                 </Box>
             </Box>
-        </ThemeProvider>
     );
 }
 

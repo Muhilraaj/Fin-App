@@ -1,164 +1,130 @@
 import Box from '@mui/material/Box';
-import React, { useEffect, useState, useMemo } from 'react';
-import { ThemeProvider } from '@mui/material/styles';
+import React, { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import theme from '../../assets/theme';
-import API from '../../services/API'
 import DropDown from '../../components/DropDown/DropDown';
 import Stack from '@mui/material/Stack';
-import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
+import { AgGridReact } from 'ag-grid-react';
+import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import { useGetConstructionLabelsQuery } from '../../stores/api/labelsApi';
+import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
+import { useGetExpensesQuery } from '../../stores/api/expenseApi';
+import { useLabelCascade } from '../../hooks/useLabelCascade';
 
 const columns = [
   {
     field: 'L1',
     width: 200,
-    renderHeader: (params) => {
-      return <p style={{ fontWeight: 'bold' }}>L1</p>
-    },
+    renderHeader: () => <p style={{ fontWeight: 'bold' }}>L1</p>,
     editable: true,
   },
   {
     field: 'L2',
-    renderHeader: (params) => {
-      return <p style={{ fontWeight: 'bold' }}>L2</p>
-    },
+    renderHeader: () => <p style={{ fontWeight: 'bold' }}>L2</p>,
     width: 200,
     editable: true,
   },
   {
     field: 'L3',
-    renderHeader: (params) => {
-      return <p style={{ fontWeight: 'bold' }}>L3</p>
-    },
+    renderHeader: () => <p style={{ fontWeight: 'bold' }}>L3</p>,
     width: 200,
     editable: true,
   },
   {
     field: 'On-Behalf',
-    renderHeader: (params) => {
-      return <p style={{ fontWeight: 'bold' }}>On-Behalf</p>
-    },
+    renderHeader: () => <p style={{ fontWeight: 'bold' }}>On-Behalf</p>,
     width: 200,
     editable: true,
   },
   {
     field: 'Expense_Note',
-    renderHeader: (params) => {
-      return <p style={{ fontWeight: 'bold' }}>Expense Note</p>
-    },
+    renderHeader: () => <p style={{ fontWeight: 'bold' }}>Expense Note</p>,
     width: 400,
     editable: true,
   },
   {
     field: 'Expense',
-    renderHeader: (params) => {
-      return <p style={{ fontWeight: 'bold' }}>Expense</p>
-    },
+    renderHeader: () => <p style={{ fontWeight: 'bold' }}>Expense</p>,
     width: 200,
     editable: true,
   },
   {
     field: 'Timestamp',
-    renderHeader: (params) => {
-      return <p style={{ fontWeight: 'bold' }}>Timestamp</p>
-    },
+    renderHeader: () => <p style={{ fontWeight: 'bold' }}>Timestamp</p>,
     width: 200,
     editable: true,
-  }
-
+  },
 ];
 
-
-
 export default function ConstructionExpenseDetails() {
-  const [expense, setExpense] = useState([]);
-  const [expenseData, setExpenseData] = useState([]);
-  const [labels, setLabels] = useState({ '*': { '*': { '*': { 'L1': [], 'L2': [], 'L3': [] } } } });
-  const [L1Options, setL1Options] = useState([]);
-  const [L2Options, setL2Options] = useState([]);
-  const [L3Options, setL3Options] = useState([]);
-  const [ObOptions, setObOptions] = useState([]);
-  const [UserKey, setUserKey] = useState({});
+  const { data: labels } = useGetConstructionLabelsQuery();
+  const { data: onBehalfUsers } = useGetOnBehalfUsersQuery();
+
   const [L1Value, setL1Value] = useState('*');
   const [L2Value, setL2Value] = useState('*');
   const [L3Value, setL3Value] = useState('*');
   const [ObValue, setObValue] = useState('*');
-  const [params, setParams] = useState({ 'custom': 'Construction' });
+  const [params, setParams] = useState({ custom: 'Construction' });
   const colDefs = useState(columns)[0];
 
-  useEffect(() => {
-    (async () => {
-      const response = await API.ConstructionLabel();
-      setLabels(response);
-      setL1Options(response['*']['*']['*']['L1'])
-      setL2Options(response['*']['*']['*']['L2'])
-      setL3Options(response['*']['*']['*']['L3'])
-      const response2 = await API.OnBehalf();
-      setObOptions(response2[0]);
-      setUserKey(response2[1]);
-    })();
-  }, []);
-  useEffect(() => {
-    (
-      async () => {
-        const response = await API.GetExpense(params);
-        setExpenseData(response.data);
-        setExpense(response.totalExpense);
-      }
-    )();
-  }, [params]);
-  useMemo(() => {
-    setL1Options(labels[L1Value][L2Value][L3Value]['L1']);
-    setL2Options(labels[L1Value][L2Value][L3Value]['L2']);
-    setL3Options(labels[L1Value][L2Value][L3Value]['L3']);
-  }, [L1Value, L2Value, L3Value, labels]);
+  const { data: expenseResponse } = useGetExpensesQuery(params);
+  const expenseData = expenseResponse?.data ?? [];
+  const expense = expenseResponse?.totalExpense ?? [];
+
+  const { l1Options, l2Options, l3Options } = useLabelCascade(
+    labels,
+    { l1: L1Value, l2: L2Value, l3: L3Value },
+    3
+  );
+  const ObOptions = onBehalfUsers?.options ?? [];
+  const UserKey = onBehalfUsers?.userKeyByName ?? {};
 
   const L1_Handler = (e) => {
     setL1Value(e.target.value);
-    let tparams = Object.assign({}, params);
-    tparams['L1'] = e.target.value;
+    const tparams = { ...params };
     if (e.target.value === '*') {
       delete tparams.L1;
+    } else {
+      tparams.L1 = e.target.value;
     }
     setParams(tparams);
-  }
+  };
   const L2_Handler = (e) => {
     setL2Value(e.target.value);
-    let tparams = Object.assign({}, params);
-    tparams['L2'] = e.target.value;
+    const tparams = { ...params };
     if (e.target.value === '*') {
       delete tparams.L2;
+    } else {
+      tparams.L2 = e.target.value;
     }
     setParams(tparams);
-  }
+  };
   const L3_Handler = (e) => {
     setL3Value(e.target.value);
-    let tparams = Object.assign({}, params);
-    tparams['L3'] = e.target.value;
+    const tparams = { ...params };
     if (e.target.value === '*') {
       delete tparams.L3;
+    } else {
+      tparams.L3 = e.target.value;
     }
     setParams(tparams);
-  }
+  };
 
   const OnBehalf_Handler = (e) => {
     setObValue(e.target.value);
-    let tparams = Object.assign({}, params);
-    tparams['userKey'] = UserKey[e.target.value];
+    const tparams = { ...params };
     if (e.target.value === '*') {
       delete tparams.userKey;
+    } else {
+      tparams.userKey = UserKey[e.target.value];
     }
     setParams(tparams);
-  }
+  };
 
   return (
-    <ThemeProvider theme={theme} >
-      <Box sx={{ height: '100%', width: '100%', overflow: 'auto', padding: 2 }}>
-        {/*mobile view*/}
+    <Box sx={{ height: '100%', width: '100%', overflow: 'auto', padding: 2 }}>
         <Stack direction="column" spacing={2} sx={{ display: { xs: 'flex', sm: 'none' } }}>
           <Stack direction="row" sx={{ display: 'flex' }} spacing={2} >
             <Box sx={{ display: 'flex' }}>
@@ -170,15 +136,14 @@ export default function ConstructionExpenseDetails() {
             </Box>
           </Stack>
           <Stack direction="row" sx={{ display: 'flex' }} spacing={2} >
-            <DropDown id='L1' p={2.5} boxShadow={5} options={L1Options} value={L1Value} handler={L1_Handler} label={"L1"} />
-            <DropDown id='L2' p={2.5} boxShadow={5} options={L2Options} value={L2Value} handler={L2_Handler} label={"L2"} />
+            <DropDown id='L1' p={2.5} boxShadow={5} options={l1Options} value={L1Value} handler={L1_Handler} label={"L1"} />
+            <DropDown id='L2' p={2.5} boxShadow={5} options={l2Options} value={L2Value} handler={L2_Handler} label={"L2"} />
           </Stack>
           <Stack direction="row" sx={{ display: 'flex' }} spacing={2}>
-            <DropDown id='L3' p={2.5} boxShadow={5} options={L3Options} value={L3Value} handler={L3_Handler} label={"L3"} />
+            <DropDown id='L3' p={2.5} boxShadow={5} options={l3Options} value={L3Value} handler={L3_Handler} label={"L3"} />
             <DropDown id='Onbehalf' p={2.5} boxShadow={5} options={ObOptions} value={ObValue} handler={OnBehalf_Handler} label={"Onbehalf"} />
           </Stack>
         </Stack>
-        {/*desktop view*/}
         <Stack direction="row" spacing={2} sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center' }} >
           <Box sx={{ display: 'flex' }} style={{ alignSelf: 'flex-start' }}>
             <Card variant="outlined" sx={{ boxShadow: 5 }}>
@@ -188,29 +153,17 @@ export default function ConstructionExpenseDetails() {
             </Card>
           </Box>
           <Stack style={{ marginLeft: 'auto' }} direction="row" spacing={2}>
-            <DropDown id='L1' p={1} boxShadow={5} options={L1Options} value={L1Value} handler={L1_Handler} label={"L1"} />
-            <DropDown id='L2' p={1} boxShadow={5} options={L2Options} value={L2Value} handler={L2_Handler} label={"L2"} />
-            <DropDown id='L3' p={1} boxShadow={5} options={L3Options} value={L3Value} handler={L3_Handler} label={"L3"} />
+            <DropDown id='L1' p={1} boxShadow={5} options={l1Options} value={L1Value} handler={L1_Handler} label={"L1"} />
+            <DropDown id='L2' p={1} boxShadow={5} options={l2Options} value={L2Value} handler={L2_Handler} label={"L2"} />
+            <DropDown id='L3' p={1} boxShadow={5} options={l3Options} value={L3Value} handler={L3_Handler} label={"L3"} />
             <DropDown id='Onbehalf' p={1} boxShadow={5} options={ObOptions} value={ObValue} handler={OnBehalf_Handler} label={"Onbehalf"} />
           </Stack>
-
         </Stack>
         <Box sx={{ marginTop: 2, boxShadow: 5, boxDecorationBreak: 2 }}>
           <div
-            className="ag-theme-quartz" // applying the Data Grid theme
-            style={{ height: 1000 }} // the Data Grid will fill the size of the parent container
+            className="ag-theme-quartz"
+            style={{ height: 1000 }}
           >
-            {
-              /*
-              <DataGrid
-            getRowId={(row)=>row.Expense_Note}
-            rows={expenseData}
-            columns={columns}
-            disableColumnFilter
-            pagination={false}
-          />
-              */ 
-            }
             <AgGridReact
               rowData={expenseData}
               columnDefs={colDefs}
@@ -218,7 +171,5 @@ export default function ConstructionExpenseDetails() {
           </div>
         </Box>
       </Box>
-    </ThemeProvider>
-
   );
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState} from 'react';
+import { useRef } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,14 +12,12 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from '../../assets/theme';
-import API from '../../services/API';
+import CircularProgress from '@mui/material/CircularProgress';
 import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux';
+import { useLoginMutation } from '../../stores/api/authApi';
+import { showSnackbar } from '../../stores/slices/snackbarSlice';
 
 function Copyright(props) {
   return (
@@ -34,44 +32,43 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
 export default function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const expiryTimerRef = useRef(null);
+  const [login, { isLoading }] = useLoginMutation();
+
+  React.useEffect(() => {
+    return () => {
+      if (expiryTimerRef.current) {
+        clearTimeout(expiryTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    try{
-      const resp = await API.SubmitLogin({
-        "user-id": data.get('user-id'),
-        "password": data.get('password'),
-      });
-      const { expiryMinutes } = resp.data;
+    try {
+      const resp = await login({
+        'user-id': data.get('user-id'),
+        password: data.get('password'),
+      }).unwrap();
+      dispatch(showSnackbar({ message: 'Login successful', type: 'success' }));
       navigate('/page/home');
-      setInterval(() => {
+      expiryTimerRef.current = setTimeout(() => {
         navigate('/page/login');
-      }, expiryMinutes * 60 * 1000);
-    } catch (error)
-    {
-      setFormError(`${error.response.status} ${error.response.statusText} error`);
-      setIsFormError(true); 
+      }, resp.expiryMinutes * 60 * 1000);
+    } catch (error) {
+      const message = error?.status
+        ? `${error.status} error`
+        : 'Login failed';
+      dispatch(showSnackbar({ message, type: 'error' }));
     }
   };
 
-  const [isFormError, setIsFormError] = useState(false);
-  const [formError,setFormError] = useState('');
-  const handleCloseError = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setIsFormError(false);
-    setFormError('');
-  };
-  
-  const { vertical, horizontal} = {vertical:'bottom',horizontal:'right'};
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
@@ -117,8 +114,9 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
             </Button>
             <Grid container>
               <Grid item xs>
@@ -132,15 +130,9 @@ export default function SignIn() {
                 </Link>
               </Grid>
             </Grid>
-            <Snackbar open={isFormError} anchorOrigin={{vertical,horizontal}} autoHideDuration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                  {formError}
-                </Alert>
-            </Snackbar>
           </Form>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
-    </ThemeProvider>
   );
 }

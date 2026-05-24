@@ -11,11 +11,6 @@ on:
     paths:
       - backend-api/**
       - .github/workflows/backend_dev.yml
-  pull_request:
-    types: [closed]
-    branches:
-      - dev
-  
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api 

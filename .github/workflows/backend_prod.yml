@@ -12,11 +12,6 @@ on:
       - backend-api/**
       - .github/workflows/backend_prod.yml
 
-  pull_request:
-    types: [closed]
-    branches:
-      - main
-
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api 
   GO_VERSION: '1.20.4' 

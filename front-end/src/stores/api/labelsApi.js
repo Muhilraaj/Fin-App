@@ -10,14 +10,17 @@ export const labelsApi = createApi({
     getExpenseLabels: builder.query({
       query: () => '/labels/expense',
       providesTags: [{ type: 'Labels', id: 'expense' }],
+      keepUnusedDataFor: 3600,
     }),
     getConstructionLabels: builder.query({
       query: () => '/labels/construction',
       providesTags: [{ type: 'Labels', id: 'construction' }],
+      keepUnusedDataFor: 3600,
     }),
     getIncomeLabels: builder.query({
       query: () => '/labels/income',
       providesTags: [{ type: 'Labels', id: 'income' }],
+      keepUnusedDataFor: 3600,
     }),
   }),
 });

@@ -22,7 +22,7 @@ import { useDispatch } from 'react-redux';
 import { useGetIncomeLabelsQuery } from '../../stores/api/labelsApi';
 import { useSubmitIncomeMutation } from '../../stores/api/incomeApi';
 import { showSnackbar } from '../../stores/slices/snackbarSlice';
-import { useLabelCascade } from '../../hooks/useLabelCascade';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 
 function IncomeForm() {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ function IncomeForm() {
   const [datetimeError, setdatetimeError] = useState(null);
   const [datetimestateError, setdatetimestateError] = useState(false);
 
-  const { l1Options, l2Options } = useLabelCascade(
+  const { l1Options, l2Options, selectedLabelId } = useLabelFilter(
     labels,
     { l1: L1Value, l2: L2Value },
     2
@@ -130,8 +130,7 @@ function IncomeForm() {
     if (!(ps | l1s | l2s) && datetimeError === null && event.target[8].value !== '') {
       const payload = {
         Income: event.target.amount.value,
-        L1: event.target[2].value,
-        L2: event.target[4].value,
+        Label_key: selectedLabelId,
         Income_Note: event.target.Comments.value,
         Timestamp: formatDatetime(DatetimeValue),
       };

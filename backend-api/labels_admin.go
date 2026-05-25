@@ -3,7 +3,6 @@ package main
 import (
 	"api/auth"
 	"api/cosmosconfig"
-	"api/labelsync"
 	"fmt"
 	"net/http"
 	"strings"
@@ -70,10 +69,6 @@ func postAdminExpenseLabel(c *gin.Context) {
 	}
 
 	custom := strings.TrimSpace(fmt.Sprint(body["Custom"]))
-	scope := "regular"
-	if custom == "Construction" {
-		scope = "construction"
-	}
 
 	existing := cosmosconfig.FindExpenseLabelByPath(fields["L1"], fields["L2"], fields["L3"], custom)
 	if len(existing) > 0 {
@@ -94,10 +89,6 @@ func postAdminExpenseLabel(c *gin.Context) {
 
 	if err := cosmosconfig.CreateLabel(item); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create label"})
-		return
-	}
-	if err := labelsync.RebuildExpenseScope(scope); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "label created but blob sync failed"})
 		return
 	}
 
@@ -132,10 +123,6 @@ func putAdminExpenseLabel(c *gin.Context) {
 	if val, ok := existing["Custom"]; ok && val != nil {
 		custom = fmt.Sprint(val)
 	}
-	scope := "regular"
-	if custom == "Construction" {
-		scope = "construction"
-	}
 
 	conflicts := cosmosconfig.FindExpenseLabelByPathExcludingID(fields["L1"], fields["L2"], fields["L3"], custom, id)
 	if len(conflicts) > 0 {
@@ -149,10 +136,6 @@ func putAdminExpenseLabel(c *gin.Context) {
 
 	if err := cosmosconfig.ReplaceLabel(existing); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update label"})
-		return
-	}
-	if err := labelsync.RebuildExpenseScope(scope); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "label updated but blob sync failed"})
 		return
 	}
 
@@ -171,15 +154,6 @@ func deleteAdminExpenseLabel(c *gin.Context) {
 		return
 	}
 
-	custom := ""
-	if val, ok := existing["Custom"]; ok && val != nil {
-		custom = fmt.Sprint(val)
-	}
-	scope := "regular"
-	if custom == "Construction" {
-		scope = "construction"
-	}
-
 	count := cosmosconfig.CountExpenseByLabelKey(id)
 	if count > 0 {
 		c.JSON(http.StatusConflict, gin.H{"error": fmt.Sprintf("label is used by %d transactions", count)})
@@ -188,10 +162,6 @@ func deleteAdminExpenseLabel(c *gin.Context) {
 
 	if err := cosmosconfig.DeleteLabel(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete label"})
-		return
-	}
-	if err := labelsync.RebuildExpenseScope(scope); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "label deleted but blob sync failed"})
 		return
 	}
 
@@ -241,10 +211,6 @@ func postAdminIncomeLabel(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create label"})
 		return
 	}
-	if err := labelsync.RebuildIncomeBlob(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "label created but blob sync failed"})
-		return
-	}
 
 	setAdminCORS(c, "POST")
 	c.JSON(http.StatusCreated, item)
@@ -286,10 +252,6 @@ func putAdminIncomeLabel(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update label"})
 		return
 	}
-	if err := labelsync.RebuildIncomeBlob(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "label updated but blob sync failed"})
-		return
-	}
 
 	setAdminCORS(c, "PUT")
 	c.JSON(http.StatusOK, existing)
@@ -313,10 +275,6 @@ func deleteAdminIncomeLabel(c *gin.Context) {
 
 	if err := cosmosconfig.DeleteIncomeLabel(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete label"})
-		return
-	}
-	if err := labelsync.RebuildIncomeBlob(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "label deleted but blob sync failed"})
 		return
 	}
 

@@ -9,6 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func parseOnBehalfFields(body map[string]interface{}) (onBehalf, name, relationship string, valid bool) {
+	onBehalf = strings.TrimSpace(fmt.Sprint(body["On-Behalf"]))
+	name = strings.TrimSpace(fmt.Sprint(body["Name"]))
+	relationship = strings.TrimSpace(fmt.Sprint(body["Relationship"]))
+	return onBehalf, name, relationship, onBehalf != "" && name != "" && relationship != ""
+}
+
 func getAdminOnBehalfUsers(c *gin.Context) {
 	if !requireAuth(c) {
 		return
@@ -29,13 +36,13 @@ func postAdminOnBehalfUser(c *gin.Context) {
 		return
 	}
 
-	name := strings.TrimSpace(fmt.Sprint(body["name"]))
-	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
+	onBehalf, name, relationship, valid := parseOnBehalfFields(body)
+	if !valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "On-Behalf, Name, and Relationship are required"})
 		return
 	}
 
-	item, err := cosmosconfig.CreateOnBehalf(name)
+	item, err := cosmosconfig.CreateOnBehalf(onBehalf, name, relationship)
 	if err != nil {
 		if err.Error() == "on-behalf user already exists" {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
@@ -66,13 +73,13 @@ func putAdminOnBehalfUser(c *gin.Context) {
 		return
 	}
 
-	name := strings.TrimSpace(fmt.Sprint(body["name"]))
-	if name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "name is required"})
+	onBehalf, name, relationship, valid := parseOnBehalfFields(body)
+	if !valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "On-Behalf, Name, and Relationship are required"})
 		return
 	}
 
-	item, err := cosmosconfig.UpdateOnBehalf(id, name)
+	item, err := cosmosconfig.UpdateOnBehalf(id, onBehalf, name, relationship)
 	if err != nil {
 		switch err.Error() {
 		case "on-behalf user not found":

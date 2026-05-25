@@ -176,14 +176,23 @@ func postExpense(c *gin.Context) {
 		panic(err)
 	}
 	result["Timestamp"] = parsedTime.Format(output_format)
-	userKey := ""
-	if val, ok := expense["User_key"]; ok && val != nil {
-		userKey = strings.TrimSpace(fmt.Sprint(val))
+	onBehalfName := strings.TrimSpace(fmt.Sprint(expense["Onbehalf"]))
+	userKey := strings.TrimSpace(fmt.Sprint(expense["User_key"]))
+	if onBehalfName == "" || onBehalfName == "*" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "on-behalf user is required"})
+		return
 	}
 	if userKey == "" {
-		userKey = customHash(fmt.Sprint(expense["Onbehalf"]))
-	} else if cosmosconfig.GetOnBehalfByID(userKey) == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User_key is required"})
+		return
+	}
+	onBehalfUser := cosmosconfig.GetOnBehalfByID(userKey)
+	if onBehalfUser == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "on-behalf user not found"})
+		return
+	}
+	if strings.TrimSpace(fmt.Sprint(onBehalfUser["On-Behalf"])) != onBehalfName {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "on-behalf user does not match"})
 		return
 	}
 	result["User_key"] = userKey

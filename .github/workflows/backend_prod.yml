@@ -11,11 +11,7 @@ on:
     paths:
       - backend-api/**
       - .github/workflows/backend_prod.yml
-
-  pull_request:
-    types: [closed]
-    branches:
-      - main
+  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api 
@@ -40,8 +36,12 @@ jobs:
         run: |
           cd backend-api
           export CGO_ENABLED=0
-          go build -o handler handler.go
-          
+          export GOOS=linux
+          export GOARCH=amd64
+          go build -o handler .
+          chmod +x handler
+          test -f handler
+          file handler
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -62,6 +62,13 @@ jobs:
         with:
           name: go-app
           path: backend-api
+
+      - name: Prepare handler binary
+        run: |
+          chmod +x backend-api/handler
+          test -x backend-api/handler
+          ls -la backend-api/handler
+          file backend-api/handler
 
       - name: "Login"
         uses: azure/login@v1

@@ -186,21 +186,27 @@ def UpdateExpense(id,key,value):
             result=i
     result[key]=value
     container.replace_item(item=result,body=result)
+
+def UpdateExpenseByLabelId(old_label_id,key,value):
+    global container,database
+    database=client.get_database_client('Fact')
+    container=database.get_container_client('Expense')
+    query = "SELECT * FROM c WHERE c.Label_key = '%s' and c.pk=1"%old_label_id
+    items= list(container.read_all_items())
+    result=''
+    for i in items:
+        if i['Label_key']==old_label_id:
+            i[key]=value
+            container.replace_item(item=i,body=i)
+            print(f"Updated Expense ID: {i['id']}")
     
 
 
-data={
-    "L1":"Living Costs",
-    "L2":"Groceries",
-    "L3":"Dairy Products",
+'''data={
+    "L1":"Others",
+    "L2":"Banking",
+    "L3":"Acc",
     "Active": "Y"
 }
 
-AddLabel(data)
-
-
-
-
-
-#UpdateExpense('3e744263e33fd7cae6d8b8e8ff42afa39bd26805844057ef5f6f90a40b7501ea','Label_key','8bbf6d0c37082f998b816b860c3f559c7e67d542f0b370f82125362808ed6694')
-
+AddLabel(data)'''

@@ -46,6 +46,7 @@ function ExpenseForm() {
     3
   );
   const ObOptions = onBehalfUsers?.options ?? [];
+  const userKeyByName = onBehalfUsers?.userKeyByName ?? {};
 
   const resetForm = () => {
     setL3Value('*');
@@ -147,10 +148,12 @@ function ExpenseForm() {
       setdatetimestateError(false);
     }
     if (!(ps | l1s | l2s | l3s | behalfError | obs) && datetimeError === null && event.target[12].value !== '') {
+      const onBehalfName = event.target[8].value;
       const payload = {
         Expense: event.target.amount.value,
         Label_key: selectedLabelId,
-        Onbehalf: event.target[8].value,
+        Onbehalf: onBehalfName,
+        User_key: userKeyByName[onBehalfName],
         Expense_Note: event.target.Comments.value,
         Timestamp: formatDatetime(DatetimeValue),
       };

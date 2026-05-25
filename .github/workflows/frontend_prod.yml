@@ -7,13 +7,6 @@ on:
     paths:
       - front-end/**
       - .github/workflows/frontend_prod.yml
-  pull_request:
-    branches:
-      - main
-    paths:
-      - front-end/**
-      - .github/workflows/frontend_prod.yml
-    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 concurrency:
@@ -22,7 +15,6 @@ concurrency:
 
 jobs:
   deploy_production:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     name: Deploy Production
     steps:
@@ -30,27 +22,6 @@ jobs:
         with:
           submodules: true
       - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_COAST_08236E510 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "front-end"
-          api_location: ""
-          output_location: "build"
-        env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-
-  deploy_preview:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    name: Deploy Preview
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - name: Build And Deploy Preview
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:

@@ -176,7 +176,17 @@ func postExpense(c *gin.Context) {
 		panic(err)
 	}
 	result["Timestamp"] = parsedTime.Format(output_format)
-	result["User_key"] = customHash(fmt.Sprint(expense["Onbehalf"]))
+	userKey := ""
+	if val, ok := expense["User_key"]; ok && val != nil {
+		userKey = strings.TrimSpace(fmt.Sprint(val))
+	}
+	if userKey == "" {
+		userKey = customHash(fmt.Sprint(expense["Onbehalf"]))
+	} else if cosmosconfig.GetOnBehalfByID(userKey) == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "on-behalf user not found"})
+		return
+	}
+	result["User_key"] = userKey
 	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], result["Label_key"], result["User_key"]))
 	result["pk"] = 1
 
@@ -462,6 +472,7 @@ func main() {
 	route.GET("api/checkCookie", checkToken)
 	route.GET("api/labels/*path", getLabel)
 	registerAdminLabelRoutes(route)
+	registerAdminOnBehalfRoutes(route)
 	route.POST("api/expense", postExpense)
 	route.GET("api/expense", getExpense)
 	route.GET("api/income", getIncome)

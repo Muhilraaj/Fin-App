@@ -11,6 +11,7 @@ import ConstructionExpenseForm from '../InputForm/ConstructionExpenseForm';
 import ConstructionExpenseDetails from '../Analytics/ConstructionExpenseDetails';
 import ManageExpenseLabels from '../Labels/ManageExpenseLabels';
 import ManageIncomeLabels from '../Labels/ManageIncomeLabels';
+import ManageOnBehalf from '../OnBehalf/ManageOnBehalf';
 import SnackbarWrapper from '../../components/SnackbarWrapper';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/page/incomeDetails" element={<IncomeDetails />} />
           <Route path="/page/manageLabels/expense" element={<ManageExpenseLabels />} />
           <Route path="/page/manageLabels/income" element={<ManageIncomeLabels />} />
+          <Route path="/page/manageOnBehalf" element={<ManageOnBehalf />} />
         </Route>
       </Routes>
       <SnackbarWrapper />

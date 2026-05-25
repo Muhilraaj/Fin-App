@@ -4,6 +4,7 @@ import ConstructionIcon from '@mui/icons-material/Construction';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import LabelIcon from '@mui/icons-material/Label';
+import PeopleIcon from '@mui/icons-material/People';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 export const DRAWER_WIDTH = 260;
@@ -35,11 +36,12 @@ export const navGroups = [
     ],
   },
   {
-    id: 'labels',
-    label: 'Manage labels',
+    id: 'settings',
+    label: 'Settings',
     items: [
       { label: 'Expense labels', path: '/page/manageLabels/expense', title: 'Expense Labels', icon: LabelIcon },
       { label: 'Income labels', path: '/page/manageLabels/income', title: 'Income Labels', icon: LabelIcon },
+      { label: 'On-behalf', path: '/page/manageOnBehalf', title: 'On-Behalf', icon: PeopleIcon },
     ],
   },
 ];

@@ -1,15 +1,10 @@
 import Form from 'react-bootstrap/Form';
 import dayjs from 'dayjs';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import React from 'react';
@@ -174,27 +169,9 @@ function ConstructionExpenseForm() {
   };
 
   return (
-    <Stack spacing={5} direction="column">
-        <AppBar position="static" width="100%">
-          <Toolbar variant="dense">
-            <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" color="inherit" component="div">
-              Construction Expense
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box sx={{ display: 'flex' }} p={4}
-          justifyContent="center"
-          alignItems="center"
-          display="flex"
-        >
-          <Box sx={{ display: 'flex' }} p={4}
-            display="flex"
-            border='solid'
-          >
-            <Form onSubmit={handleSubmit}>
+    <Box display="flex" justifyContent="center">
+      <Box p={3} border="solid" borderColor="divider" borderRadius={1} bgcolor="background.paper">
+        <Form onSubmit={handleSubmit}>
               <Stack direction="column" spacing={2}>
                 <FormControl error={priceError}>
                   <InputLabel htmlFor="amount">Expense</InputLabel>
@@ -226,9 +203,8 @@ function ConstructionExpenseForm() {
               </Stack>
               <FormHelperText error={datetimestateError}>{datetimestateError ? 'Datetime cannot be empty' : ''}</FormHelperText>
             </Form>
-          </Box>
-        </Box>
-      </Stack>
+      </Box>
+    </Box>
   );
 }
 

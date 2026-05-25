@@ -124,10 +124,14 @@ export default function ManageExpenseLabels() {
           <IconButton edge="start" color="inherit" onClick={() => navigate('/page/home')}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Manage Expense Labels
+          <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
+            Expense Labels
           </Typography>
-          <Button color="inherit" onClick={() => { setEditingRow(null); setDialogOpen(true); }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => { setEditingRow(null); setDialogOpen(true); }}
+          >
             Add Label
           </Button>
         </Toolbar>
@@ -135,8 +139,15 @@ export default function ManageExpenseLabels() {
 
       <Box p={4} flex={1}>
         <Stack spacing={3}>
-          <Tabs value={scope} onChange={(_, value) => { setScope(value); setSearch(''); }}>
-            <Tab value="regular" label="Regular Expense" />
+          <Tabs
+            value={scope}
+            onChange={(_, value) => { setScope(value); setSearch(''); }}
+            TabIndicatorProps={{ sx: { bgcolor: 'secondary.main' } }}
+            sx={{
+              '& .MuiTab-root.Mui-selected': { color: 'secondary.main' },
+            }}
+          >
+            <Tab value="regular" label="Regular" />
             <Tab value="construction" label="Construction" />
           </Tabs>
 
@@ -175,8 +186,9 @@ export default function ManageExpenseLabels() {
 
       <LabelFormDialog
         open={dialogOpen}
-        title={editingRow ? 'Edit Expense Label' : 'Add Expense Label'}
         depth={3}
+        labels={data}
+        isEdit={Boolean(editingRow)}
         initialValues={editingRow ?? {}}
         onClose={() => { setDialogOpen(false); setEditingRow(null); }}
         onSubmit={handleSave}
@@ -184,7 +196,7 @@ export default function ManageExpenseLabels() {
       />
 
       <Dialog open={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)}>
-        <DialogTitle>Delete label?</DialogTitle>
+        <DialogTitle>Delete Label?</DialogTitle>
         <DialogContent>
           Delete {deleteTarget?.L1} / {deleteTarget?.L2} / {deleteTarget?.L3}?
         </DialogContent>

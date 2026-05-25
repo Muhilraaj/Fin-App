@@ -119,10 +119,14 @@ export default function ManageIncomeLabels() {
           <IconButton edge="start" color="inherit" onClick={() => navigate('/page/home')}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Manage Income Labels
+          <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
+            Income Labels
           </Typography>
-          <Button color="inherit" onClick={() => { setEditingRow(null); setDialogOpen(true); }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => { setEditingRow(null); setDialogOpen(true); }}
+          >
             Add Label
           </Button>
         </Toolbar>
@@ -165,8 +169,9 @@ export default function ManageIncomeLabels() {
 
       <LabelFormDialog
         open={dialogOpen}
-        title={editingRow ? 'Edit Income Label' : 'Add Income Label'}
         depth={2}
+        labels={data}
+        isEdit={Boolean(editingRow)}
         initialValues={editingRow ?? {}}
         onClose={() => { setDialogOpen(false); setEditingRow(null); }}
         onSubmit={handleSave}
@@ -174,7 +179,7 @@ export default function ManageIncomeLabels() {
       />
 
       <Dialog open={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)}>
-        <DialogTitle>Delete label?</DialogTitle>
+        <DialogTitle>Delete Label?</DialogTitle>
         <DialogContent>
           Delete {deleteTarget?.L1} / {deleteTarget?.L2}?
         </DialogContent>

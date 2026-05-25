@@ -105,12 +105,21 @@ func postExpense(c *gin.Context) {
 		return
 	}
 	var result = make(map[string]interface{})
+	l1 := fmt.Sprint(expense["L1"])
+	l2 := fmt.Sprint(expense["L2"])
+	l3 := fmt.Sprint(expense["L3"])
+	var labels []map[string]interface{}
 	if ecust := expense["Custom"]; ecust != nil {
 		result["Custom"] = expense["Custom"]
-		result["Label_key"] = customHash(fmt.Sprintf("%v%v%v%v", expense["L1"], expense["L2"], expense["L3"], expense["Custom"]))
+		labels = cosmosconfig.FindExpenseLabelByPath(l1, l2, l3, fmt.Sprint(ecust))
 	} else {
-		result["Label_key"] = customHash(fmt.Sprintf("%v%v%v", expense["L1"], expense["L2"], expense["L3"]))
+		labels = cosmosconfig.FindExpenseLabelByPath(l1, l2, l3, "")
 	}
+	if len(labels) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "label path not found"})
+		return
+	}
+	result["Label_key"] = labels[0]["id"]
 	result["Expense"] = expense["Expense"]
 	result["Expense_Note"] = expense["Expense_Note"]
 	input_format := "01/02/2006 15:04:05"
@@ -122,7 +131,7 @@ func postExpense(c *gin.Context) {
 	}
 	result["Timestamp"] = parsedTime.Format(output_format)
 	result["User_key"] = customHash(fmt.Sprint(expense["Onbehalf"]))
-	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], expense["Label_key"], expense["User_key"]))
+	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], result["Label_key"], result["User_key"]))
 	result["pk"] = 1
 
 	err = cosmosconfig.CreateExpense(result)
@@ -165,8 +174,15 @@ func postIncome(c *gin.Context) {
 		panic(err)
 	}
 	result["Timestamp"] = parsedTime.Format(output_format)
-	result["Label_key"] = customHash(fmt.Sprintf("%v%v", income["L1"], income["L2"]))
-	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], income["Label_key"]))
+	l1 := fmt.Sprint(income["L1"])
+	l2 := fmt.Sprint(income["L2"])
+	labels := cosmosconfig.FindIncomeLabelByPath(l1, l2)
+	if len(labels) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "label path not found"})
+		return
+	}
+	result["Label_key"] = labels[0]["id"]
+	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], result["Label_key"]))
 	result["pk"] = 1
 
 	err = cosmosconfig.CreateIncome(result)
@@ -376,6 +392,7 @@ func main() {
 	route.GET("api/user", getUser)
 	route.GET("api/checkCookie", checkToken)
 	route.GET("api/labels/*path", getLabel)
+	registerAdminLabelRoutes(route)
 	route.POST("api/expense", postExpense)
 	route.GET("api/expense", getExpense)
 	route.GET("api/income", getIncome)

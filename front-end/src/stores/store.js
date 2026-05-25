@@ -4,6 +4,7 @@ import { labelsApi } from './api/labelsApi';
 import { usersApi } from './api/usersApi';
 import { expenseApi } from './api/expenseApi';
 import { incomeApi } from './api/incomeApi';
+import { labelsAdminApi } from './api/labelsAdminApi';
 import snackbarReducer from './slices/snackbarSlice';
 
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
     [usersApi.reducerPath]: usersApi.reducer,
     [expenseApi.reducerPath]: expenseApi.reducer,
     [incomeApi.reducerPath]: incomeApi.reducer,
+    [labelsAdminApi.reducerPath]: labelsAdminApi.reducer,
     snackbar: snackbarReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -22,6 +24,7 @@ const store = configureStore({
       usersApi.middleware,
       expenseApi.middleware,
       incomeApi.middleware,
+      labelsAdminApi.middleware,
     ]),
 });
 

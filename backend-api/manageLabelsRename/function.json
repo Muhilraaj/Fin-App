@@ -5,9 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "manage-labels/{scope}",
+      "route": "manage-labels/{scope}/rename",
       "methods": [
-        "get",
         "post",
         "patch",
         "options"

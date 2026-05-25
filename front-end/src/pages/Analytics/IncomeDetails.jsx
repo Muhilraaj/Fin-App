@@ -12,7 +12,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { useGetIncomeLabelsQuery } from '../../stores/api/labelsApi';
 import { useGetIncomeQuery } from '../../stores/api/incomeApi';
-import { useLabelCascade } from '../../hooks/useLabelCascade';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 
 const columns = [
   {
@@ -60,7 +60,7 @@ export default function IncomeDetails() {
   const incomeData = incomeResponse?.data ?? [];
   const income = incomeResponse?.totalIncome ?? [];
 
-  const { l1Options, l2Options } = useLabelCascade(
+  const { l1Options, l2Options } = useLabelFilter(
     labels,
     { l1: L1Value, l2: L2Value },
     2

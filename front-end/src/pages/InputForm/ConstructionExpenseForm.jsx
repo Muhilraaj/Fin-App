@@ -23,7 +23,7 @@ import { useGetConstructionLabelsQuery } from '../../stores/api/labelsApi';
 import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
 import { useSubmitExpenseMutation } from '../../stores/api/expenseApi';
 import { showSnackbar } from '../../stores/slices/snackbarSlice';
-import { useLabelCascade } from '../../hooks/useLabelCascade';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 
 function ConstructionExpenseForm() {
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ function ConstructionExpenseForm() {
   const [datetimeError, setdatetimeError] = useState(null);
   const [datetimestateError, setdatetimestateError] = useState(false);
 
-  const { l1Options, l2Options, l3Options } = useLabelCascade(
+  const { l1Options, l2Options, l3Options, selectedLabelId } = useLabelFilter(
     labels,
     { l1: L1Value, l2: L2Value, l3: L3Value },
     3
@@ -154,9 +154,7 @@ function ConstructionExpenseForm() {
     if (!(ps | l1s | l2s | l3s | behalfError | obs) && datetimeError === null && event.target[12].value !== '') {
       const payload = {
         Expense: event.target.amount.value,
-        L1: event.target[2].value,
-        L2: event.target[4].value,
-        L3: event.target[6].value,
+        Label_key: selectedLabelId,
         Onbehalf: event.target[8].value,
         Expense_Note: event.target.Comments.value,
         Timestamp: formatDatetime(DatetimeValue),

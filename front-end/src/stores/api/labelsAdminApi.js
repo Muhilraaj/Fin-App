@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { labelsApi } from './labelsApi';
 
 const baseUrl = process.env.REACT_APP_API_URL + '/api';
+
+function invalidateLabelCache(dispatch, labelId) {
+  dispatch(labelsApi.util.invalidateTags([{ type: 'Labels', id: labelId }]));
+}
 
 export const labelsAdminApi = createApi({
   reducerPath: 'labelsAdminApi',
@@ -23,8 +28,11 @@ export const labelsAdminApi = createApi({
       }),
       invalidatesTags: (_result, _error, body) => [
         { type: 'AdminLabels', id: `expense-${body.Custom === 'Construction' ? 'construction' : 'regular'}` },
-        { type: 'Labels', id: body.Custom === 'Construction' ? 'construction' : 'expense' },
       ],
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        invalidateLabelCache(dispatch, body.Custom === 'Construction' ? 'construction' : 'expense');
+      },
     }),
     updateExpenseLabel: builder.mutation({
       query: ({ id, body }) => ({
@@ -34,8 +42,11 @@ export const labelsAdminApi = createApi({
       }),
       invalidatesTags: (_result, _error, { scope }) => [
         { type: 'AdminLabels', id: `expense-${scope}` },
-        { type: 'Labels', id: scope === 'construction' ? 'construction' : 'expense' },
       ],
+      async onQueryStarted({ scope }, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        invalidateLabelCache(dispatch, scope === 'construction' ? 'construction' : 'expense');
+      },
     }),
     deleteExpenseLabel: builder.mutation({
       query: ({ id, scope }) => ({
@@ -44,8 +55,11 @@ export const labelsAdminApi = createApi({
       }),
       invalidatesTags: (_result, _error, { scope }) => [
         { type: 'AdminLabels', id: `expense-${scope}` },
-        { type: 'Labels', id: scope === 'construction' ? 'construction' : 'expense' },
       ],
+      async onQueryStarted({ scope }, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        invalidateLabelCache(dispatch, scope === 'construction' ? 'construction' : 'expense');
+      },
     }),
     createIncomeLabel: builder.mutation({
       query: (body) => ({
@@ -53,10 +67,11 @@ export const labelsAdminApi = createApi({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [
-        { type: 'AdminLabels', id: 'income' },
-        { type: 'Labels', id: 'income' },
-      ],
+      invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
+      async onQueryStarted(_body, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        invalidateLabelCache(dispatch, 'income');
+      },
     }),
     updateIncomeLabel: builder.mutation({
       query: ({ id, body }) => ({
@@ -64,20 +79,22 @@ export const labelsAdminApi = createApi({
         method: 'PUT',
         body,
       }),
-      invalidatesTags: [
-        { type: 'AdminLabels', id: 'income' },
-        { type: 'Labels', id: 'income' },
-      ],
+      invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        invalidateLabelCache(dispatch, 'income');
+      },
     }),
     deleteIncomeLabel: builder.mutation({
       query: (id) => ({
         url: `/manage-labels/income/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: [
-        { type: 'AdminLabels', id: 'income' },
-        { type: 'Labels', id: 'income' },
-      ],
+      invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
+      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        invalidateLabelCache(dispatch, 'income');
+      },
     }),
   }),
 });

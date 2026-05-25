@@ -1,11 +1,7 @@
-import React, { useMemo, useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import React, { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -14,7 +10,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -28,6 +23,7 @@ import {
   useRenameIncomeLabelMutation,
 } from '../../stores/api/labelsAdminApi';
 import { showSnackbar } from '../../stores/slices/snackbarSlice';
+import { usePageActions } from '../../components/layout/PageActionsContext';
 import LabelFormDialog from './LabelFormDialog';
 
 const incomeColumns = [
@@ -48,8 +44,8 @@ function filterRows(rows, { l1, l2, search }) {
 }
 
 export default function ManageIncomeLabels() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { setActions } = usePageActions();
   const [filterL1, setFilterL1] = useState('*');
   const [filterL2, setFilterL2] = useState('*');
   const [search, setSearch] = useState('');
@@ -143,28 +139,21 @@ export default function ManageIncomeLabels() {
     }
   };
 
-  return (
-    <Box display="flex" flexDirection="column" minHeight="100vh">
-      <AppBar position="static">
-        <Toolbar variant="dense">
-          <IconButton edge="start" color="inherit" onClick={() => navigate('/page/home')}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
-            Income Labels
-          </Typography>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => { setEditingRow(null); setDialogOpen(true); }}
-          >
-            Add Label
-          </Button>
-        </Toolbar>
-      </AppBar>
+  useEffect(() => {
+    setActions(
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => { setEditingRow(null); setDialogOpen(true); }}
+      >
+        Add Label
+      </Button>
+    );
+    return () => setActions(null);
+  }, [setActions]);
 
-      <Box p={4} flex={1}>
-        <Stack spacing={3}>
+  return (
+    <Stack spacing={3}>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
             <DropDown
               id="filter-l1"
@@ -216,9 +205,6 @@ export default function ManageIncomeLabels() {
               />
             </Box>
           )}
-        </Stack>
-      </Box>
-
       <LabelFormDialog
         open={dialogOpen}
         depth={2}
@@ -242,6 +228,6 @@ export default function ManageIncomeLabels() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </Stack>
   );
 }

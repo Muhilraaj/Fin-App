@@ -1,11 +1,7 @@
-import React, { useMemo, useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import React, { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -16,7 +12,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -30,6 +25,7 @@ import {
   useRenameExpenseLabelMutation,
 } from '../../stores/api/labelsAdminApi';
 import { showSnackbar } from '../../stores/slices/snackbarSlice';
+import { usePageActions } from '../../components/layout/PageActionsContext';
 import LabelFormDialog from './LabelFormDialog';
 
 const expenseColumns = [
@@ -52,8 +48,8 @@ function filterRows(rows, { l1, l2, l3, search }) {
 }
 
 export default function ManageExpenseLabels() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { setActions } = usePageActions();
   const [scope, setScope] = useState('regular');
   const [filterL1, setFilterL1] = useState('*');
   const [filterL2, setFilterL2] = useState('*');
@@ -156,28 +152,21 @@ export default function ManageExpenseLabels() {
     }
   };
 
-  return (
-    <Box display="flex" flexDirection="column" minHeight="100vh">
-      <AppBar position="static">
-        <Toolbar variant="dense">
-          <IconButton edge="start" color="inherit" onClick={() => navigate('/page/home')}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
-            Expense Labels
-          </Typography>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => { setEditingRow(null); setDialogOpen(true); }}
-          >
-            Add Label
-          </Button>
-        </Toolbar>
-      </AppBar>
+  useEffect(() => {
+    setActions(
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => { setEditingRow(null); setDialogOpen(true); }}
+      >
+        Add Label
+      </Button>
+    );
+    return () => setActions(null);
+  }, [setActions]);
 
-      <Box p={4} flex={1}>
-        <Stack spacing={3}>
+  return (
+    <Stack spacing={3}>
           <Tabs
             value={scope}
             onChange={(_, value) => {
@@ -256,9 +245,6 @@ export default function ManageExpenseLabels() {
               />
             </Box>
           )}
-        </Stack>
-      </Box>
-
       <LabelFormDialog
         open={dialogOpen}
         depth={3}
@@ -282,6 +268,6 @@ export default function ManageExpenseLabels() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </Stack>
   );
 }

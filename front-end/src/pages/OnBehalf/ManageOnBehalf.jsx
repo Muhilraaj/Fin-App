@@ -19,11 +19,19 @@ import { showSnackbar } from '../../stores/slices/snackbarSlice';
 import { usePageActions } from '../../components/layout/PageActionsContext';
 import OnBehalfFormDialog from './OnBehalfFormDialog';
 
+const emptyValues = {
+  'On-Behalf': '',
+  Name: '',
+  Relationship: '',
+};
+
+const searchableFields = ['On-Behalf', 'Name', 'Relationship', 'id'];
+
 function filterRows(rows, search) {
   const term = search.trim().toLowerCase();
   if (!term) return rows;
   return rows.filter((row) =>
-    String(row['On-Behalf'] ?? '').toLowerCase().includes(term)
+    searchableFields.some((key) => String(row[key] ?? '').toLowerCase().includes(term))
   );
 }
 
@@ -42,7 +50,11 @@ export default function ManageOnBehalf() {
 
   const columnDefs = useMemo(
     () => [
-      { field: 'On-Behalf', headerName: 'Name', flex: 1, minWidth: 220 },
+      { field: 'On-Behalf', headerName: 'On-Behalf', flex: 1, minWidth: 120 },
+      { field: 'Name', headerName: 'Name', flex: 1, minWidth: 160 },
+      { field: 'Relationship', headerName: 'Relationship', flex: 1, minWidth: 120 },
+      { field: 'id', headerName: 'ID', flex: 1, minWidth: 220 },
+      { field: 'pk', headerName: 'PK', width: 80 },
       {
         headerName: 'Actions',
         width: 120,
@@ -65,13 +77,13 @@ export default function ManageOnBehalf() {
     []
   );
 
-  const handleSave = async (name) => {
+  const handleSave = async (body) => {
     try {
       if (editingRow) {
-        await updateUser({ id: editingRow.id, body: { name } }).unwrap();
+        await updateUser({ id: editingRow.id, body }).unwrap();
         dispatch(showSnackbar({ message: 'User updated', type: 'success' }));
       } else {
-        await createUser({ name }).unwrap();
+        await createUser(body).unwrap();
         dispatch(showSnackbar({ message: 'User created', type: 'success' }));
       }
       setDialogOpen(false);
@@ -136,7 +148,7 @@ export default function ManageOnBehalf() {
       <OnBehalfFormDialog
         open={dialogOpen}
         isEdit={Boolean(editingRow)}
-        initialName={editingRow?.['On-Behalf'] ?? ''}
+        initialValues={editingRow ?? emptyValues}
         onClose={() => {
           setDialogOpen(false);
           setEditingRow(null);

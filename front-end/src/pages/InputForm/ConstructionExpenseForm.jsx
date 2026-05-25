@@ -149,11 +149,20 @@ function ConstructionExpenseForm() {
     }
     if (!(ps | l1s | l2s | l3s | behalfError | obs) && datetimeError === null && event.target[12].value !== '') {
       const onBehalfName = event.target[8].value;
+      const userKey = userKeyByName[onBehalfName];
+      if (!userKey) {
+        setObError(true);
+        dispatch(showSnackbar({
+          message: 'On-behalf user not found. Refresh the page and try again.',
+          type: 'error',
+        }));
+        return;
+      }
       const payload = {
         Expense: event.target.amount.value,
         Label_key: selectedLabelId,
         Onbehalf: onBehalfName,
-        User_key: userKeyByName[onBehalfName],
+        User_key: userKey,
         Expense_Note: event.target.Comments.value,
         Timestamp: formatDatetime(DatetimeValue),
         Custom: 'Construction',

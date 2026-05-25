@@ -12,6 +12,13 @@ function consumerLabelTag(kind, scope) {
 
 function invalidateConsumerLabels(dispatch, { kind, scope }) {
   dispatch(labelsApi.util.invalidateTags([consumerLabelTag(kind, scope)]));
+  if (kind === 'expense') {
+    dispatch(labelsApi.util.invalidateTags([
+      { type: 'Labels', id: scope === 'construction' ? 'construction-all' : 'expense-all' },
+    ]));
+  } else {
+    dispatch(labelsApi.util.invalidateTags([{ type: 'Labels', id: 'income-all' }]));
+  }
 }
 
 function upsertAdminLabel(dispatch, endpoint, arg, newItem) {
@@ -90,17 +97,16 @@ export const labelsAdminApi = createApi({
         }
       },
     }),
-    deleteExpenseLabel: builder.mutation({
-      query: ({ id }) => ({
-        url: `/manage-labels/expense/${id}`,
-        method: 'DELETE',
+    setExpenseLabelStatus: builder.mutation({
+      query: ({ id, active }) => ({
+        url: '/manage-labels/expense/status',
+        method: 'POST',
+        body: { id, active },
       }),
-      invalidatesTags: (_result, _error, { scope }) => [
-        { type: 'AdminLabels', id: `expense-${scope}` },
-      ],
       async onQueryStarted({ scope }, { dispatch, queryFulfilled }) {
         try {
-          await queryFulfilled;
+          const { data: updatedItem } = await queryFulfilled;
+          upsertAdminLabel(dispatch, 'getAdminExpenseLabels', scope, updatedItem);
           invalidateConsumerLabels(dispatch, { kind: 'expense', scope });
         } catch {
           // mutation failed
@@ -155,15 +161,16 @@ export const labelsAdminApi = createApi({
         }
       },
     }),
-    deleteIncomeLabel: builder.mutation({
-      query: ({ id }) => ({
-        url: `/manage-labels/income/${id}`,
-        method: 'DELETE',
+    setIncomeLabelStatus: builder.mutation({
+      query: ({ id, active }) => ({
+        url: '/manage-labels/income/status',
+        method: 'POST',
+        body: { id, active },
       }),
-      invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
-          await queryFulfilled;
+          const { data: updatedItem } = await queryFulfilled;
+          upsertAdminLabel(dispatch, 'getAdminIncomeLabels', undefined, updatedItem);
           invalidateConsumerLabels(dispatch, { kind: 'income' });
         } catch {
           // mutation failed
@@ -179,9 +186,9 @@ export const {
   useCreateExpenseLabelMutation,
   useUpdateExpenseLabelMutation,
   useRenameExpenseLabelMutation,
-  useDeleteExpenseLabelMutation,
+  useSetExpenseLabelStatusMutation,
   useCreateIncomeLabelMutation,
   useUpdateIncomeLabelMutation,
   useRenameIncomeLabelMutation,
-  useDeleteIncomeLabelMutation,
+  useSetIncomeLabelStatusMutation,
 } = labelsAdminApi;

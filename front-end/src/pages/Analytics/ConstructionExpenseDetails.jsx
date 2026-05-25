@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useGetConstructionLabelsQuery } from '../../stores/api/labelsApi';
+import { useGetConstructionLabelsForFilterQuery } from '../../stores/api/labelsApi';
 import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
 import { useGetExpensesQuery } from '../../stores/api/expenseApi';
 import { useLabelFilter } from '../../hooks/useLabelFilter';
@@ -59,7 +59,7 @@ const columns = [
 ];
 
 export default function ConstructionExpenseDetails() {
-  const { data: labels } = useGetConstructionLabelsQuery();
+  const { data: labels } = useGetConstructionLabelsForFilterQuery();
   const { data: onBehalfUsers } = useGetOnBehalfUsersQuery();
 
   const [L1Value, setL1Value] = useState('*');

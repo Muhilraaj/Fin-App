@@ -237,30 +237,40 @@ func patchAdminExpenseLabel(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"updatedCount": len(updated), "items": updated})
 }
 
-func deleteAdminExpenseLabel(c *gin.Context) {
+func postAdminExpenseLabelStatus(c *gin.Context) {
 	if !requireAuth(c) {
 		return
 	}
-	id := c.Param("id")
-	existing := cosmosconfig.GetLabelByID(id)
-	if existing == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "label not found"})
+	var body map[string]interface{}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	count := cosmosconfig.CountExpenseByLabelKey(id)
-	if count > 0 {
-		c.JSON(http.StatusConflict, gin.H{"error": fmt.Sprintf("label is used by %d transactions", count)})
+	id := strings.TrimSpace(fmt.Sprint(body["id"]))
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
 		return
 	}
 
-	if err := cosmosconfig.DeleteLabel(id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete label"})
+	active := strings.ToUpper(strings.TrimSpace(fmt.Sprint(body["active"])))
+	if active != "Y" && active != "N" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "active must be Y or N"})
 		return
 	}
 
-	setAdminCORS(c, "DELETE")
-	c.JSON(http.StatusOK, gin.H{"message": "label deleted"})
+	updated, err := cosmosconfig.SetExpenseLabelActive(id, active)
+	if err != nil {
+		if err.Error() == "label not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update label status"})
+		return
+	}
+
+	setAdminCORS(c, "POST")
+	c.JSON(http.StatusOK, updated)
 }
 
 func getAdminIncomeLabels(c *gin.Context) {
@@ -412,29 +422,40 @@ func patchAdminIncomeLabel(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"updatedCount": len(updated), "items": updated})
 }
 
-func deleteAdminIncomeLabel(c *gin.Context) {
+func postAdminIncomeLabelStatus(c *gin.Context) {
 	if !requireAuth(c) {
 		return
 	}
-	id := c.Param("id")
-	if cosmosconfig.GetIncomeLabelByID(id) == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "label not found"})
+	var body map[string]interface{}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	count := cosmosconfig.CountIncomeByLabelKey(id)
-	if count > 0 {
-		c.JSON(http.StatusConflict, gin.H{"error": fmt.Sprintf("label is used by %d transactions", count)})
+	id := strings.TrimSpace(fmt.Sprint(body["id"]))
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
 		return
 	}
 
-	if err := cosmosconfig.DeleteIncomeLabel(id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete label"})
+	active := strings.ToUpper(strings.TrimSpace(fmt.Sprint(body["active"])))
+	if active != "Y" && active != "N" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "active must be Y or N"})
 		return
 	}
 
-	setAdminCORS(c, "DELETE")
-	c.JSON(http.StatusOK, gin.H{"message": "label deleted"})
+	updated, err := cosmosconfig.SetIncomeLabelActive(id, active)
+	if err != nil {
+		if err.Error() == "label not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update label status"})
+		return
+	}
+
+	setAdminCORS(c, "POST")
+	c.JSON(http.StatusOK, updated)
 }
 
 func registerAdminLabelRoutes(route *gin.Engine) {
@@ -443,12 +464,12 @@ func registerAdminLabelRoutes(route *gin.Engine) {
 	route.POST("api/manage-labels/expense/rename", patchAdminExpenseLabel)
 	route.PATCH("api/manage-labels/expense", patchAdminExpenseLabel)
 	route.PUT("api/manage-labels/expense/:id", putAdminExpenseLabel)
-	route.DELETE("api/manage-labels/expense/:id", deleteAdminExpenseLabel)
+	route.POST("api/manage-labels/expense/status", postAdminExpenseLabelStatus)
 
 	route.GET("api/manage-labels/income", getAdminIncomeLabels)
 	route.POST("api/manage-labels/income", postAdminIncomeLabel)
 	route.POST("api/manage-labels/income/rename", patchAdminIncomeLabel)
 	route.PATCH("api/manage-labels/income", patchAdminIncomeLabel)
 	route.PUT("api/manage-labels/income/:id", putAdminIncomeLabel)
-	route.DELETE("api/manage-labels/income/:id", deleteAdminIncomeLabel)
+	route.POST("api/manage-labels/income/status", postAdminIncomeLabelStatus)
 }

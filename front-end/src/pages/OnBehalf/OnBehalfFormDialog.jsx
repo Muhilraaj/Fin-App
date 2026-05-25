@@ -58,16 +58,8 @@ export default function OnBehalfFormDialog({
         <DialogTitle>{isEdit ? 'Edit user' : 'Add user'}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
-            {isEdit && (
-              <TextField
-                label="ID"
-                fullWidth
-                value={initialValues?.id ?? ''}
-                disabled
-              />
-            )}
             <TextField
-              autoFocus={!isEdit}
+              autoFocus
               label="On-Behalf"
               fullWidth
               required

@@ -25,7 +25,7 @@ const emptyValues = {
   Relationship: '',
 };
 
-const searchableFields = ['On-Behalf', 'Name', 'Relationship', 'id'];
+const searchableFields = ['On-Behalf', 'Name', 'Relationship'];
 
 function filterRows(rows, search) {
   const term = search.trim().toLowerCase();
@@ -53,7 +53,6 @@ export default function ManageOnBehalf() {
       { field: 'On-Behalf', headerName: 'On-Behalf', flex: 1, minWidth: 120 },
       { field: 'Name', headerName: 'Name', flex: 1, minWidth: 160 },
       { field: 'Relationship', headerName: 'Relationship', flex: 1, minWidth: 120 },
-      { field: 'id', headerName: 'ID', flex: 1, minWidth: 220 },
       { field: 'pk', headerName: 'PK', width: 80 },
       {
         headerName: 'Actions',

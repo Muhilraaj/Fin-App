@@ -5,10 +5,10 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "admin/labels/{scope}",
+      "route": "admin/labels/{scope}/{id}",
       "methods": [
-        "get",
-        "post",
+        "put",
+        "delete",
         "options"
       ]
     },

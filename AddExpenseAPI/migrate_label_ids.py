@@ -21,6 +21,13 @@ load_dotenv()
 endpoint = os.getenv("azcosmos_endpoint")
 key = os.getenv("azcosmos_key")
 
+DIM_DATABASE = os.getenv("Cosmos_DB_Dim_Database", "DIM")
+FACT_DATABASE = os.getenv("Cosmos_DB_Fact_Database", "Fact")
+LABEL_CONTAINER = os.getenv("Cosmos_DB_Label_Container", "Label_Dev")
+INCOME_LABEL_CONTAINER = os.getenv("Cosmos_DB_Income_Label_Container", "Income_Label_Dev")
+EXPENSE_CONTAINER = os.getenv("Cosmos_DB_Expense_Container", "Expense_Test")
+INCOME_CONTAINER = os.getenv("Cosmos_DB_Income_Container", "Income_Test")
+
 LEGACY_HASH_RE = re.compile(r"^[a-fA-F0-9]{64}$")
 
 
@@ -29,10 +36,10 @@ def is_legacy_hash_id(label_id):
 
 
 def migrate_label_container(client, dry_run):
-    dim = client.get_database_client("DIM")
-    fact = client.get_database_client("Fact")
-    label_container = dim.get_container_client("Label")
-    expense_container = fact.get_container_client("Expense")
+    dim = client.get_database_client(DIM_DATABASE)
+    fact = client.get_database_client(FACT_DATABASE)
+    label_container = dim.get_container_client(LABEL_CONTAINER)
+    expense_container = fact.get_container_client(EXPENSE_CONTAINER)
 
     labels = list(label_container.read_all_items())
     migrated = 0
@@ -75,10 +82,10 @@ def migrate_label_container(client, dry_run):
 
 
 def migrate_income_label_container(client, dry_run):
-    dim = client.get_database_client("DIM")
-    fact = client.get_database_client("Fact")
-    label_container = dim.get_container_client("Income_Label")
-    income_container = fact.get_container_client("Income")
+    dim = client.get_database_client(DIM_DATABASE)
+    fact = client.get_database_client(FACT_DATABASE)
+    label_container = dim.get_container_client(INCOME_LABEL_CONTAINER)
+    income_container = fact.get_container_client(INCOME_CONTAINER)
 
     labels = list(label_container.read_all_items())
     migrated = 0
@@ -126,6 +133,13 @@ def main():
     args = parser.parse_args()
 
     client = CosmosClient(url=endpoint, credential=key)
+
+    print(f"Dim database: {DIM_DATABASE}")
+    print(f"Fact database: {FACT_DATABASE}")
+    print(f"Label container: {LABEL_CONTAINER}")
+    print(f"Income label container: {INCOME_LABEL_CONTAINER}")
+    print(f"Expense container: {EXPENSE_CONTAINER}")
+    print(f"Income container: {INCOME_CONTAINER}\n")
 
     print("=== Expense/Construction labels (Label container) ===")
     exp_migrated, exp_skipped = migrate_label_container(client, args.dry_run)

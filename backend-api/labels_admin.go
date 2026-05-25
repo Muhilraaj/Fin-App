@@ -66,6 +66,12 @@ func postAdminExpenseLabel(c *gin.Context) {
 	if !requireAuth(c) {
 		return
 	}
+	scope := c.DefaultQuery("scope", "regular")
+	if scope != "regular" && scope != "construction" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "scope must be regular or construction"})
+		return
+	}
+
 	var body map[string]interface{}
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -78,7 +84,10 @@ func postAdminExpenseLabel(c *gin.Context) {
 		return
 	}
 
-	custom := strings.TrimSpace(fmt.Sprint(body["Custom"]))
+	custom := ""
+	if scope == "construction" {
+		custom = "Construction"
+	}
 
 	existing := cosmosconfig.FindExpenseLabelByPath(fields["L1"], fields["L2"], fields["L3"], custom)
 	if len(existing) > 0 {
@@ -94,8 +103,8 @@ func postAdminExpenseLabel(c *gin.Context) {
 		"L3":     fields["L3"],
 		"Active": "Y",
 	}
-	if custom != "" {
-		item["Custom"] = custom
+	if scope == "construction" {
+		item["Custom"] = "Construction"
 	}
 
 	if err := cosmosconfig.CreateLabel(item); err != nil {
@@ -224,7 +233,7 @@ func patchAdminExpenseLabel(c *gin.Context) {
 		return
 	}
 
-	setAdminCORS(c, "PATCH")
+	setAdminCORS(c, "POST, PATCH")
 	c.JSON(http.StatusOK, gin.H{"updatedCount": len(updated), "items": updated})
 }
 
@@ -399,7 +408,7 @@ func patchAdminIncomeLabel(c *gin.Context) {
 		return
 	}
 
-	setAdminCORS(c, "PATCH")
+	setAdminCORS(c, "POST, PATCH")
 	c.JSON(http.StatusOK, gin.H{"updatedCount": len(updated), "items": updated})
 }
 
@@ -431,12 +440,14 @@ func deleteAdminIncomeLabel(c *gin.Context) {
 func registerAdminLabelRoutes(route *gin.Engine) {
 	route.GET("api/manage-labels/expense", getAdminExpenseLabels)
 	route.POST("api/manage-labels/expense", postAdminExpenseLabel)
+	route.POST("api/manage-labels/expense/rename", patchAdminExpenseLabel)
 	route.PATCH("api/manage-labels/expense", patchAdminExpenseLabel)
 	route.PUT("api/manage-labels/expense/:id", putAdminExpenseLabel)
 	route.DELETE("api/manage-labels/expense/:id", deleteAdminExpenseLabel)
 
 	route.GET("api/manage-labels/income", getAdminIncomeLabels)
 	route.POST("api/manage-labels/income", postAdminIncomeLabel)
+	route.POST("api/manage-labels/income/rename", patchAdminIncomeLabel)
 	route.PATCH("api/manage-labels/income", patchAdminIncomeLabel)
 	route.PUT("api/manage-labels/income/:id", putAdminIncomeLabel)
 	route.DELETE("api/manage-labels/income/:id", deleteAdminIncomeLabel)

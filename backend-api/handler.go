@@ -76,7 +76,7 @@ func getLabel(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
-	c.Header("Cache-Control", "private, max-age=60")
+	c.Header("Cache-Control", "no-store")
 	c.JSON(http.StatusOK, result)
 }
 
@@ -417,7 +417,7 @@ func main() {
 			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
 			//origin := c.Request.Header.Get("Origin")
 			c.Header("Access-Control-Allow-Origin", "*")
-			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 			c.Header("Access-Control-Allow-Headers", "Content-Type,*")
 			c.Header("Access-Control-Allow-Credentials", "true")
 			c.Header("Access-Control-Expose-Headers", "*, Authorization")

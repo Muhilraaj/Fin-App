@@ -325,13 +325,13 @@ func deleteAdminIncomeLabel(c *gin.Context) {
 }
 
 func registerAdminLabelRoutes(route *gin.Engine) {
-	route.GET("api/admin/labels/expense", getAdminExpenseLabels)
-	route.POST("api/admin/labels/expense", postAdminExpenseLabel)
-	route.PUT("api/admin/labels/expense/:id", putAdminExpenseLabel)
-	route.DELETE("api/admin/labels/expense/:id", deleteAdminExpenseLabel)
+	route.GET("api/manage-labels/expense", getAdminExpenseLabels)
+	route.POST("api/manage-labels/expense", postAdminExpenseLabel)
+	route.PUT("api/manage-labels/expense/:id", putAdminExpenseLabel)
+	route.DELETE("api/manage-labels/expense/:id", deleteAdminExpenseLabel)
 
-	route.GET("api/admin/labels/income", getAdminIncomeLabels)
-	route.POST("api/admin/labels/income", postAdminIncomeLabel)
-	route.PUT("api/admin/labels/income/:id", putAdminIncomeLabel)
-	route.DELETE("api/admin/labels/income/:id", deleteAdminIncomeLabel)
+	route.GET("api/manage-labels/income", getAdminIncomeLabels)
+	route.POST("api/manage-labels/income", postAdminIncomeLabel)
+	route.PUT("api/manage-labels/income/:id", putAdminIncomeLabel)
+	route.DELETE("api/manage-labels/income/:id", deleteAdminIncomeLabel)
 }

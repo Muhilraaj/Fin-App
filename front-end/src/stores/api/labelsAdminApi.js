@@ -8,16 +8,16 @@ export const labelsAdminApi = createApi({
   tagTypes: ['AdminLabels', 'Labels'],
   endpoints: (builder) => ({
     getAdminExpenseLabels: builder.query({
-      query: (scope) => `/admin/labels/expense?scope=${scope}`,
+      query: (scope) => `/manage-labels/expense?scope=${scope}`,
       providesTags: (_result, _error, scope) => [{ type: 'AdminLabels', id: `expense-${scope}` }],
     }),
     getAdminIncomeLabels: builder.query({
-      query: () => '/admin/labels/income',
+      query: () => '/manage-labels/income',
       providesTags: [{ type: 'AdminLabels', id: 'income' }],
     }),
     createExpenseLabel: builder.mutation({
       query: (body) => ({
-        url: '/admin/labels/expense',
+        url: '/manage-labels/expense',
         method: 'POST',
         body,
       }),
@@ -28,7 +28,7 @@ export const labelsAdminApi = createApi({
     }),
     updateExpenseLabel: builder.mutation({
       query: ({ id, body }) => ({
-        url: `/admin/labels/expense/${id}`,
+        url: `/manage-labels/expense/${id}`,
         method: 'PUT',
         body,
       }),
@@ -39,7 +39,7 @@ export const labelsAdminApi = createApi({
     }),
     deleteExpenseLabel: builder.mutation({
       query: ({ id, scope }) => ({
-        url: `/admin/labels/expense/${id}`,
+        url: `/manage-labels/expense/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: (_result, _error, { scope }) => [
@@ -49,7 +49,7 @@ export const labelsAdminApi = createApi({
     }),
     createIncomeLabel: builder.mutation({
       query: (body) => ({
-        url: '/admin/labels/income',
+        url: '/manage-labels/income',
         method: 'POST',
         body,
       }),
@@ -60,7 +60,7 @@ export const labelsAdminApi = createApi({
     }),
     updateIncomeLabel: builder.mutation({
       query: ({ id, body }) => ({
-        url: `/admin/labels/income/${id}`,
+        url: `/manage-labels/income/${id}`,
         method: 'PUT',
         body,
       }),
@@ -71,7 +71,7 @@ export const labelsAdminApi = createApi({
     }),
     deleteIncomeLabel: builder.mutation({
       query: (id) => ({
-        url: `/admin/labels/income/${id}`,
+        url: `/manage-labels/income/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [

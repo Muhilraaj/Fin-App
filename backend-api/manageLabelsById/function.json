@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "admin/labels/{scope}/{id}",
+      "route": "manage-labels/{scope}/{id}",
       "methods": [
         "put",
         "delete",

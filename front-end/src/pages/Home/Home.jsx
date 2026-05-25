@@ -169,7 +169,7 @@ function Home() {
                             onClick={handleManageExpenseLabels}
                             sx={{
                                 minWidth: 345,
-                                backgroundColor: theme.palette.secondary.main,
+                                backgroundColor: theme.palette.success.main,
                                 color: 'white',
                                 cursor: 'pointer'
                             }}
@@ -185,7 +185,7 @@ function Home() {
                             onClick={handleManageIncomeLabels}
                             sx={{
                                 minWidth: 345,
-                                backgroundColor: theme.palette.secondary.main,
+                                backgroundColor: theme.palette.success.main,
                                 color: 'white',
                                 cursor: 'pointer'
                             }}

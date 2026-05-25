@@ -18,14 +18,25 @@ import theme from '../../assets/theme';
 import { useAdminLabelCascade } from '../../hooks/useAdminLabelCascade';
 
 const MODES_DEPTH_3 = [
-  { value: 'new-l1', label: 'New category' },
-  { value: 'add-l2', label: 'Add sub-category' },
-  { value: 'add-l3', label: 'Add item' },
+  { value: 'new-l1', label: 'New path (L1, L2, L3)' },
+  { value: 'add-l2', label: 'New path under L1 (L2 + L3)' },
+  { value: 'add-l3', label: 'New item under L1 / L2 (L3 only)' },
 ];
 
 const MODES_DEPTH_2 = [
-  { value: 'new-l1', label: 'New category' },
-  { value: 'add-l2', label: 'Add sub-category' },
+  { value: 'new-l1', label: 'New path (L1, L2)' },
+  { value: 'add-l2', label: 'New path under L1 (L2 only)' },
+];
+
+const EDIT_MODES_DEPTH_3 = [
+  { value: 'L1', label: 'Edit L1 (category)' },
+  { value: 'L2', label: 'Edit L2 (sub-category)' },
+  { value: 'L3', label: 'Edit L3 (item)' },
+];
+
+const EDIT_MODES_DEPTH_2 = [
+  { value: 'L1', label: 'Edit L1 (category)' },
+  { value: 'L2', label: 'Edit L2 (item)' },
 ];
 
 function formatPath(parts) {
@@ -67,7 +78,9 @@ export default function LabelFormDialog({
   isSubmitting = false,
 }) {
   const modes = depth === 3 ? MODES_DEPTH_3 : MODES_DEPTH_2;
+  const editModes = depth === 3 ? EDIT_MODES_DEPTH_3 : EDIT_MODES_DEPTH_2;
   const [mode, setMode] = useState('new-l1');
+  const [editLevel, setEditLevel] = useState('L3');
   const [L1, setL1] = useState('');
   const [L2, setL2] = useState('');
   const [L3, setL3] = useState('');
@@ -83,6 +96,7 @@ export default function LabelFormDialog({
   useEffect(() => {
     if (!open) return;
     if (isEdit) {
+      setEditLevel(depth === 3 ? 'L3' : 'L2');
       setL1(initialValues.L1 ?? '');
       setL2(initialValues.L2 ?? '');
       setL3(initialValues.L3 ?? '');
@@ -92,30 +106,33 @@ export default function LabelFormDialog({
     setL1('');
     setL2('');
     setL3('');
-  }, [open, isEdit, initialValues]);
+  }, [open, isEdit, initialValues, depth]);
 
   useEffect(() => {
     if (isEdit || !open) return;
-    if (mode === 'new-l1') {
-      setL1('');
-      setL2('');
-      setL3('');
-    } else if (mode === 'add-l2') {
-      setL1('');
-      setL2('');
-      setL3('');
-    } else if (mode === 'add-l3') {
-      setL1('');
-      setL2('');
-      setL3('');
-    }
+    setL1('');
+    setL2('');
+    setL3('');
   }, [mode, isEdit, open]);
+
+  useEffect(() => {
+    if (!isEdit || !open) return;
+    setL1(initialValues.L1 ?? '');
+    setL2(initialValues.L2 ?? '');
+    setL3(initialValues.L3 ?? '');
+  }, [editLevel, isEdit, open, initialValues]);
 
   const previewPath = useMemo(() => {
     if (isEdit) {
-      return depth === 3
-        ? formatPath([initialValues.L1, initialValues.L2, L3.trim() || initialValues.L3])
-        : formatPath([initialValues.L1, L2.trim() || initialValues.L2]);
+      if (depth === 3) {
+        const nextL1 = editLevel === 'L1' ? L1.trim() || initialValues.L1 : initialValues.L1;
+        const nextL2 = editLevel === 'L2' ? L2.trim() || initialValues.L2 : initialValues.L2;
+        const nextL3 = editLevel === 'L3' ? L3.trim() || initialValues.L3 : initialValues.L3;
+        return formatPath([nextL1, nextL2, nextL3]);
+      }
+      const nextL1 = editLevel === 'L1' ? L1.trim() || initialValues.L1 : initialValues.L1;
+      const nextL2 = editLevel === 'L2' ? L2.trim() || initialValues.L2 : initialValues.L2;
+      return formatPath([nextL1, nextL2]);
     }
     if (mode === 'new-l1') {
       return depth === 3
@@ -128,39 +145,64 @@ export default function LabelFormDialog({
         : formatPath([L1, L2.trim()]);
     }
     return formatPath([L1, L2, L3.trim()]);
-  }, [isEdit, mode, depth, L1, L2, L3, initialValues]);
+  }, [isEdit, editLevel, mode, depth, L1, L2, L3, initialValues]);
+
+  const editHelperText = useMemo(() => {
+    if (!isEdit) return '';
+    if (editLevel === 'L1') return 'Renames all labels under this category.';
+    if (editLevel === 'L2' && depth === 3) return 'Renames all items under this sub-category.';
+    return 'Renames this label only.';
+  }, [isEdit, editLevel, depth]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (isEdit) {
-      const payload = {
+      const from = {
         L1: initialValues.L1,
-        L2: depth === 3 ? initialValues.L2 : L2.trim(),
+        L2: initialValues.L2,
       };
+      const to = {};
       if (depth === 3) {
-        payload.L3 = L3.trim();
+        from.L3 = initialValues.L3;
       }
-      onSubmit(payload);
+
+      if (editLevel === 'L1') {
+        to.L1 = L1.trim();
+      } else if (editLevel === 'L2') {
+        to.L2 = L2.trim();
+      } else if (depth === 3) {
+        to.L3 = L3.trim();
+      } else {
+        to.L2 = L2.trim();
+      }
+
+      onSubmit({
+        type: 'rename',
+        level: editLevel,
+        id: initialValues.id,
+        from,
+        to,
+      });
       return;
     }
 
     if (mode === 'new-l1') {
       const payload = { L1: L1.trim(), L2: L2.trim() };
       if (depth === 3) payload.L3 = L3.trim();
-      onSubmit(payload);
+      onSubmit({ type: 'create', body: payload });
       return;
     }
     if (mode === 'add-l2') {
       const payload = { L1, L2: L2.trim() };
       if (depth === 3) payload.L3 = L3.trim();
-      onSubmit(payload);
+      onSubmit({ type: 'create', body: payload });
       return;
     }
-    onSubmit({ L1, L2, L3: L3.trim() });
+    onSubmit({ type: 'create', body: { L1, L2, L3: L3.trim() } });
   };
 
   const titleSx = {
-    borderLeft: `4px solid ${theme.palette.secondary.main}`,
+    borderLeft: `4px solid ${theme.palette.success.main}`,
     pl: 2,
   };
 
@@ -179,7 +221,7 @@ export default function LabelFormDialog({
                   <FormControlLabel
                     key={value}
                     value={value}
-                    control={<Radio color="secondary" />}
+                    control={<Radio color="success" />}
                     label={label}
                   />
                 ))}
@@ -188,36 +230,65 @@ export default function LabelFormDialog({
 
             {isEdit && (
               <>
+                <RadioGroup
+                  value={editLevel}
+                  onChange={(e) => setEditLevel(e.target.value)}
+                >
+                  {editModes.map(({ value, label }) => (
+                    <FormControlLabel
+                      key={value}
+                      value={value}
+                      control={<Radio color="success" />}
+                      label={label}
+                    />
+                  ))}
+                </RadioGroup>
+                {editHelperText && (
+                  <Typography variant="body2" color="text.secondary">
+                    {editHelperText}
+                  </Typography>
+                )}
                 <Typography variant="body2" color="text.secondary">
-                  Path
+                  Current path
                 </Typography>
                 <Typography variant="body1" fontWeight="medium">
                   {depth === 3
                     ? formatPath([initialValues.L1, initialValues.L2, initialValues.L3])
                     : formatPath([initialValues.L1, initialValues.L2])}
                 </Typography>
-                <TextField
-                  label="L1"
-                  value={initialValues.L1 ?? ''}
-                  fullWidth
-                  disabled
-                />
-                <TextField
-                  label="L2"
-                  value={depth === 3 ? (initialValues.L2 ?? '') : L2}
-                  onChange={(e) => setL2(e.target.value)}
-                  fullWidth
-                  disabled={depth === 3}
-                  required
-                />
-                {depth === 3 && (
+                {editLevel === 'L1' && (
                   <TextField
-                    label="L3"
-                    value={L3}
-                    onChange={(e) => setL3(e.target.value)}
+                    label="L1"
+                    value={L1}
+                    onChange={(e) => setL1(e.target.value)}
                     required
                     fullWidth
                   />
+                )}
+                {editLevel === 'L2' && (
+                  <>
+                    <TextField label="L1" value={initialValues.L1 ?? ''} fullWidth disabled />
+                    <TextField
+                      label="L2"
+                      value={L2}
+                      onChange={(e) => setL2(e.target.value)}
+                      required
+                      fullWidth
+                    />
+                  </>
+                )}
+                {editLevel === 'L3' && depth === 3 && (
+                  <>
+                    <TextField label="L1" value={initialValues.L1 ?? ''} fullWidth disabled />
+                    <TextField label="L2" value={initialValues.L2 ?? ''} fullWidth disabled />
+                    <TextField
+                      label="L3"
+                      value={L3}
+                      onChange={(e) => setL3(e.target.value)}
+                      required
+                      fullWidth
+                    />
+                  </>
                 )}
               </>
             )}

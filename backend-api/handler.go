@@ -63,11 +63,11 @@ func getLabel(c *gin.Context) {
 	var result []map[string]interface{}
 	switch c.Param("path") {
 	case "/expense":
-		result = cosmosconfig.ListExpenseLabels("regular")
+		result = cosmosconfig.ListActiveExpenseLabels("regular")
 	case "/construction":
-		result = cosmosconfig.ListExpenseLabels("construction")
+		result = cosmosconfig.ListActiveExpenseLabels("construction")
 	case "/income":
-		result = cosmosconfig.ListIncomeLabels()
+		result = cosmosconfig.ListActiveIncomeLabels()
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"error": "unknown label type"})
 		return

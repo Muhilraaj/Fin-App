@@ -41,6 +41,16 @@ function Home() {
         navigate('/page/income');
     }
 
+    const handleManageExpenseLabels = (event) => {
+        event.preventDefault();
+        navigate('/page/manageLabels/expense');
+    }
+
+    const handleManageIncomeLabels = (event) => {
+        event.preventDefault();
+        navigate('/page/manageLabels/income');
+    }
+
     return (
         <Box display="flex" flexDirection="column" minHeight="100vh">
                 <AppBar position="static">
@@ -151,6 +161,38 @@ function Home() {
                             <CardContent>
                                 <Typography variant="h5" align="center">
                                     Income Detail
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                        <Card
+                            elevation={10}
+                            onClick={handleManageExpenseLabels}
+                            sx={{
+                                minWidth: 345,
+                                backgroundColor: theme.palette.secondary.main,
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <CardContent>
+                                <Typography variant="h5" align="center">
+                                    Expense Labels
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                        <Card
+                            elevation={10}
+                            onClick={handleManageIncomeLabels}
+                            sx={{
+                                minWidth: 345,
+                                backgroundColor: theme.palette.secondary.main,
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <CardContent>
+                                <Typography variant="h5" align="center">
+                                    Income Labels
                                 </Typography>
                             </CardContent>
                         </Card>

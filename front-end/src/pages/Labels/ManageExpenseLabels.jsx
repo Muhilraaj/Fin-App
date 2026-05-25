@@ -129,10 +129,7 @@ export default function ManageExpenseLabels() {
           type: 'success',
         }));
       } else {
-        const body = scope === 'construction'
-          ? { ...payload.body, Custom: 'Construction' }
-          : payload.body;
-        await createLabel({ scope, body }).unwrap();
+        await createLabel({ scope, body: payload.body }).unwrap();
         dispatch(showSnackbar({ message: 'Label created', type: 'success' }));
       }
       setDialogOpen(false);

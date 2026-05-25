@@ -5,9 +5,9 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "manage-labels/{scope}/{id}",
+      "route": "manage-labels/{scope}/status",
       "methods": [
-        "put",
+        "post",
         "options"
       ]
     },

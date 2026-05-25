@@ -61,13 +61,26 @@ func getLabel(c *gin.Context) {
 	}
 
 	var result []map[string]interface{}
+	includeAll := c.Query("all") == "true" || c.Query("all") == "1"
 	switch c.Param("path") {
 	case "/expense":
-		result = cosmosconfig.ListActiveExpenseLabels("regular")
+		if includeAll {
+			result = cosmosconfig.ListExpenseLabels("regular")
+		} else {
+			result = cosmosconfig.ListActiveExpenseLabels("regular")
+		}
 	case "/construction":
-		result = cosmosconfig.ListActiveExpenseLabels("construction")
+		if includeAll {
+			result = cosmosconfig.ListExpenseLabels("construction")
+		} else {
+			result = cosmosconfig.ListActiveExpenseLabels("construction")
+		}
 	case "/income":
-		result = cosmosconfig.ListActiveIncomeLabels()
+		if includeAll {
+			result = cosmosconfig.ListIncomeLabels()
+		} else {
+			result = cosmosconfig.ListActiveIncomeLabels()
+		}
 	default:
 		c.JSON(http.StatusNotFound, gin.H{"error": "unknown label type"})
 		return
@@ -132,6 +145,10 @@ func postExpense(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "label is not a regular expense label"})
 			return
 		}
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
 		result["Label_key"] = labelKey
 	} else {
 		l1 := fmt.Sprint(expense["L1"])
@@ -142,7 +159,12 @@ func postExpense(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "label path not found"})
 			return
 		}
-		result["Label_key"] = labels[0]["id"]
+		label := labels[0]
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
+		result["Label_key"] = label["id"]
 	}
 	result["Expense"] = expense["Expense"]
 	result["Expense_Note"] = expense["Expense_Note"]
@@ -209,6 +231,10 @@ func postIncome(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "label not found"})
 			return
 		}
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
 		result["Label_key"] = labelKey
 	} else {
 		l1 := fmt.Sprint(income["L1"])
@@ -218,7 +244,12 @@ func postIncome(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "label path not found"})
 			return
 		}
-		result["Label_key"] = labels[0]["id"]
+		label := labels[0]
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
+		result["Label_key"] = label["id"]
 	}
 	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], result["Label_key"]))
 	result["pk"] = 1

@@ -8,6 +8,21 @@ import (
 
 const activeFilterClause = "(NOT IS_DEFINED(c.Active) OR c.Active = 'Y')"
 
+func IsLabelActive(item map[string]interface{}) bool {
+	if item == nil {
+		return false
+	}
+	val, ok := item["Active"]
+	if !ok || val == nil {
+		return true
+	}
+	s := strings.TrimSpace(fmt.Sprint(val))
+	if s == "" {
+		return true
+	}
+	return strings.ToUpper(s) == "Y"
+}
+
 func escapeQueryValue(value string) string {
 	return strings.ReplaceAll(value, "'", "''")
 }
@@ -60,12 +75,12 @@ func listExpenseLabels(scope string, activeOnly bool) []map[string]interface{} {
 	var query string
 	if scope == "construction" {
 		query = fmt.Sprintf(
-			"SELECT c.id, c.L1, c.L2, c.L3, c.Custom FROM c WHERE c.Custom = 'Construction'%s",
+			"SELECT c.id, c.L1, c.L2, c.L3, c.Custom, c.Active FROM c WHERE c.Custom = 'Construction'%s",
 			activeClause,
 		)
 	} else {
 		query = fmt.Sprintf(
-			"SELECT c.id, c.L1, c.L2, c.L3 FROM c WHERE NOT IS_DEFINED(c.Custom)%s",
+			"SELECT c.id, c.L1, c.L2, c.L3, c.Active FROM c WHERE NOT IS_DEFINED(c.Custom)%s",
 			activeClause,
 		)
 	}
@@ -81,7 +96,7 @@ func ListActiveIncomeLabels() []map[string]interface{} {
 }
 
 func listIncomeLabels(activeOnly bool) []map[string]interface{} {
-	query := "SELECT c.id, c.L1, c.L2 FROM c"
+	query := "SELECT c.id, c.L1, c.L2, c.Active FROM c"
 	if activeOnly {
 		query += " WHERE " + activeFilterClause
 	}
@@ -334,4 +349,28 @@ func GetIncomeLabelByID(id string) map[string]interface{} {
 		return nil
 	}
 	return rows[0]
+}
+
+func SetExpenseLabelActive(id, active string) (map[string]interface{}, error) {
+	row := GetLabelByID(id)
+	if row == nil {
+		return nil, fmt.Errorf("label not found")
+	}
+	row["Active"] = active
+	if err := ReplaceLabel(row); err != nil {
+		return nil, err
+	}
+	return row, nil
+}
+
+func SetIncomeLabelActive(id, active string) (map[string]interface{}, error) {
+	row := GetIncomeLabelByID(id)
+	if row == nil {
+		return nil, fmt.Errorf("label not found")
+	}
+	row["Active"] = active
+	if err := ReplaceIncomeLabel(row); err != nil {
+		return nil, err
+	}
+	return row, nil
 }

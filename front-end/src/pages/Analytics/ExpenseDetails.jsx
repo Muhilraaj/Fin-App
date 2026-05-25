@@ -10,7 +10,7 @@ import dayjs from 'dayjs';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useGetExpenseLabelsQuery } from '../../stores/api/labelsApi';
+import { useGetExpenseLabelsForFilterQuery } from '../../stores/api/labelsApi';
 import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
 import { useGetExpensesQuery } from '../../stores/api/expenseApi';
 import { useLabelFilter } from '../../hooks/useLabelFilter';
@@ -61,7 +61,7 @@ const columns = [
 ];
 
 export default function ExpenseDetails() {
-  const { data: labels } = useGetExpenseLabelsQuery();
+  const { data: labels } = useGetExpenseLabelsForFilterQuery();
   const { data: onBehalfUsers } = useGetOnBehalfUsersQuery();
 
   const [L1Value, setL1Value] = useState('*');

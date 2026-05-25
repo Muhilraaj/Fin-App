@@ -10,7 +10,7 @@ import dayjs from 'dayjs';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useGetIncomeLabelsQuery } from '../../stores/api/labelsApi';
+import { useGetIncomeLabelsForFilterQuery } from '../../stores/api/labelsApi';
 import { useGetIncomeQuery } from '../../stores/api/incomeApi';
 import { useLabelFilter } from '../../hooks/useLabelFilter';
 
@@ -48,7 +48,7 @@ const columns = [
 ];
 
 export default function IncomeDetails() {
-  const { data: labels } = useGetIncomeLabelsQuery();
+  const { data: labels } = useGetIncomeLabelsForFilterQuery();
 
   const [L1Value, setL1Value] = useState('*');
   const [L2Value, setL2Value] = useState('*');

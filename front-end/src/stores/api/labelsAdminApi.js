@@ -3,8 +3,23 @@ import { labelsApi } from './labelsApi';
 
 const baseUrl = process.env.REACT_APP_API_URL + '/api';
 
-function invalidateLabelCache(dispatch, labelId) {
-  dispatch(labelsApi.util.invalidateTags([{ type: 'Labels', id: labelId }]));
+function invalidateAllLabelCaches(dispatch, { kind, scope }) {
+  const adminTags = [];
+  const consumerTags = [];
+
+  if (kind === 'expense') {
+    adminTags.push({ type: 'AdminLabels', id: `expense-${scope}` });
+    consumerTags.push({
+      type: 'Labels',
+      id: scope === 'construction' ? 'construction' : 'expense',
+    });
+  } else if (kind === 'income') {
+    adminTags.push({ type: 'AdminLabels', id: 'income' });
+    consumerTags.push({ type: 'Labels', id: 'income' });
+  }
+
+  dispatch(labelsAdminApi.util.invalidateTags(adminTags));
+  dispatch(labelsApi.util.invalidateTags(consumerTags));
 }
 
 export const labelsAdminApi = createApi({
@@ -21,17 +36,28 @@ export const labelsAdminApi = createApi({
       providesTags: [{ type: 'AdminLabels', id: 'income' }],
     }),
     createExpenseLabel: builder.mutation({
-      query: (body) => ({
+      query: ({ body }) => ({
         url: '/manage-labels/expense',
         method: 'POST',
         body,
       }),
-      invalidatesTags: (_result, _error, body) => [
-        { type: 'AdminLabels', id: `expense-${body.Custom === 'Construction' ? 'construction' : 'regular'}` },
+      invalidatesTags: (_result, _error, { scope }) => [
+        { type: 'AdminLabels', id: `expense-${scope}` },
       ],
-      async onQueryStarted(body, { dispatch, queryFulfilled }) {
-        await queryFulfilled;
-        invalidateLabelCache(dispatch, body.Custom === 'Construction' ? 'construction' : 'expense');
+      async onQueryStarted({ scope, body }, { dispatch, queryFulfilled }) {
+        try {
+          const { data: newItem } = await queryFulfilled;
+          dispatch(
+            labelsAdminApi.util.updateQueryData('getAdminExpenseLabels', scope, (draft) => {
+              if (!draft.some((row) => row.id === newItem.id)) {
+                draft.push(newItem);
+              }
+            })
+          );
+          invalidateAllLabelCaches(dispatch, { kind: 'expense', scope });
+        } catch {
+          // mutation failed
+        }
       },
     }),
     updateExpenseLabel: builder.mutation({
@@ -44,12 +70,34 @@ export const labelsAdminApi = createApi({
         { type: 'AdminLabels', id: `expense-${scope}` },
       ],
       async onQueryStarted({ scope }, { dispatch, queryFulfilled }) {
-        await queryFulfilled;
-        invalidateLabelCache(dispatch, scope === 'construction' ? 'construction' : 'expense');
+        try {
+          await queryFulfilled;
+          invalidateAllLabelCaches(dispatch, { kind: 'expense', scope });
+        } catch {
+          // mutation failed
+        }
+      },
+    }),
+    renameExpenseLabel: builder.mutation({
+      query: (body) => ({
+        url: '/manage-labels/expense',
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: (_result, _error, { scope }) => [
+        { type: 'AdminLabels', id: `expense-${scope}` },
+      ],
+      async onQueryStarted({ scope }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateAllLabelCaches(dispatch, { kind: 'expense', scope });
+        } catch {
+          // mutation failed
+        }
       },
     }),
     deleteExpenseLabel: builder.mutation({
-      query: ({ id, scope }) => ({
+      query: ({ id }) => ({
         url: `/manage-labels/expense/${id}`,
         method: 'DELETE',
       }),
@@ -57,20 +105,35 @@ export const labelsAdminApi = createApi({
         { type: 'AdminLabels', id: `expense-${scope}` },
       ],
       async onQueryStarted({ scope }, { dispatch, queryFulfilled }) {
-        await queryFulfilled;
-        invalidateLabelCache(dispatch, scope === 'construction' ? 'construction' : 'expense');
+        try {
+          await queryFulfilled;
+          invalidateAllLabelCaches(dispatch, { kind: 'expense', scope });
+        } catch {
+          // mutation failed
+        }
       },
     }),
     createIncomeLabel: builder.mutation({
-      query: (body) => ({
+      query: ({ body }) => ({
         url: '/manage-labels/income',
         method: 'POST',
         body,
       }),
       invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
-      async onQueryStarted(_body, { dispatch, queryFulfilled }) {
-        await queryFulfilled;
-        invalidateLabelCache(dispatch, 'income');
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data: newItem } = await queryFulfilled;
+          dispatch(
+            labelsAdminApi.util.updateQueryData('getAdminIncomeLabels', undefined, (draft) => {
+              if (!draft.some((row) => row.id === newItem.id)) {
+                draft.push(newItem);
+              }
+            })
+          );
+          invalidateAllLabelCaches(dispatch, { kind: 'income' });
+        } catch {
+          // mutation failed
+        }
       },
     }),
     updateIncomeLabel: builder.mutation({
@@ -81,19 +144,43 @@ export const labelsAdminApi = createApi({
       }),
       invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        await queryFulfilled;
-        invalidateLabelCache(dispatch, 'income');
+        try {
+          await queryFulfilled;
+          invalidateAllLabelCaches(dispatch, { kind: 'income' });
+        } catch {
+          // mutation failed
+        }
+      },
+    }),
+    renameIncomeLabel: builder.mutation({
+      query: (body) => ({
+        url: '/manage-labels/income',
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateAllLabelCaches(dispatch, { kind: 'income' });
+        } catch {
+          // mutation failed
+        }
       },
     }),
     deleteIncomeLabel: builder.mutation({
-      query: (id) => ({
+      query: ({ id }) => ({
         url: `/manage-labels/income/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [{ type: 'AdminLabels', id: 'income' }],
-      async onQueryStarted(_id, { dispatch, queryFulfilled }) {
-        await queryFulfilled;
-        invalidateLabelCache(dispatch, 'income');
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          invalidateAllLabelCaches(dispatch, { kind: 'income' });
+        } catch {
+          // mutation failed
+        }
       },
     }),
   }),
@@ -104,8 +191,10 @@ export const {
   useGetAdminIncomeLabelsQuery,
   useCreateExpenseLabelMutation,
   useUpdateExpenseLabelMutation,
+  useRenameExpenseLabelMutation,
   useDeleteExpenseLabelMutation,
   useCreateIncomeLabelMutation,
   useUpdateIncomeLabelMutation,
+  useRenameIncomeLabelMutation,
   useDeleteIncomeLabelMutation,
 } = labelsAdminApi;

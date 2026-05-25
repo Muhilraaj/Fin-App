@@ -21,11 +21,13 @@ import { useDispatch } from 'react-redux';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
+import DropDown from '../../components/DropDown/DropDown';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 import {
   useCreateExpenseLabelMutation,
   useDeleteExpenseLabelMutation,
   useGetAdminExpenseLabelsQuery,
-  useUpdateExpenseLabelMutation,
+  useRenameExpenseLabelMutation,
 } from '../../stores/api/labelsAdminApi';
 import { showSnackbar } from '../../stores/slices/snackbarSlice';
 import LabelFormDialog from './LabelFormDialog';
@@ -36,10 +38,15 @@ const expenseColumns = [
   { field: 'L3', headerName: 'L3', flex: 1, minWidth: 160 },
 ];
 
-function filterRows(rows, search) {
+function filterRows(rows, { l1, l2, l3, search }) {
+  let result = rows;
+  if (l1 !== '*') result = result.filter((row) => row.L1 === l1);
+  if (l2 !== '*') result = result.filter((row) => row.L2 === l2);
+  if (l3 !== '*') result = result.filter((row) => row.L3 === l3);
+
   const term = search.trim().toLowerCase();
-  if (!term) return rows;
-  return rows.filter((row) =>
+  if (!term) return result;
+  return result.filter((row) =>
     ['L1', 'L2', 'L3'].some((key) => String(row[key] ?? '').toLowerCase().includes(term))
   );
 }
@@ -48,6 +55,9 @@ export default function ManageExpenseLabels() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [scope, setScope] = useState('regular');
+  const [filterL1, setFilterL1] = useState('*');
+  const [filterL2, setFilterL2] = useState('*');
+  const [filterL3, setFilterL3] = useState('*');
   const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
@@ -55,10 +65,19 @@ export default function ManageExpenseLabels() {
 
   const { data = [], isLoading, isError } = useGetAdminExpenseLabelsQuery(scope);
   const [createLabel, { isLoading: isCreating }] = useCreateExpenseLabelMutation();
-  const [updateLabel, { isLoading: isUpdating }] = useUpdateExpenseLabelMutation();
+  const [renameLabel, { isLoading: isRenaming }] = useRenameExpenseLabelMutation();
   const [deleteLabel, { isLoading: isDeleting }] = useDeleteExpenseLabelMutation();
 
-  const rows = useMemo(() => filterRows(data, search), [data, search]);
+  const { l1Options, l2Options, l3Options } = useLabelFilter(
+    data,
+    { l1: filterL1, l2: filterL2, l3: filterL3 },
+    3
+  );
+
+  const rows = useMemo(
+    () => filterRows(data, { l1: filterL1, l2: filterL2, l3: filterL3, search }),
+    [data, filterL1, filterL2, filterL3, search]
+  );
 
   const columnDefs = useMemo(
     () => [
@@ -83,14 +102,37 @@ export default function ManageExpenseLabels() {
     []
   );
 
+  const handleFilterL1 = (e) => {
+    setFilterL1(e.target.value);
+    setFilterL2('*');
+    setFilterL3('*');
+  };
+
+  const handleFilterL2 = (e) => {
+    setFilterL2(e.target.value);
+    setFilterL3('*');
+  };
+
   const handleSave = async (payload) => {
     try {
-      if (editingRow) {
-        await updateLabel({ id: editingRow.id, body: payload, scope }).unwrap();
-        dispatch(showSnackbar({ message: 'Label updated', type: 'success' }));
+      if (payload.type === 'rename') {
+        const result = await renameLabel({
+          scope,
+          level: payload.level,
+          id: payload.id,
+          from: payload.from,
+          to: payload.to,
+        }).unwrap();
+        const count = result.updatedCount ?? 1;
+        dispatch(showSnackbar({
+          message: count === 1 ? 'Label updated' : `Renamed ${count} labels`,
+          type: 'success',
+        }));
       } else {
-        const body = scope === 'construction' ? { ...payload, Custom: 'Construction' } : payload;
-        await createLabel(body).unwrap();
+        const body = scope === 'construction'
+          ? { ...payload.body, Custom: 'Construction' }
+          : payload.body;
+        await createLabel({ scope, body }).unwrap();
         dispatch(showSnackbar({ message: 'Label created', type: 'success' }));
       }
       setDialogOpen(false);
@@ -129,7 +171,7 @@ export default function ManageExpenseLabels() {
           </Typography>
           <Button
             variant="contained"
-            color="secondary"
+            color="success"
             onClick={() => { setEditingRow(null); setDialogOpen(true); }}
           >
             Add Label
@@ -141,15 +183,51 @@ export default function ManageExpenseLabels() {
         <Stack spacing={3}>
           <Tabs
             value={scope}
-            onChange={(_, value) => { setScope(value); setSearch(''); }}
-            TabIndicatorProps={{ sx: { bgcolor: 'secondary.main' } }}
+            onChange={(_, value) => {
+              setScope(value);
+              setSearch('');
+              setFilterL1('*');
+              setFilterL2('*');
+              setFilterL3('*');
+            }}
+            TabIndicatorProps={{ sx: { bgcolor: 'success.main' } }}
             sx={{
-              '& .MuiTab-root.Mui-selected': { color: 'secondary.main' },
+              '& .MuiTab-root.Mui-selected': { color: 'success.main' },
             }}
           >
             <Tab value="regular" label="Regular" />
             <Tab value="construction" label="Construction" />
           </Tabs>
+
+          <Stack direction={{ xs: 'column', lg: 'row' }} spacing={2} flexWrap="wrap">
+            <DropDown
+              id="filter-l1"
+              p={1}
+              boxShadow={5}
+              options={l1Options}
+              value={filterL1}
+              handler={handleFilterL1}
+              label="L1"
+            />
+            <DropDown
+              id="filter-l2"
+              p={1}
+              boxShadow={5}
+              options={l2Options}
+              value={filterL2}
+              handler={handleFilterL2}
+              label="L2"
+            />
+            <DropDown
+              id="filter-l3"
+              p={1}
+              boxShadow={5}
+              options={l3Options}
+              value={filterL3}
+              handler={(e) => setFilterL3(e.target.value)}
+              label="L3"
+            />
+          </Stack>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
             <TextField
@@ -192,7 +270,7 @@ export default function ManageExpenseLabels() {
         initialValues={editingRow ?? {}}
         onClose={() => { setDialogOpen(false); setEditingRow(null); }}
         onSubmit={handleSave}
-        isSubmitting={isCreating || isUpdating}
+        isSubmitting={isCreating || isRenaming}
       />
 
       <Dialog open={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)}>

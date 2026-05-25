@@ -13,6 +13,10 @@ on:
       - .github/workflows/backend_dev.yml
   workflow_dispatch:
 
+concurrency:
+  group: backend-dev-deploy
+  cancel-in-progress: true
+
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: backend-api 
   GO_VERSION: '1.20.4' 

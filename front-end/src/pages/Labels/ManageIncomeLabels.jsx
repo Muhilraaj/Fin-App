@@ -19,11 +19,13 @@ import { useDispatch } from 'react-redux';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
+import DropDown from '../../components/DropDown/DropDown';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 import {
   useCreateIncomeLabelMutation,
   useDeleteIncomeLabelMutation,
   useGetAdminIncomeLabelsQuery,
-  useUpdateIncomeLabelMutation,
+  useRenameIncomeLabelMutation,
 } from '../../stores/api/labelsAdminApi';
 import { showSnackbar } from '../../stores/slices/snackbarSlice';
 import LabelFormDialog from './LabelFormDialog';
@@ -33,10 +35,14 @@ const incomeColumns = [
   { field: 'L2', headerName: 'L2', flex: 1, minWidth: 200 },
 ];
 
-function filterRows(rows, search) {
+function filterRows(rows, { l1, l2, search }) {
+  let result = rows;
+  if (l1 !== '*') result = result.filter((row) => row.L1 === l1);
+  if (l2 !== '*') result = result.filter((row) => row.L2 === l2);
+
   const term = search.trim().toLowerCase();
-  if (!term) return rows;
-  return rows.filter((row) =>
+  if (!term) return result;
+  return result.filter((row) =>
     ['L1', 'L2'].some((key) => String(row[key] ?? '').toLowerCase().includes(term))
   );
 }
@@ -44,6 +50,8 @@ function filterRows(rows, search) {
 export default function ManageIncomeLabels() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [filterL1, setFilterL1] = useState('*');
+  const [filterL2, setFilterL2] = useState('*');
   const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
@@ -51,10 +59,19 @@ export default function ManageIncomeLabels() {
 
   const { data = [], isLoading, isError } = useGetAdminIncomeLabelsQuery();
   const [createLabel, { isLoading: isCreating }] = useCreateIncomeLabelMutation();
-  const [updateLabel, { isLoading: isUpdating }] = useUpdateIncomeLabelMutation();
+  const [renameLabel, { isLoading: isRenaming }] = useRenameIncomeLabelMutation();
   const [deleteLabel, { isLoading: isDeleting }] = useDeleteIncomeLabelMutation();
 
-  const rows = useMemo(() => filterRows(data, search), [data, search]);
+  const { l1Options, l2Options } = useLabelFilter(
+    data,
+    { l1: filterL1, l2: filterL2 },
+    2
+  );
+
+  const rows = useMemo(
+    () => filterRows(data, { l1: filterL1, l2: filterL2, search }),
+    [data, filterL1, filterL2, search]
+  );
 
   const columnDefs = useMemo(
     () => [
@@ -79,13 +96,27 @@ export default function ManageIncomeLabels() {
     []
   );
 
+  const handleFilterL1 = (e) => {
+    setFilterL1(e.target.value);
+    setFilterL2('*');
+  };
+
   const handleSave = async (payload) => {
     try {
-      if (editingRow) {
-        await updateLabel({ id: editingRow.id, body: payload }).unwrap();
-        dispatch(showSnackbar({ message: 'Label updated', type: 'success' }));
+      if (payload.type === 'rename') {
+        const result = await renameLabel({
+          level: payload.level,
+          id: payload.id,
+          from: payload.from,
+          to: payload.to,
+        }).unwrap();
+        const count = result.updatedCount ?? 1;
+        dispatch(showSnackbar({
+          message: count === 1 ? 'Label updated' : `Renamed ${count} labels`,
+          type: 'success',
+        }));
       } else {
-        await createLabel(payload).unwrap();
+        await createLabel({ body: payload.body }).unwrap();
         dispatch(showSnackbar({ message: 'Label created', type: 'success' }));
       }
       setDialogOpen(false);
@@ -101,7 +132,7 @@ export default function ManageIncomeLabels() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      await deleteLabel(deleteTarget.id).unwrap();
+      await deleteLabel({ id: deleteTarget.id }).unwrap();
       dispatch(showSnackbar({ message: 'Label deleted', type: 'success' }));
       setDeleteTarget(null);
     } catch (error) {
@@ -124,7 +155,7 @@ export default function ManageIncomeLabels() {
           </Typography>
           <Button
             variant="contained"
-            color="secondary"
+            color="success"
             onClick={() => { setEditingRow(null); setDialogOpen(true); }}
           >
             Add Label
@@ -134,6 +165,27 @@ export default function ManageIncomeLabels() {
 
       <Box p={4} flex={1}>
         <Stack spacing={3}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} flexWrap="wrap">
+            <DropDown
+              id="filter-l1"
+              p={1}
+              boxShadow={5}
+              options={l1Options}
+              value={filterL1}
+              handler={handleFilterL1}
+              label="L1"
+            />
+            <DropDown
+              id="filter-l2"
+              p={1}
+              boxShadow={5}
+              options={l2Options}
+              value={filterL2}
+              handler={(e) => setFilterL2(e.target.value)}
+              label="L2"
+            />
+          </Stack>
+
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
             <TextField
               label="Search labels"
@@ -175,7 +227,7 @@ export default function ManageIncomeLabels() {
         initialValues={editingRow ?? {}}
         onClose={() => { setDialogOpen(false); setEditingRow(null); }}
         onSubmit={handleSave}
-        isSubmitting={isCreating || isUpdating}
+        isSubmitting={isCreating || isRenaming}
       />
 
       <Dialog open={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)}>

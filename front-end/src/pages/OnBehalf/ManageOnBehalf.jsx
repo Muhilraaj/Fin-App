@@ -53,7 +53,6 @@ export default function ManageOnBehalf() {
       { field: 'On-Behalf', headerName: 'On-Behalf', flex: 1, minWidth: 120 },
       { field: 'Name', headerName: 'Name', flex: 1, minWidth: 160 },
       { field: 'Relationship', headerName: 'Relationship', flex: 1, minWidth: 120 },
-      { field: 'pk', headerName: 'PK', width: 80 },
       {
         headerName: 'Actions',
         width: 120,

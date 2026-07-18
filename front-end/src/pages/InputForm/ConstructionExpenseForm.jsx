@@ -1,15 +1,10 @@
 import Form from 'react-bootstrap/Form';
 import dayjs from 'dayjs';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import React from 'react';
@@ -23,7 +18,7 @@ import { useGetConstructionLabelsQuery } from '../../stores/api/labelsApi';
 import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
 import { useSubmitExpenseMutation } from '../../stores/api/expenseApi';
 import { showSnackbar } from '../../stores/slices/snackbarSlice';
-import { useLabelCascade } from '../../hooks/useLabelCascade';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 
 function ConstructionExpenseForm() {
   const dispatch = useDispatch();
@@ -45,12 +40,13 @@ function ConstructionExpenseForm() {
   const [datetimeError, setdatetimeError] = useState(null);
   const [datetimestateError, setdatetimestateError] = useState(false);
 
-  const { l1Options, l2Options, l3Options } = useLabelCascade(
+  const { l1Options, l2Options, l3Options, selectedLabelId } = useLabelFilter(
     labels,
     { l1: L1Value, l2: L2Value, l3: L3Value },
     3
   );
   const ObOptions = onBehalfUsers?.options ?? [];
+  const userKeyByName = onBehalfUsers?.userKeyByName ?? {};
 
   const resetForm = () => {
     setL3Value('*');
@@ -152,12 +148,21 @@ function ConstructionExpenseForm() {
       setdatetimestateError(false);
     }
     if (!(ps | l1s | l2s | l3s | behalfError | obs) && datetimeError === null && event.target[12].value !== '') {
+      const onBehalfName = event.target[8].value;
+      const userKey = userKeyByName[onBehalfName];
+      if (!userKey) {
+        setObError(true);
+        dispatch(showSnackbar({
+          message: 'On-behalf user not found. Refresh the page and try again.',
+          type: 'error',
+        }));
+        return;
+      }
       const payload = {
         Expense: event.target.amount.value,
-        L1: event.target[2].value,
-        L2: event.target[4].value,
-        L3: event.target[6].value,
-        Onbehalf: event.target[8].value,
+        Label_key: selectedLabelId,
+        Onbehalf: onBehalfName,
+        User_key: userKey,
         Expense_Note: event.target.Comments.value,
         Timestamp: formatDatetime(DatetimeValue),
         Custom: 'Construction',
@@ -176,27 +181,9 @@ function ConstructionExpenseForm() {
   };
 
   return (
-    <Stack spacing={5} direction="column">
-        <AppBar position="static" width="100%">
-          <Toolbar variant="dense">
-            <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" color="inherit" component="div">
-              Construction Expense
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box sx={{ display: 'flex' }} p={4}
-          justifyContent="center"
-          alignItems="center"
-          display="flex"
-        >
-          <Box sx={{ display: 'flex' }} p={4}
-            display="flex"
-            border='solid'
-          >
-            <Form onSubmit={handleSubmit}>
+    <Box display="flex" justifyContent="center">
+      <Box p={3} border="solid" borderColor="divider" borderRadius={1} bgcolor="background.paper">
+        <Form onSubmit={handleSubmit}>
               <Stack direction="column" spacing={2}>
                 <FormControl error={priceError}>
                   <InputLabel htmlFor="amount">Expense</InputLabel>
@@ -228,9 +215,8 @@ function ConstructionExpenseForm() {
               </Stack>
               <FormHelperText error={datetimestateError}>{datetimestateError ? 'Datetime cannot be empty' : ''}</FormHelperText>
             </Form>
-          </Box>
-        </Box>
-      </Stack>
+      </Box>
+    </Box>
   );
 }
 

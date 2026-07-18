@@ -8,10 +8,10 @@ import Stack from '@mui/material/Stack';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useGetConstructionLabelsQuery } from '../../stores/api/labelsApi';
+import { useGetConstructionLabelsForFilterQuery } from '../../stores/api/labelsApi';
 import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
 import { useGetExpensesQuery } from '../../stores/api/expenseApi';
-import { useLabelCascade } from '../../hooks/useLabelCascade';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 
 const columns = [
   {
@@ -59,7 +59,7 @@ const columns = [
 ];
 
 export default function ConstructionExpenseDetails() {
-  const { data: labels } = useGetConstructionLabelsQuery();
+  const { data: labels } = useGetConstructionLabelsForFilterQuery();
   const { data: onBehalfUsers } = useGetOnBehalfUsersQuery();
 
   const [L1Value, setL1Value] = useState('*');
@@ -73,7 +73,7 @@ export default function ConstructionExpenseDetails() {
   const expenseData = expenseResponse?.data ?? [];
   const expense = expenseResponse?.totalExpense ?? [];
 
-  const { l1Options, l2Options, l3Options } = useLabelCascade(
+  const { l1Options, l2Options, l3Options } = useLabelFilter(
     labels,
     { l1: L1Value, l2: L2Value, l3: L3Value },
     3

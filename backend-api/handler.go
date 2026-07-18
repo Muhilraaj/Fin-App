@@ -4,19 +4,16 @@ import (
 	"api/auth"
 	azcosmosapi "api/azcosmos-api"
 	"api/cosmosconfig"
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/Azure/azure-storage-blob-go/azblob"
 	"github.com/gin-gonic/gin"
 )
 
@@ -62,20 +59,38 @@ func getLabel(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, make(map[string]interface{}))
 		return
 	}
-	cred, _ := azblob.NewSharedKeyCredential(os.Getenv("Storage_Account_Name"), os.Getenv("Storage_Account_Key"))
-	options := azblob.PipelineOptions{}
-	var blob_url = map[string]string{"/expense": os.Getenv("EXPENSE_BLOB_URL"), "/income": os.Getenv("INCOME_BLOB_URL"), "/construction": os.Getenv("CONSTRUCTION_BLOB_URL")}
-	u, _ := url.Parse(blob_url[c.Param("path")])
-	pipeline := azblob.NewPipeline(cred, options)
-	url := azblob.NewBlobURL(*u, pipeline)
-	ctx := context.Background()
-	b, _ := url.Download(ctx, 0, azblob.CountToEnd, azblob.BlobAccessConditions{}, false, azblob.ClientProvidedKeyOptions{})
-	var label = make(map[string]interface{})
-	_ = json.NewDecoder(b.Body(azblob.RetryReaderOptions{})).Decode(&label)
+
+	var result []map[string]interface{}
+	includeAll := c.Query("all") == "true" || c.Query("all") == "1"
+	switch c.Param("path") {
+	case "/expense":
+		if includeAll {
+			result = cosmosconfig.ListExpenseLabels("regular")
+		} else {
+			result = cosmosconfig.ListActiveExpenseLabels("regular")
+		}
+	case "/construction":
+		if includeAll {
+			result = cosmosconfig.ListExpenseLabels("construction")
+		} else {
+			result = cosmosconfig.ListActiveExpenseLabels("construction")
+		}
+	case "/income":
+		if includeAll {
+			result = cosmosconfig.ListIncomeLabels()
+		} else {
+			result = cosmosconfig.ListActiveIncomeLabels()
+		}
+	default:
+		c.JSON(http.StatusNotFound, gin.H{"error": "unknown label type"})
+		return
+	}
+
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
-	c.JSON(http.StatusAccepted, &label)
+	c.Header("Cache-Control", "no-store")
+	c.JSON(http.StatusOK, result)
 }
 
 func APIPort() string {
@@ -105,11 +120,51 @@ func postExpense(c *gin.Context) {
 		return
 	}
 	var result = make(map[string]interface{})
+	custom := ""
 	if ecust := expense["Custom"]; ecust != nil {
+		custom = fmt.Sprint(ecust)
 		result["Custom"] = expense["Custom"]
-		result["Label_key"] = customHash(fmt.Sprintf("%v%v%v%v", expense["L1"], expense["L2"], expense["L3"], expense["Custom"]))
+	}
+
+	labelKey := ""
+	if val, ok := expense["Label_key"]; ok && val != nil {
+		labelKey = strings.TrimSpace(fmt.Sprint(val))
+	}
+	if labelKey != "" {
+		label := cosmosconfig.GetLabelByID(labelKey)
+		if label == nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label not found"})
+			return
+		}
+		if custom == "Construction" {
+			if fmt.Sprint(label["Custom"]) != "Construction" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "label is not a construction label"})
+				return
+			}
+		} else if val, ok := label["Custom"]; ok && val != nil && fmt.Sprint(val) == "Construction" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is not a regular expense label"})
+			return
+		}
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
+		result["Label_key"] = labelKey
 	} else {
-		result["Label_key"] = customHash(fmt.Sprintf("%v%v%v", expense["L1"], expense["L2"], expense["L3"]))
+		l1 := fmt.Sprint(expense["L1"])
+		l2 := fmt.Sprint(expense["L2"])
+		l3 := fmt.Sprint(expense["L3"])
+		labels := cosmosconfig.FindExpenseLabelByPath(l1, l2, l3, custom)
+		if len(labels) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label path not found"})
+			return
+		}
+		label := labels[0]
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
+		result["Label_key"] = label["id"]
 	}
 	result["Expense"] = expense["Expense"]
 	result["Expense_Note"] = expense["Expense_Note"]
@@ -121,8 +176,27 @@ func postExpense(c *gin.Context) {
 		panic(err)
 	}
 	result["Timestamp"] = parsedTime.Format(output_format)
-	result["User_key"] = customHash(fmt.Sprint(expense["Onbehalf"]))
-	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], expense["Label_key"], expense["User_key"]))
+	onBehalfName := strings.TrimSpace(fmt.Sprint(expense["Onbehalf"]))
+	userKey := strings.TrimSpace(fmt.Sprint(expense["User_key"]))
+	if onBehalfName == "" || onBehalfName == "*" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "on-behalf user is required"})
+		return
+	}
+	if userKey == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User_key is required"})
+		return
+	}
+	onBehalfUser := cosmosconfig.GetOnBehalfByID(userKey)
+	if onBehalfUser == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "on-behalf user not found"})
+		return
+	}
+	if strings.TrimSpace(fmt.Sprint(onBehalfUser["On-Behalf"])) != onBehalfName {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "on-behalf user does not match"})
+		return
+	}
+	result["User_key"] = userKey
+	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], result["Label_key"], result["User_key"]))
 	result["pk"] = 1
 
 	err = cosmosconfig.CreateExpense(result)
@@ -165,8 +239,38 @@ func postIncome(c *gin.Context) {
 		panic(err)
 	}
 	result["Timestamp"] = parsedTime.Format(output_format)
-	result["Label_key"] = customHash(fmt.Sprintf("%v%v", income["L1"], income["L2"]))
-	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], income["Label_key"]))
+
+	labelKey := ""
+	if val, ok := income["Label_key"]; ok && val != nil {
+		labelKey = strings.TrimSpace(fmt.Sprint(val))
+	}
+	if labelKey != "" {
+		label := cosmosconfig.GetIncomeLabelByID(labelKey)
+		if label == nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label not found"})
+			return
+		}
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
+		result["Label_key"] = labelKey
+	} else {
+		l1 := fmt.Sprint(income["L1"])
+		l2 := fmt.Sprint(income["L2"])
+		labels := cosmosconfig.FindIncomeLabelByPath(l1, l2)
+		if len(labels) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label path not found"})
+			return
+		}
+		label := labels[0]
+		if !cosmosconfig.IsLabelActive(label) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "label is inactive"})
+			return
+		}
+		result["Label_key"] = label["id"]
+	}
+	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], result["Label_key"]))
 	result["pk"] = 1
 
 	err = cosmosconfig.CreateIncome(result)
@@ -363,7 +467,7 @@ func main() {
 			// Set the necessary headers for CORS (Cross-Origin Resource Sharing)
 			//origin := c.Request.Header.Get("Origin")
 			c.Header("Access-Control-Allow-Origin", "*")
-			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 			c.Header("Access-Control-Allow-Headers", "Content-Type,*")
 			c.Header("Access-Control-Allow-Credentials", "true")
 			c.Header("Access-Control-Expose-Headers", "*, Authorization")
@@ -376,6 +480,8 @@ func main() {
 	route.GET("api/user", getUser)
 	route.GET("api/checkCookie", checkToken)
 	route.GET("api/labels/*path", getLabel)
+	registerAdminLabelRoutes(route)
+	registerAdminOnBehalfRoutes(route)
 	route.POST("api/expense", postExpense)
 	route.GET("api/expense", getExpense)
 	route.GET("api/income", getIncome)

@@ -10,10 +10,10 @@ import dayjs from 'dayjs';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { useGetExpenseLabelsQuery } from '../../stores/api/labelsApi';
+import { useGetExpenseLabelsForFilterQuery } from '../../stores/api/labelsApi';
 import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
 import { useGetExpensesQuery } from '../../stores/api/expenseApi';
-import { useLabelCascade } from '../../hooks/useLabelCascade';
+import { useLabelFilter } from '../../hooks/useLabelFilter';
 
 const columns = [
   {
@@ -61,7 +61,7 @@ const columns = [
 ];
 
 export default function ExpenseDetails() {
-  const { data: labels } = useGetExpenseLabelsQuery();
+  const { data: labels } = useGetExpenseLabelsForFilterQuery();
   const { data: onBehalfUsers } = useGetOnBehalfUsersQuery();
 
   const [L1Value, setL1Value] = useState('*');
@@ -76,7 +76,7 @@ export default function ExpenseDetails() {
   const expenseData = expenseResponse?.data ?? [];
   const expense = expenseResponse?.totalExpense ?? [];
 
-  const { l1Options, l2Options, l3Options } = useLabelCascade(
+  const { l1Options, l2Options, l3Options } = useLabelFilter(
     labels,
     { l1: L1Value, l2: L2Value, l3: L3Value },
     3

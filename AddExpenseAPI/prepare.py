@@ -82,9 +82,10 @@ def PrepareLabel():
 
 def AddLabel(data):
     global container,database
+    import uuid
     database=client.get_database_client('DIM')
     container=database.get_container_client('Label')
-    data["id"]=customHash(data['L1']+data['L2']+data['L3'])
+    data["id"]=str(uuid.uuid4())
     data["pk"]=1
     InsertCosmos(data)
 
@@ -98,9 +99,10 @@ def AddUser(data):
 
 def AddIncomeLabel(data):
     global container,database
+    import uuid
     database=client.get_database_client('DIM')
     container=database.get_container_client('Income_Label')
-    data["id"]=customHash(data['L1']+data['L2'])
+    data["id"]=str(uuid.uuid4())
     data["pk"]=1
     InsertCosmos(data)
     

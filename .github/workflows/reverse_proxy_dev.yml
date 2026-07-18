@@ -1,18 +1,19 @@
 name: Deploy Container - Reverse Proxy - My Fin App Dev
 # When this action will be executed
 on:
-  # Automatically trigger it when detected changes in repo
+  # Deploy when changes land on dev (including merged PRs). Do not also use
+  # pull_request: closed — that fires on merge too and causes a duplicate run.
   push:
-    branches: 
-      [ dev ]
-    paths:
-    - 'reverseProxy/**'
-    - '.github/workflows/reverse_proxy_dev.yml'
-  pull_request:
-    types: [closed]
     branches:
       - dev
+    paths:
+      - reverseProxy/**
+      - .github/workflows/reverse_proxy_dev.yml
   workflow_dispatch:
+
+concurrency:
+  group: reverse-proxy-dev-deploy
+  cancel-in-progress: true
       
 jobs:
   build-and-deploy:

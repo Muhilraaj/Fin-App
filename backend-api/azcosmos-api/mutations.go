@@ -1,12 +1,14 @@
 package azcosmosapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
 )
 
@@ -36,16 +38,32 @@ func partitionKey() azcosmos.PartitionKey {
 }
 
 func DeleteItem(databaseid, containerid, id string) error {
+	return deleteItem(context.Background(), databaseid, containerid, id, nil)
+}
+
+func DeleteItemIfMatch(ctx context.Context, databaseid, containerid, id string, version azcore.ETag) error {
+	return deleteItem(ctx, databaseid, containerid, id, &azcosmos.ItemOptions{IfMatchEtag: &version})
+}
+
+func deleteItem(ctx context.Context, databaseid, containerid, id string, options *azcosmos.ItemOptions) error {
 	container, err := cosmosContainer(databaseid, containerid)
 	if err != nil {
 		return err
 	}
 
-	_, err = container.DeleteItem(context.Background(), partitionKey(), id, nil)
+	_, err = container.DeleteItem(ctx, partitionKey(), id, options)
 	return err
 }
 
 func ReplaceItem(databaseid, containerid string, item map[string]interface{}) error {
+	return replaceItem(context.Background(), databaseid, containerid, item, nil)
+}
+
+func ReplaceItemIfMatch(ctx context.Context, databaseid, containerid string, item map[string]interface{}, version azcore.ETag) error {
+	return replaceItem(ctx, databaseid, containerid, item, &azcosmos.ItemOptions{IfMatchEtag: &version})
+}
+
+func replaceItem(ctx context.Context, databaseid, containerid string, item map[string]interface{}, options *azcosmos.ItemOptions) error {
 	container, err := cosmosContainer(databaseid, containerid)
 	if err != nil {
 		return err
@@ -61,8 +79,26 @@ func ReplaceItem(databaseid, containerid string, item map[string]interface{}) er
 		return err
 	}
 
-	_, err = container.ReplaceItem(context.Background(), partitionKey(), id, marshalled, nil)
+	_, err = container.ReplaceItem(ctx, partitionKey(), id, marshalled, options)
 	return err
+}
+
+func ReadItem(ctx context.Context, databaseid, containerid, id string) (map[string]interface{}, azcore.ETag, error) {
+	container, err := cosmosContainer(databaseid, containerid)
+	if err != nil {
+		return nil, "", err
+	}
+	response, err := container.ReadItem(ctx, partitionKey(), id, nil)
+	if err != nil {
+		return nil, "", err
+	}
+	decoder := json.NewDecoder(bytes.NewReader(response.Value))
+	decoder.UseNumber()
+	var item map[string]interface{}
+	if err := decoder.Decode(&item); err != nil {
+		return nil, "", err
+	}
+	return item, response.ETag, nil
 }
 
 // ReplaceItemsBatch atomically replaces multiple items in the same partition (pk=1).

@@ -22,7 +22,29 @@ export const expenseApi = createApi({
       }),
       invalidatesTags: ['Expenses'],
     }),
+    updateExpense: builder.mutation({
+      query: ({ id, version, changes }) => ({
+        url: `/expense/${encodeURIComponent(id)}`,
+        method: 'PATCH',
+        headers: { 'If-Match': version },
+        body: changes,
+      }),
+      invalidatesTags: ['Expenses'],
+    }),
+    deleteExpense: builder.mutation({
+      query: ({ id, version }) => ({
+        url: `/expense/${encodeURIComponent(id)}`,
+        method: 'DELETE',
+        headers: { 'If-Match': version },
+      }),
+      invalidatesTags: ['Expenses'],
+    }),
   }),
 });
 
-export const { useGetExpensesQuery, useSubmitExpenseMutation } = expenseApi;
+export const {
+  useGetExpensesQuery,
+  useSubmitExpenseMutation,
+  useUpdateExpenseMutation,
+  useDeleteExpenseMutation,
+} = expenseApi;

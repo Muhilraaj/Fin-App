@@ -25,6 +25,7 @@ function DateTime(props) {
                     helperText: props.e_message
                   }
                 }}
+                disableIgnoringDatePartForTimeValidation
                 disableFuture />
             </DemoItem>
           </DemoContainer>

@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -198,6 +197,7 @@ func postExpense(c *gin.Context) {
 	result["User_key"] = userKey
 	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], result["Label_key"], result["User_key"]))
 	result["pk"] = 1
+	result["CreatedAt"] = time.Now().UTC().Format(time.RFC3339Nano)
 
 	err = cosmosconfig.CreateExpense(result)
 	c.Header("Access-Control-Allow-Origin", "*")
@@ -272,6 +272,7 @@ func postIncome(c *gin.Context) {
 	}
 	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], result["Label_key"]))
 	result["pk"] = 1
+	result["CreatedAt"] = time.Now().UTC().Format(time.RFC3339Nano)
 
 	err = cosmosconfig.CreateIncome(result)
 	c.Header("Access-Control-Allow-Origin", "*")
@@ -356,7 +357,7 @@ func getExpense(c *gin.Context) {
 		return
 	}
 	var filters = c.Request.URL.Query()
-	var expenseQuery = "SELECT c['Expense'],c['Expense_Note'],c['Label_key'],c['User_key'],c['Timestamp'] FROM c"
+	var expenseQuery = "SELECT c.Expense, c.Expense_Note, c.Label_key, c.User_key, c.Timestamp, c.CreatedAt, c.id AS transactionId, c.Label_key AS labelId, c.User_key AS onBehalfId, c._etag AS version FROM c"
 	if v := filters["custom"]; v != nil {
 		expenseQuery = fmt.Sprintf("%s WHERE c.Custom = '%s'", expenseQuery, v[0])
 	} else {
@@ -390,18 +391,7 @@ func getExpense(c *gin.Context) {
 	label := cosmosconfig.QueryLabel(labelQuery)
 	on_behalf := cosmosconfig.QueryOnBehalf("SELECT c['id'],c['On-Behalf'] FROM c")
 	finalData := azcosmosapi.InnerJoin(azcosmosapi.InnerJoin(&expense, &label, "Label_key", "id"), &on_behalf, "User_key", "id")
-	//calculate total income
-	var totalExpense = 0
-	for i := range *finalData {
-		if v, ok := ((*finalData)[i]["Expense"]).(int); ok {
-			totalExpense += v
-		} else if v, ok := ((*finalData)[i]["Expense"]).(string); ok {
-			i, _ = strconv.Atoi(v)
-			totalExpense += i
-		} else if v, ok := ((*finalData)[i]["Expense"]).(float64); ok {
-			totalExpense += int(v)
-		}
-	}
+	totalExpense := reportTransactionTotal(*finalData, "Expense")
 	var result = map[string]interface{}{"data": finalData, "totalExpense": totalExpense}
 	c.JSON(http.StatusAccepted, &result)
 	c.Header("Access-Control-Allow-Origin", "*")
@@ -423,13 +413,16 @@ func getIncome(c *gin.Context) {
 		return
 	}
 	var filters = c.Request.URL.Query()
-	var incomeQuery = "SELECT c['Income'],c['Income_Note'],c['Label_key'],c['Timestamp'] FROM c "
+	var incomeQuery = "SELECT c.Income, c.Income_Note, c.Label_key, c.Timestamp, c.CreatedAt, c.id AS transactionId, c.Label_key AS labelId, c._etag AS version FROM c"
 	var labelQuery = "SELECT c['id'],c['L1'],c['L2'],c['L3'] FROM c"
 	//add filter to the query
 	if v := filters["monthYear"]; v != nil {
-		year := v[0][0:4]
-		month := v[0][4:6]
-		incomeQuery = fmt.Sprintf("%s Where c.Timestamp >= '%s-%s-01' and c.Timestamp<='%s-%s-31'", incomeQuery, year, month, year, month)
+		month, err := time.Parse("200601", v[0])
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "monthYear must be a valid month in YYYYMM format"})
+			return
+		}
+		incomeQuery = fmt.Sprintf("%s WHERE c.Timestamp >= '%s' AND c.Timestamp < '%s'", incomeQuery, month.Format("2006-01-02"), month.AddDate(0, 1, 0).Format("2006-01-02"))
 	}
 	if v := filters["L2"]; v != nil {
 		labelQuery = fmt.Sprintf("%s Where c.L2 = '%s'", labelQuery, v[0])
@@ -440,18 +433,7 @@ func getIncome(c *gin.Context) {
 	income := cosmosconfig.QueryIncome(incomeQuery)
 	label := cosmosconfig.QueryIncomeLabel(labelQuery)
 	finalData := azcosmosapi.InnerJoin(&income, &label, "Label_key", "id")
-	//calculate total income
-	var totalIncome = 0
-	for i := range *finalData {
-		if v, ok := ((*finalData)[i]["Income"]).(int); ok {
-			totalIncome += v
-		} else if v, ok := ((*finalData)[i]["Income"]).(string); ok {
-			i, _ = strconv.Atoi(v)
-			totalIncome += i
-		} else if v, ok := ((*finalData)[i]["Income"]).(float64); ok {
-			totalIncome += int(v)
-		}
-	}
+	totalIncome := reportTransactionTotal(*finalData, "Income")
 	var result = map[string]interface{}{"data": finalData, "totalIncome": totalIncome}
 	c.JSON(http.StatusAccepted, &result)
 	c.Header("Access-Control-Allow-Origin", "*")
@@ -468,7 +450,7 @@ func main() {
 			//origin := c.Request.Header.Get("Origin")
 			c.Header("Access-Control-Allow-Origin", "*")
 			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-			c.Header("Access-Control-Allow-Headers", "Content-Type,*")
+			c.Header("Access-Control-Allow-Headers", "Content-Type, If-Match,*")
 			c.Header("Access-Control-Allow-Credentials", "true")
 			c.Header("Access-Control-Expose-Headers", "*, Authorization")
 			c.AbortWithStatus(http.StatusOK)
@@ -486,6 +468,12 @@ func main() {
 	route.GET("api/expense", getExpense)
 	route.GET("api/income", getIncome)
 	route.POST("api/income", postIncome)
+	expenseMutation := mutateTransaction("Expense", cosmosconfig.ExpenseContainer)
+	incomeMutation := mutateTransaction("Income", cosmosconfig.IncomeContainer)
+	route.PATCH("api/expense/:id", expenseMutation)
+	route.DELETE("api/expense/:id", expenseMutation)
+	route.PATCH("api/income/:id", incomeMutation)
+	route.DELETE("api/income/:id", incomeMutation)
 	route.POST("api/login", postJWT)
 	port_info := APIPort()
 	fmt.Println("Starting custom handler on", port_info)

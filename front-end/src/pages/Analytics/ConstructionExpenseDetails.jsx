@@ -5,9 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import DropDown from '../../components/DropDown/DropDown';
 import Stack from '@mui/material/Stack';
-import { AgGridReact } from 'ag-grid-react';
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import TransactionReportGrid from './TransactionReportGrid';
 import { useGetConstructionLabelsForFilterQuery } from '../../stores/api/labelsApi';
 import { useGetOnBehalfUsersQuery } from '../../stores/api/usersApi';
 import { useGetExpensesQuery } from '../../stores/api/expenseApi';
@@ -18,43 +16,36 @@ const columns = [
     field: 'L1',
     width: 200,
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>L1</p>,
-    editable: true,
   },
   {
     field: 'L2',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>L2</p>,
     width: 200,
-    editable: true,
   },
   {
     field: 'L3',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>L3</p>,
     width: 200,
-    editable: true,
   },
   {
     field: 'On-Behalf',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>On-Behalf</p>,
     width: 200,
-    editable: true,
   },
   {
     field: 'Expense_Note',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>Expense Note</p>,
     width: 400,
-    editable: true,
   },
   {
     field: 'Expense',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>Expense</p>,
     width: 200,
-    editable: true,
   },
   {
     field: 'Timestamp',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>Timestamp</p>,
     width: 200,
-    editable: true,
   },
 ];
 
@@ -67,7 +58,6 @@ export default function ConstructionExpenseDetails() {
   const [L3Value, setL3Value] = useState('*');
   const [ObValue, setObValue] = useState('*');
   const [params, setParams] = useState({ custom: 'Construction' });
-  const colDefs = useState(columns)[0];
 
   const { data: expenseResponse } = useGetExpensesQuery(params);
   const expenseData = expenseResponse?.data ?? [];
@@ -164,9 +154,12 @@ export default function ConstructionExpenseDetails() {
             className="ag-theme-quartz"
             style={{ height: 1000 }}
           >
-            <AgGridReact
-              rowData={expenseData}
-              columnDefs={colDefs}
+            <TransactionReportGrid
+              rows={expenseData}
+              columns={columns}
+              type="expense"
+              labels={labels}
+              onBehalfUsers={onBehalfUsers}
             />
           </div>
         </Box>

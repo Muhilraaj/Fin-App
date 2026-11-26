@@ -53,6 +53,24 @@ func ExecuteQuery(databaseid string, containerid string, queryString string, par
 	return result
 }
 
+func QueryHasItems(ctx context.Context, databaseID, containerID, query string, parameters []azcosmos.QueryParameter) (bool, error) {
+	container, err := cosmosContainer(databaseID, containerID)
+	if err != nil {
+		return false, err
+	}
+	pager := container.NewQueryItemsPager(query, partitionKey(), &azcosmos.QueryOptions{QueryParameters: parameters})
+	for pager.More() {
+		page, err := pager.NextPage(ctx)
+		if err != nil {
+			return false, err
+		}
+		if len(page.Items) > 0 {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 func LeftJoin(firstData *[]map[string]interface{}, secondData *[]map[string]interface{}, key1 string, key2 string) *[]map[string]interface{} {
 	var finalResult = make([]map[string]interface{}, 0)
 	var mapSecond = make(map[string]*map[string]interface{})

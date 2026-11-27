@@ -4,8 +4,6 @@ import (
 	"api/auth"
 	azcosmosapi "api/azcosmos-api"
 	"api/cosmosconfig"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,15 +13,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-func customHash(data interface{}) string {
-	strData := fmt.Sprintf("%v", data)
-	hash := sha256.New()
-	hash.Write([]byte(strData))
-	hashBytes := hash.Sum(nil)
-	hashString := hex.EncodeToString(hashBytes)
-	return hashString
-}
 
 func getUser(c *gin.Context) {
 	cookie, err := c.Cookie("token")
@@ -167,14 +156,12 @@ func postExpense(c *gin.Context) {
 	}
 	result["Expense"] = expense["Expense"]
 	result["Expense_Note"] = expense["Expense_Note"]
-	input_format := "01/02/2006 15:04:05"
-	output_format := "2006-01-02 15:04:05"
-	parsedTime, err := time.Parse(input_format, fmt.Sprint(expense["Timestamp"]))
+	parsedTime, err := time.Parse(transactionInputTimestampLayout, fmt.Sprint(expense["Timestamp"]))
 	if err != nil {
 		fmt.Print(err)
 		panic(err)
 	}
-	result["Timestamp"] = parsedTime.Format(output_format)
+	result["Timestamp"] = parsedTime.Format(transactionTimestampLayout)
 	onBehalfName := strings.TrimSpace(fmt.Sprint(expense["Onbehalf"]))
 	userKey := strings.TrimSpace(fmt.Sprint(expense["User_key"]))
 	if onBehalfName == "" || onBehalfName == "*" {
@@ -195,14 +182,17 @@ func postExpense(c *gin.Context) {
 		return
 	}
 	result["User_key"] = userKey
-	result["id"] = customHash(fmt.Sprintf("%v%v%v", expense["Timestamp"], result["Label_key"], result["User_key"]))
+	result["id"] = transactionID(parsedTime, fmt.Sprint(result["Label_key"]), userKey)
 	result["pk"] = 1
-	result["CreatedAt"] = time.Now().UTC().Format(time.RFC3339Nano)
 
-	err = cosmosconfig.CreateExpense(result)
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	if !transactionDestinationAvailable(c, cosmosconfig.ExpenseContainer(), "Expense", "", transactionKeyFor(result, "Expense")) {
+		return
+	}
+	result["CreatedAt"] = time.Now().UTC().Format(time.RFC3339Nano)
+	err = cosmosconfig.CreateExpense(result)
 	if err != nil {
 		fmt.Print(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "send proper expense data"})
@@ -231,14 +221,12 @@ func postIncome(c *gin.Context) {
 	var result = make(map[string]interface{})
 	result["Income"] = income["Income"]
 	result["Income_Note"] = income["Income_Note"]
-	input_format := "01/02/2006 15:04:05"
-	output_format := "2006-01-02 15:04:05"
-	parsedTime, err := time.Parse(input_format, fmt.Sprint(income["Timestamp"]))
+	parsedTime, err := time.Parse(transactionInputTimestampLayout, fmt.Sprint(income["Timestamp"]))
 	if err != nil {
 		fmt.Print(err)
 		panic(err)
 	}
-	result["Timestamp"] = parsedTime.Format(output_format)
+	result["Timestamp"] = parsedTime.Format(transactionTimestampLayout)
 
 	labelKey := ""
 	if val, ok := income["Label_key"]; ok && val != nil {
@@ -270,14 +258,17 @@ func postIncome(c *gin.Context) {
 		}
 		result["Label_key"] = label["id"]
 	}
-	result["id"] = customHash(fmt.Sprintf("%v%v", income["Timestamp"], result["Label_key"]))
+	result["id"] = transactionID(parsedTime, fmt.Sprint(result["Label_key"]), "")
 	result["pk"] = 1
-	result["CreatedAt"] = time.Now().UTC().Format(time.RFC3339Nano)
 
-	err = cosmosconfig.CreateIncome(result)
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	if !transactionDestinationAvailable(c, cosmosconfig.IncomeContainer(), "Income", "", transactionKeyFor(result, "Income")) {
+		return
+	}
+	result["CreatedAt"] = time.Now().UTC().Format(time.RFC3339Nano)
+	err = cosmosconfig.CreateIncome(result)
 	if err != nil {
 		fmt.Print(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "send proper income data"})

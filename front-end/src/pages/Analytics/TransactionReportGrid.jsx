@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { AgGridReact } from 'ag-grid-react';
+import dayjs from 'dayjs';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { useDispatch } from 'react-redux';
@@ -69,11 +70,6 @@ function getLabelPath(label) {
     l2: String(label?.L2 ?? '').trim(),
     l3: String(label?.L3 ?? '').trim(),
   };
-}
-
-function formatTimestamp(value) {
-  const timestamp = value.replace('T', ' ');
-  return timestamp.length === 16 ? timestamp + ':00' : timestamp;
 }
 
 export default function TransactionReportGrid({ rows, columns, type, labels, onBehalfUsers }) {
@@ -179,7 +175,14 @@ export default function TransactionReportGrid({ rows, columns, type, labels, onB
           close();
           return;
         }
-        if (changes.timestamp !== undefined) changes.timestamp = formatTimestamp(changes.timestamp);
+        if (changes.timestamp !== undefined) {
+          const timestamp = dayjs(changes.timestamp);
+          if (timestamp.isAfter(dayjs())) {
+            setError('Transaction date and time cannot be in the future.');
+            return;
+          }
+          changes.timestamp = timestamp.format('YYYY-MM-DD HH:mm:ss');
+        }
         await (isExpense ? updateExpense : updateIncome)({ ...request, changes }).unwrap();
       } else {
         await (isExpense ? deleteExpense : deleteIncome)(request).unwrap();
@@ -204,7 +207,8 @@ export default function TransactionReportGrid({ rows, columns, type, labels, onB
                 <TextField label="Amount (₹)" type="number" inputProps={{ step: 'any' }}
                   value={fields.amount} onChange={change('amount')} required />
                 <TextField label="Date and time" type="datetime-local" InputLabelProps={{ shrink: true }}
-                  inputProps={{ step: 1 }} value={fields.timestamp} onChange={change('timestamp')} required />
+                  inputProps={{ step: 1, max: dayjs().format('YYYY-MM-DDTHH:mm:ss') }}
+                  value={fields.timestamp} onChange={change('timestamp')} required />
                 {labelLevels.map(({ level, value, options, disabled }) => (
                   <TextField
                     key={level}

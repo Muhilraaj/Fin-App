@@ -1,5 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import dayjs from 'dayjs';
 import TransactionReportGrid from './TransactionReportGrid';
 
 const mockUpdateExpense = jest.fn();
@@ -60,7 +61,7 @@ function recentExpense() {
     version: '"original-version"',
     editExpiresAt: new Date(Date.now() + 60000).toISOString(),
     Expense: '12.50',
-    Timestamp: '2026-11-12 19:00:10',
+    Timestamp: dayjs().subtract(1, 'day').format('YYYY-MM-DD HH:mm:ss'),
     labelId: 'food',
     onBehalfId: 'me',
   };
@@ -106,6 +107,29 @@ test('editing other fields preserves the current inactive label', async () => {
     id: expense.transactionId,
     version: expense.version,
     changes: { amount: '15.25' },
+  }));
+});
+
+test('editing rejects future dates and still accepts past timestamps', async () => {
+  const expense = recentExpense();
+  renderTransactions([expense]);
+  fireEvent.click(openActionMenu().getByRole('menuitem', { name: 'Edit' }));
+  const dateField = screen.getByLabelText(/Date and time/);
+  const save = screen.getByRole('button', { name: 'Save changes' });
+  const future = dayjs().add(1, 'day').format('YYYY-MM-DDTHH:mm:ss');
+  fireEvent.change(dateField, { target: { value: future } });
+  expect(dateField.validity.rangeOverflow).toBe(true);
+  fireEvent.submit(save.form);
+  expect(screen.getByRole('alert')).toHaveTextContent('cannot be in the future');
+  expect(mockUpdateExpense).not.toHaveBeenCalled();
+
+  const past = dayjs().subtract(2, 'day');
+  fireEvent.change(dateField, { target: { value: past.format('YYYY-MM-DDTHH:mm:ss') } });
+  fireEvent.click(save);
+  await waitFor(() => expect(mockUpdateExpense).toHaveBeenCalledWith({
+    id: expense.transactionId,
+    version: expense.version,
+    changes: { timestamp: past.format('YYYY-MM-DD HH:mm:ss') },
   }));
 });
 

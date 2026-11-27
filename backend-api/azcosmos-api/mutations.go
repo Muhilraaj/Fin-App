@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
@@ -61,6 +62,22 @@ func ReplaceItem(databaseid, containerid string, item map[string]interface{}) er
 
 func ReplaceItemIfMatch(ctx context.Context, databaseid, containerid string, item map[string]interface{}, version azcore.ETag) error {
 	return replaceItem(ctx, databaseid, containerid, item, &azcosmos.ItemOptions{IfMatchEtag: &version})
+}
+
+// MoveItemIfMatch changes the document ID without releasing its old ID on failure.
+func MoveItemIfMatch(ctx context.Context, databaseid, containerid, oldID string, item map[string]interface{}, version azcore.ETag) error {
+	container, err := cosmosContainer(databaseid, containerid)
+	if err != nil {
+		return err
+	}
+	marshalled, err := json.Marshal(item)
+	if err != nil {
+		return err
+	}
+	batch := container.NewTransactionalBatch(partitionKey())
+	batch.DeleteItem(oldID, &azcosmos.TransactionalBatchItemOptions{IfMatchETag: &version})
+	batch.CreateItem(marshalled, nil)
+	return executeBatch(ctx, container, batch)
 }
 
 func replaceItem(ctx context.Context, databaseid, containerid string, item map[string]interface{}, options *azcosmos.ItemOptions) error {
@@ -128,7 +145,11 @@ func ReplaceItemsBatch(databaseid, containerid string, items []map[string]interf
 		batch.ReplaceItem(id, marshalled, nil)
 	}
 
-	resp, err := container.ExecuteTransactionalBatch(context.Background(), batch, nil)
+	return executeBatch(context.Background(), container, batch)
+}
+
+func executeBatch(ctx context.Context, container *azcosmos.ContainerClient, batch azcosmos.TransactionalBatch) error {
+	resp, err := container.ExecuteTransactionalBatch(ctx, batch, nil)
 	if err != nil {
 		return err
 	}
@@ -137,8 +158,8 @@ func ReplaceItemsBatch(databaseid, containerid string, items []map[string]interf
 	}
 
 	for i, op := range resp.OperationResults {
-		if op.StatusCode >= 400 && op.StatusCode != 424 {
-			return fmt.Errorf("transactional batch failed at operation %d: status %d", i, op.StatusCode)
+		if op.StatusCode >= 400 && op.StatusCode != http.StatusFailedDependency {
+			return fmt.Errorf("transactional batch failed at operation %d: %w", i, &azcore.ResponseError{StatusCode: int(op.StatusCode)})
 		}
 	}
 	return errors.New("transactional batch failed")

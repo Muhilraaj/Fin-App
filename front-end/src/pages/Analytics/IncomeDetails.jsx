@@ -7,9 +7,7 @@ import DropDown from '../../components/DropDown/DropDown';
 import Stack from '@mui/material/Stack';
 import Date from '../../components/Date/Date';
 import dayjs from 'dayjs';
-import { AgGridReact } from 'ag-grid-react';
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import TransactionReportGrid from './TransactionReportGrid';
 import { useGetIncomeLabelsForFilterQuery } from '../../stores/api/labelsApi';
 import { useGetIncomeQuery } from '../../stores/api/incomeApi';
 import { useLabelFilter } from '../../hooks/useLabelFilter';
@@ -19,31 +17,26 @@ const columns = [
     field: 'L1',
     width: 200,
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>L1</p>,
-    editable: true,
   },
   {
     field: 'L2',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>L2</p>,
     width: 200,
-    editable: true,
   },
   {
     field: 'Income_Note',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>Income Note</p>,
     width: 400,
-    editable: true,
   },
   {
     field: 'Income',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>Income</p>,
     width: 200,
-    editable: true,
   },
   {
     field: 'Timestamp',
     renderHeader: () => <p style={{ fontWeight: 'bold' }}>Timestamp</p>,
     width: 200,
-    editable: true,
   },
 ];
 
@@ -54,7 +47,6 @@ export default function IncomeDetails() {
   const [L2Value, setL2Value] = useState('*');
   const [DatetimeValue, setDatetimeValue] = useState(dayjs());
   const [params, setParams] = useState({ monthYear: dayjs().format('YYYYMM') });
-  const colDefs = useState(columns)[0];
 
   const { data: incomeResponse } = useGetIncomeQuery(params);
   const incomeData = incomeResponse?.data ?? [];
@@ -132,9 +124,11 @@ export default function IncomeDetails() {
             className="ag-theme-quartz"
             style={{ height: '100vh', width: '100%' }}
           >
-            <AgGridReact
-              rowData={incomeData}
-              columnDefs={colDefs}
+            <TransactionReportGrid
+              rows={incomeData}
+              columns={columns}
+              type="income"
+              labels={labels}
             />
           </div>
         </Box>

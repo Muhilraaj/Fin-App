@@ -22,7 +22,29 @@ export const incomeApi = createApi({
       }),
       invalidatesTags: ['Income'],
     }),
+    updateIncome: builder.mutation({
+      query: ({ id, version, changes }) => ({
+        url: `/income/${encodeURIComponent(id)}`,
+        method: 'PATCH',
+        headers: { 'If-Match': version },
+        body: changes,
+      }),
+      invalidatesTags: ['Income'],
+    }),
+    deleteIncome: builder.mutation({
+      query: ({ id, version }) => ({
+        url: `/income/${encodeURIComponent(id)}`,
+        method: 'DELETE',
+        headers: { 'If-Match': version },
+      }),
+      invalidatesTags: ['Income'],
+    }),
   }),
 });
 
-export const { useGetIncomeQuery, useSubmitIncomeMutation } = incomeApi;
+export const {
+  useGetIncomeQuery,
+  useSubmitIncomeMutation,
+  useUpdateIncomeMutation,
+  useDeleteIncomeMutation,
+} = incomeApi;
